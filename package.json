@@ -1,0 +1,16 @@
+{
+    "scripts": {
+        "pretest": "ts-node --transpile-only --ignore=false --skip-project test/pretest.ts",
+        "test": "ts-node --transpile-only --ignore=false --skip-project test/test.ts"
+    },
+    "dependencies": {
+        "azle": "^0.20.2",
+        "@dfinity/candid": "^1.0.1",
+        "@dfinity/principal": "^1.0.1"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.26",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.2.2"
+    }
+}
