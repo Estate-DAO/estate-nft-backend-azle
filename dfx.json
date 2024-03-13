@@ -1,12 +1,12 @@
 {
-    "canisters": {
-        "estate_minter": {
-            "type": "custom",
-            "main": "src/estate_minter/index.ts",
-            "candid": "src/estate_minter/index.did",
-            "build": "npx azle estate_minter",
-            "wasm": ".azle/estate_minter/estate_minter.wasm",
-            "gzip": true
-        }
+  "canisters": {
+    "estate_minter": {
+      "type": "custom",
+      "main": "src/estate_minter/index.ts",
+      "candid": "src/estate_minter/index.did",
+      "build": "npx azle estate_minter",
+      "wasm": ".azle/estate_minter/estate_minter.wasm",
+      "gzip": true
     }
+  }
 }
