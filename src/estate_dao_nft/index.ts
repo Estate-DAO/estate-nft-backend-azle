@@ -1,4 +1,4 @@
-import { bool, Canister, nat, Opt, query, text } from "azle";
+import { bool, Canister, init, nat, Opt, query, text } from "azle";
 import {
   icrc7_symbol,
   icrc7_name,
@@ -14,9 +14,14 @@ import {
   icrc7_atomic_batch_transfers,
   icrc7_tx_window,
   icrc7_permitted_drift,
+  icrc7_collection_metadata,
 } from "./icrc7";
+import { CollectionMetadata, InitArgs } from "./types";
+import { init_collection } from "./state";
 
 export default Canister({
+  init: init([InitArgs], init_collection),
+
   icrc7_symbol: query([], text, icrc7_symbol),
   icrc7_name: query([], text, icrc7_name),
   icrc7_description: query([], Opt(text), icrc7_description),
@@ -32,4 +37,6 @@ export default Canister({
   icrc7_atomic_batch_transfers: query([], Opt(bool), icrc7_atomic_batch_transfers),
   icrc7_tx_window: query([], Opt(nat), icrc7_tx_window),
   icrc7_permitted_drift: query([], Opt(nat), icrc7_permitted_drift),
+
+  icrc7_collection_metadata: query([], CollectionMetadata, icrc7_collection_metadata),
 });

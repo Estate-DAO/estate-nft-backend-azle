@@ -22,7 +22,7 @@ export const Value = Variant({
 });
 export type Value = typeof Value.tsType;
 
-export type ICRC7Metadata = {
+export type MetadataStorageType = {
   symbol: text;
   name: text;
   description?: text;
@@ -39,3 +39,14 @@ export type ICRC7Metadata = {
   tx_window?: nat;
   permitted_drift?: nat;
 };
+
+export const InitArgs = Record({
+  symbol: text,
+  name: text,
+  description: Opt(text),
+  logo: Opt(text),
+});
+export type InitArgs = typeof InitArgs.tsType;
+
+export const CollectionMetadata = Vec(Tuple(text, Value));
+export type CollectionMetadata = typeof CollectionMetadata.tsType;
