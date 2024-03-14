@@ -1,16 +1,4 @@
-import {
-  Record,
-  Principal,
-  Opt,
-  blob,
-  Variant,
-  text,
-  nat,
-  int,
-  Vec,
-  Tuple,
-  bool,
-} from "azle";
+import { Record, Principal, Opt, blob, Variant, text, nat, int, Vec, Tuple, bool } from "azle";
 
 export const Subaccount = blob;
 export type Subaccount = blob;

@@ -38,9 +38,7 @@ export function getTests(canisterId: string): Test[] {
           const responseJson = await response.json();
 
           return {
-            Ok:
-              JSON.stringify(responseJson) ===
-              JSON.stringify({ hello: "world" }),
+            Ok: JSON.stringify(responseJson) === JSON.stringify({ hello: "world" }),
           };
         } catch (error: any) {
           return {
