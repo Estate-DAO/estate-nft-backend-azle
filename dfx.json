@@ -1,11 +1,11 @@
 {
   "canisters": {
-    "estate_minter": {
+    "estate_dao_nft": {
       "type": "custom",
-      "main": "src/estate_minter/index.ts",
-      "candid": "src/estate_minter/index.did",
-      "build": "npx azle estate_minter",
-      "wasm": ".azle/estate_minter/estate_minter.wasm",
+      "main": "src/estate_nft/index.ts",
+      "candid": "src/estate_nft/index.did",
+      "build": "npx azle estate_nft",
+      "wasm": ".azle/estate_nft/estate_nft.wasm",
       "gzip": true
     }
   }
