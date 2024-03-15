@@ -2,8 +2,7 @@
   "scripts": {
     "pocket-ic:setup": "./scripts/setup-pocket-ic.sh",
     "pocket-ic:start": "./test/pocket-ic/pocket-ic",
-    "pretest": "ts-node --transpile-only --ignore=false --skip-project test/pretest.ts",
-    "test": "ts-node --transpile-only --ignore=false --skip-project test/test.ts",
+    "test": "./scripts/setup-wasm-for-test.sh && jest",
     "lint:check": "prettier src/ test/ --check",
     "lint": "prettier src/ test/ --write"
   },

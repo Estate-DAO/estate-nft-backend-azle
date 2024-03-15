@@ -1,5 +1,6 @@
-service: () -> {
+service: (record {logo:opt text; name:text; description:opt text; symbol:text}) -> {
     icrc7_atomic_batch_transfers: () -> (opt bool) query;
+    icrc7_collection_metadata: () -> (vec record {text; variant {Int:int; Map:vec record {text; variant {Int:int; Nat:nat; Blob:vec nat8; Text:text}}; Nat:nat; Blob:vec nat8; Text:text; Array:vec variant {Int:int; Nat:nat; Blob:vec nat8; Text:text}}}) query;
     icrc7_description: () -> (opt text) query;
     icrc7_logo: () -> (opt text) query;
     icrc7_max_default_take_value: () -> (opt nat) query;
