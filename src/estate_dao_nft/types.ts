@@ -22,7 +22,7 @@ export const Value = Variant({
 });
 export type Value = typeof Value.tsType;
 
-export type MetadataStorageType = {
+export type MetadataStoreType = {
   symbol: text;
   name: text;
   description?: text;
@@ -48,5 +48,5 @@ export const InitArgs = Record({
 });
 export type InitArgs = typeof InitArgs.tsType;
 
-export const CollectionMetadata = Vec(Tuple(text, Value));
-export type CollectionMetadata = typeof CollectionMetadata.tsType;
+export const Metadata = Vec(Tuple(text, Value));
+export type Metadata = typeof Metadata.tsType;

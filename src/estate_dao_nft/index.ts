@@ -16,7 +16,7 @@ import {
   icrc7_permitted_drift,
   icrc7_collection_metadata,
 } from "./icrc7";
-import { CollectionMetadata, InitArgs } from "./types";
+import { Metadata, InitArgs } from "./types";
 import { init_collection } from "./state";
 
 export default Canister({
@@ -38,5 +38,5 @@ export default Canister({
   icrc7_tx_window: query([], Opt(nat), icrc7_tx_window),
   icrc7_permitted_drift: query([], Opt(nat), icrc7_permitted_drift),
 
-  icrc7_collection_metadata: query([], CollectionMetadata, icrc7_collection_metadata),
+  icrc7_collection_metadata: query([], Metadata, icrc7_collection_metadata),
 });
