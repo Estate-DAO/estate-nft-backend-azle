@@ -22,6 +22,17 @@ export const Value = Variant({
 });
 export type Value = typeof Value.tsType;
 
+export const InitArgs = Record({
+  symbol: text,
+  name: text,
+  description: Opt(text),
+  logo: Opt(text),
+});
+export type InitArgs = typeof InitArgs.tsType;
+
+export const MetadataResult = Vec(Tuple(text, Value));
+export type MetadataResult = typeof MetadataResult.tsType;
+
 export type MetadataStoreType = {
   symbol: text;
   name: text;
@@ -40,13 +51,15 @@ export type MetadataStoreType = {
   permitted_drift?: nat;
 };
 
-export const InitArgs = Record({
-  symbol: text,
-  name: text,
-  description: Opt(text),
-  logo: Opt(text),
-});
-export type InitArgs = typeof InitArgs.tsType;
+type TokenStoreType = {
+  owner: Account
+}
+export type TokensStoreType = (TokenStoreType | undefined)[];
 
-export const MetadataResponse = Vec(Tuple(text, Value));
-export type MetadataResponse = typeof MetadataResponse.tsType;
+export const ICRC61Standards = Vec(
+  Record({
+    name: text,
+    url: text
+  })
+);
+export type ICRC61Standards = typeof ICRC61Standards.tsType;

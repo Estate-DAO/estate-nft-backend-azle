@@ -16,8 +16,9 @@ import {
   icrc7_permitted_drift,
   icrc7_collection_metadata,
 } from "./icrc7";
-import { MetadataResponse, InitArgs } from "./types";
+import { MetadataResult, InitArgs, ICRC61Standards } from "./types";
 import { init_collection } from "./state";
+import { icrc61_supported_standards } from "./icrc61";
 
 export default Canister({
   init: init([InitArgs], init_collection),
@@ -38,5 +39,7 @@ export default Canister({
   icrc7_tx_window: query([], Opt(nat), icrc7_tx_window),
   icrc7_permitted_drift: query([], Opt(nat), icrc7_permitted_drift),
 
-  icrc7_collection_metadata: query([], MetadataResponse, icrc7_collection_metadata),
+  icrc7_collection_metadata: query([], MetadataResult, icrc7_collection_metadata),
+
+  icrc61_supported_standards: query([], ICRC61Standards, icrc61_supported_standards),
 });

@@ -1,7 +1,7 @@
 import { Opt, bool, nat, text } from "azle";
 import { MetadataStore } from "./state";
 import { toOpt } from "./utils";
-import { MetadataResponse } from "./types";
+import { MetadataResult } from "./types";
 
 export function icrc7_symbol(): text {
   return MetadataStore.symbol;
@@ -59,14 +59,15 @@ export function icrc7_permitted_drift(): Opt<nat> {
   return toOpt(MetadataStore.permitted_drift);
 }
 
-export function icrc7_collection_metadata(): MetadataResponse {
-  const metadata: MetadataResponse = [];
+export function icrc7_collection_metadata(): MetadataResult {
+  const metadata: MetadataResult = [];
 
   metadata.push(["icrc7:name", { Text: MetadataStore.name }]);
   metadata.push(["icrc7:symbol", { Text: MetadataStore.symbol }]);
   metadata.push(["icrc7:total_supply", { Nat: MetadataStore.total_supply }]);
 
-  if (MetadataStore.description) metadata.push(["icrc7:description", { Text: MetadataStore.description }]);
+  if (MetadataStore.description)
+    metadata.push(["icrc7:description", { Text: MetadataStore.description }]);
   if (MetadataStore.logo) metadata.push(["icrc7:logo", { Text: MetadataStore.logo }]);
 
   return metadata;
