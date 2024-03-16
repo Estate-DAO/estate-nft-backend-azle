@@ -1,7 +1,8 @@
 {
   "scripts": {
     "pocket-ic:setup": "./scripts/setup-pocket-ic.sh",
-    "pocket-ic:start": "./test/pocket-ic/pocket-ic",
+    "pocket-ic:start": "./test/pocket-ic/pocket-ic --port 7000",
+    "build": "dfx build",
     "test": "./scripts/setup-wasm-for-test.sh && jest",
     "lint:check": "prettier src/ test/ --check",
     "lint": "prettier src/ test/ --write"
