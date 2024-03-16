@@ -48,5 +48,5 @@ export const InitArgs = Record({
 });
 export type InitArgs = typeof InitArgs.tsType;
 
-export const Metadata = Vec(Tuple(text, Value));
-export type Metadata = typeof Metadata.tsType;
+export const MetadataResponse = Vec(Tuple(text, Value));
+export type MetadataResponse = typeof MetadataResponse.tsType;
