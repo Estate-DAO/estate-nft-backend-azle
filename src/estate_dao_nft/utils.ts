@@ -6,7 +6,7 @@ export function toOpt<T>(a?: T): Opt<T> {
 }
 
 export function toAccountId(principal: string, subaccount?: Subaccount): string {
-  let subaccountId = subaccount?.toString() ?? Array(32).fill('0').join();
+  let subaccountId = subaccount?.toString() ?? Array(32).fill("0").join();
   return `${principal}#${subaccountId}`;
 }
 
@@ -17,7 +17,7 @@ export function bigIntToNumber(a: BigInt): number {
 export function iterableToArray<T>(a: Iterable<T>): T[] {
   const arr: T[] = [];
 
-  for ( const item of a ) {
+  for (const item of a) {
     arr.push(item);
   }
 

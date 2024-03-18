@@ -12,6 +12,6 @@ export function initImpl(args: InitArg) {
     symbol: args.symbol,
     name: args.name,
     description: args.description.Some,
-    logo: args.logo.Some
+    logo: args.logo.Some,
   });
 }

@@ -1,4 +1,18 @@
-import { Record, Principal, Opt, blob, Variant, text, nat, int, Vec, Tuple, bool, nat64, Null } from "azle";
+import {
+  Record,
+  Principal,
+  Opt,
+  blob,
+  Variant,
+  text,
+  nat,
+  int,
+  Vec,
+  Tuple,
+  bool,
+  nat64,
+  Null,
+} from "azle";
 
 export const Subaccount = blob;
 export type Subaccount = blob;
@@ -32,14 +46,14 @@ export const InitArg = Record({
 export type InitArg = typeof InitArg.tsType;
 
 export const MintArg = Record({
-  subaccount: Opt(Subaccount)
+  subaccount: Opt(Subaccount),
 });
 
 export type MintArg = typeof MintArg.tsType;
 
 export const BurnArg = Record({
-  token_id: nat
-})
+  token_id: nat,
+});
 
 export type BurnArg = typeof BurnArg.tsType;
 
@@ -48,7 +62,7 @@ export const TransferArg = Record({
   to: Account,
   token_id: nat,
   memo: Opt(blob),
-  created_at_time: Opt(nat64)
+  created_at_time: Opt(nat64),
 });
 
 export const TransferError = Variant({
@@ -56,15 +70,15 @@ export const TransferError = Variant({
   InvalidRecipient: Null,
   Unauthorized: Null,
   TooOld: Null,
-  CreatedInFuture : Record({ ledger_time: nat64 }),
-  Duplicate : Record({ duplicate_of: nat }),
-  GenericError : Record({ error_code: nat, message: text }),
-  GenericBatchError : Record({ error_code: nat, message: text })
+  CreatedInFuture: Record({ ledger_time: nat64 }),
+  Duplicate: Record({ duplicate_of: nat }),
+  GenericError: Record({ error_code: nat, message: text }),
+  GenericBatchError: Record({ error_code: nat, message: text }),
 });
 
 export const TransferResult = Variant({
   Ok: nat,
-  Err: TransferError
+  Err: TransferError,
 });
 
 export type TransferArg = typeof TransferArg.tsType;
@@ -92,25 +106,27 @@ export type MetadataStoreType = {
   permitted_drift?: nat;
 };
 
-export type CollectionMetadataStoreType = Partial<Pick<MetadataStoreType, 'symbol' | 'name' | 'description' | 'logo' | 'supply_cap'>>
+export type CollectionMetadataStoreType = Partial<
+  Pick<MetadataStoreType, "symbol" | "name" | "description" | "logo" | "supply_cap">
+>;
 
 type TokenStoreType = {
   owner: {
     principal: string;
     subaccount?: Subaccount;
-  }
-}
+  };
+};
 export type TokensStoreType = {
   counter: number;
   store: Map<number, TokenStoreType>;
-  ownerToTokenIndex: Map<string, Map<number, boolean>>
+  ownerToTokenIndex: Map<string, Map<number, boolean>>;
 };
 
 export type TokensStoreExportType = ReadonlyMap<number, TokenStoreType>;
 export type OwnerToTokensIndexExportType = ReadonlyMap<string, ReadonlyMap<number, boolean>>;
 
-export const ICRC61Standard = Record({
+export const ICRC61Standards = Vec(Record({
   name: text,
-  url: text
-});
-export type ICRC61Standard = typeof ICRC61Standard.tsType;
+  url: text,
+}));
+export type ICRC61Standards = typeof ICRC61Standards.tsType;

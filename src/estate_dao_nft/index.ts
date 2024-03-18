@@ -16,11 +16,29 @@ import {
   icrc7_permitted_drift,
   icrc7_collection_metadata,
 } from "./icrc7";
-import { MetadataResult, InitArg, ICRC61Standard, Account, MintArg, TransferResult, BurnArg, TransferArg } from "./types";
+import {
+  MetadataResult,
+  InitArg,
+  Account,
+  MintArg,
+  TransferResult,
+  BurnArg,
+  TransferArg,
+  ICRC61Standards,
+} from "./types";
 import { initImpl } from "./base";
 import { icrc61_supported_standards } from "./icrc61";
 import { inspectMessageImpl } from "./base";
-import { burn, icrc7_balance_of, icrc7_owner_of, icrc7_token_metadata, icrc7_tokens, icrc7_tokens_of, icrc7_transfer, mint } from "./token";
+import {
+  burn,
+  icrc7_balance_of,
+  icrc7_owner_of,
+  icrc7_token_metadata,
+  icrc7_tokens,
+  icrc7_tokens_of,
+  icrc7_transfer,
+  mint,
+} from "./token";
 
 export default Canister({
   inspectMessage: inspectMessage(inspectMessageImpl),
@@ -53,5 +71,5 @@ export default Canister({
   burn: query([Vec(BurnArg)], Vec(Opt(TransferResult)), burn),
   icrc7_transfer: query([Vec(TransferArg)], Vec(Opt(TransferResult)), icrc7_transfer),
 
-  icrc61_supported_standards: query([], Vec(ICRC61Standard), icrc61_supported_standards),
+  icrc61_supported_standards: query([], ICRC61Standards, icrc61_supported_standards),
 });
