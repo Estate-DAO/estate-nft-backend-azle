@@ -15,7 +15,7 @@ export function initPocketIc<_SERVICE>(
   let instance: PocketIc;
 
   const setup = async () => {
-    instance = await PocketIc.createFromUrl("http://localhost:7000");
+    instance = await PocketIc.create();
     const fixture = await instance.setupCanister<_SERVICE>({
       idlFactory,
       wasm: wasmPath,

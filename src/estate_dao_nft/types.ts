@@ -129,6 +129,10 @@ export type OwnerToTokenIndexType = Map<string, Map<number, boolean>>;
 export type TokenStoreReadonlyType = ReadonlyMap<number, TokenType>;
 export type OwnerToTokensIndexReadonlyType = ReadonlyMap<string, ReadonlyMap<number, boolean>>;
 
+export type TxnIndexStoreType = {
+  index: bigint;
+};
+
 export const ICRC61Standards = Vec(
   Record({
     name: text,

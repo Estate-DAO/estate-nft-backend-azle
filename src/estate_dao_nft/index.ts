@@ -1,4 +1,4 @@
-import { bool, Canister, init, inspectMessage, nat, Opt, query, text, Vec } from "azle";
+import { bool, Canister, init, inspectMessage, nat, Opt, query, text, update, Vec } from "azle";
 import {
   icrc7_symbol,
   icrc7_name,
@@ -67,9 +67,9 @@ export default Canister({
   icrc7_balance_of: query([Vec(Account)], Vec(nat), icrc7_balance_of),
   icrc7_tokens: query([Opt(nat), Opt(nat)], Vec(nat), icrc7_tokens),
   icrc7_tokens_of: query([Account, Opt(nat), Opt(nat)], Vec(nat), icrc7_tokens_of),
-  mint: query([Vec(MintArg)], Vec(Opt(TransferResult)), mint),
-  burn: query([Vec(BurnArg)], Vec(Opt(TransferResult)), burn),
-  icrc7_transfer: query([Vec(TransferArg)], Vec(Opt(TransferResult)), icrc7_transfer),
+  mint: update([Vec(MintArg)], Vec(Opt(TransferResult)), mint),
+  burn: update([Vec(BurnArg)], Vec(Opt(TransferResult)), burn),
+  icrc7_transfer: update([Vec(TransferArg)], Vec(Opt(TransferResult)), icrc7_transfer),
 
   icrc61_supported_standards: query([], ICRC61Standards, icrc61_supported_standards),
 });

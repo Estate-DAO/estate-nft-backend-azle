@@ -55,16 +55,19 @@ export function icrc7_tokens_of(account: Account, prev: Opt<nat>, take: Opt<nat>
     .map((id) => BigInt(id));
 }
 
-// TODO: add guard function for anonymous principal
 // TODO: Implement memo and created_at_time checks
 export function mint(args: Vec<MintArg>): Vec<Opt<TransferResult>> {
+  TxnIndexStore.increment();
+  if ( ic.caller().isAnonymous() ) return [toOpt({ Err: { Unauthorized: null } })];
+
   return args.map((arg) => {
-    TokenStore.mint(ic.caller().toString(), arg.subaccount.Some);
-    return toOpt({ Ok: TxnIndexStore.index });
+    const tokenId = TokenStore.mint(ic.caller().toString(), arg.subaccount.Some);
+    return toOpt({ Ok: BigInt(tokenId) });
   });
 }
 
 export function burn(args: Vec<BurnArg>): Vec<Opt<TransferResult>> {
+  TxnIndexStore.increment();
   return args.map((arg) => {
     const tokenId = bigIntToNumber(arg.token_id);
     const token = TokenStore.store.get(tokenId);
@@ -74,11 +77,12 @@ export function burn(args: Vec<BurnArg>): Vec<Opt<TransferResult>> {
       return toOpt({ Err: { Unauthorized: null } });
 
     TokenStore.burn(tokenId);
-    return toOpt({ Ok: TxnIndexStore.index });
+    return toOpt({ Ok: TxnIndexStore.store.index });
   });
 }
 
 export function icrc7_transfer(args: Vec<TransferArg>): Vec<Opt<TransferResult>> {
+  TxnIndexStore.increment();
   const holderPrincipal = ic.caller().toString();
 
   return args.map((arg) => {
@@ -103,6 +107,6 @@ export function icrc7_transfer(args: Vec<TransferArg>): Vec<Opt<TransferResult>>
       return toOpt({ Err: { InvalidRecipient: null } });
 
     TokenStore.transfer(tokenId, receiverPrincipal, receiverSubaccount);
-    return toOpt({ Ok: TxnIndexStore.index });
+    return toOpt({ Ok: TxnIndexStore.store.index });
   });
 }

@@ -1,4 +1,5 @@
-import { MetadataStoreReadonlyType, MetadataStoreType, WritableMetadataType } from "../types";
+import { ic } from "azle";
+import { MetadataStoreType, WritableMetadataType } from "../types";
 
 const _metadataStore: MetadataStoreType = {
   symbol: "",

@@ -11,7 +11,7 @@ describe("ICRC61 Standard", () => {
   let actor: estateDaoActor;
   const { setup, teardown } = initEstateDaoNft([initMetadata]);
 
-  beforeAll(async () => (actor = await setup()));
+  beforeAll(async () => (actor = await setup()), 10*1000);
   afterAll(teardown);
 
   it("icrc61_supported_standards", async () => {

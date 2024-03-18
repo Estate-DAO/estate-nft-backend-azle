@@ -1,10 +1,14 @@
-let _transactionIndex = 1n;
+import { TxnIndexStoreType } from "../types";
+
+const _txnIndexStore: TxnIndexStoreType = {
+  index: 0n,
+}
 
 function _increment() {
-  _transactionIndex++;
+  _txnIndexStore.index++;
 }
 
 export default {
-  index: _transactionIndex as Readonly<bigint>,
+  store: _txnIndexStore as Readonly<TxnIndexStoreType>,
   increment: _increment,
 };

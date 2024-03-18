@@ -12,7 +12,7 @@ let _tokenIndexCounter = 1;
 const _tokenStore: TokenStoreType = new Map();
 const _ownerToTokenIndex: OwnerToTokenIndexType = new Map();
 
-export function _mint(principal: string, subaccount?: Subaccount) {
+export function _mint(principal: string, subaccount?: Subaccount): number {
   const accountId = toAccountId(principal, subaccount);
   const tokenId = _tokenIndexCounter;
   _tokenIndexCounter++;
@@ -31,6 +31,8 @@ export function _mint(principal: string, subaccount?: Subaccount) {
   });
   userTokenIndex.set(tokenId, true);
   MetadataStore.incrementSupply();
+
+  return tokenId;
 }
 
 export function _burn(tokenId: number) {

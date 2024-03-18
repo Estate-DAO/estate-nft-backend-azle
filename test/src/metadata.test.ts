@@ -11,7 +11,7 @@ describe("ICRC7 Metadata", () => {
   let actor: estateDaoActor;
   const { setup, teardown } = initEstateDaoNft([initMetadata]);
 
-  beforeAll(async () => (actor = await setup()));
+  beforeAll(async () => (actor = await setup()), 10*1000);
   afterAll(teardown);
 
   it("icrc7_name", async () => {

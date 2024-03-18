@@ -1,4 +1,4 @@
-import { Opt, bool, nat, text } from "azle";
+import { Opt, bool, ic, nat, text } from "azle";
 import { MetadataStore } from "./store";
 import { toOpt } from "./utils";
 import { MetadataResult } from "./types";
