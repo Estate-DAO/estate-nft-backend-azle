@@ -1,4 +1,4 @@
-import { estateDaoActor, initEstateDaoNft } from "./utils/pocket-ic";
+import { estateDaoActor, initEstateDaoNft } from "../utils/pocket-ic";
 
 const initMetadata = {
   name: "EstateDaoNFT",
@@ -11,7 +11,7 @@ describe("ICRC7 Metadata", () => {
   let actor: estateDaoActor;
   const { setup, teardown } = initEstateDaoNft([initMetadata]);
 
-  beforeAll(async () => (actor = await setup()), 10*1000);
+  beforeAll(async () => (actor = await setup()));
   afterAll(teardown);
 
   it("icrc7_name", async () => {

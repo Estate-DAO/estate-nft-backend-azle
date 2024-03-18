@@ -1,6 +1,6 @@
 import { generateRandomIdentity } from "@hadronous/pic";
-import { estateDaoActor, initEstateDaoNft } from "./utils/pocket-ic";
-import { OkResult, Account } from "./utils/common";
+import { estateDaoActor, initEstateDaoNft } from "../utils/pocket-ic";
+import { OkResult } from "../utils/common";
 
 const initMetadata = {
   name: "EstateDaoNFT",
@@ -9,14 +9,14 @@ const initMetadata = {
   description: [],
 };
 
-describe("ICRC7 Token - User mints, transfer and burns a token", () => {
+describe("User mints, transfer and burns a token successfully", () => {
   let actor: estateDaoActor;
   const { setup, teardown } = initEstateDaoNft([initMetadata]);
   const alice = generateRandomIdentity();
   const bob = generateRandomIdentity();
   let mintedTokenId: bigint;
 
-  beforeAll(async () => (actor = await setup()), 10*1000);
+  beforeAll(async () => (actor = await setup()));
   afterAll(teardown);
 
   it("mints token.", async () => {
