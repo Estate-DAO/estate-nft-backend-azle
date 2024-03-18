@@ -106,27 +106,33 @@ export type MetadataStoreType = {
   permitted_drift?: nat;
 };
 
-export type CollectionMetadataStoreType = Partial<
-  Pick<MetadataStoreType, "symbol" | "name" | "description" | "logo" | "supply_cap">
->;
+type UnwritableMetadataKeys =
+  | "max_query_batch_size"
+  | "max_update_batch_size"
+  | "default_take_value"
+  | "max_take_value"
+  | "max_memo_size"
+  | "atomic_batch_transfers"
+  | "tx_window"
+  | "permitted_drift";
+export type WritableMetadataType = Partial<Omit<MetadataStoreType, UnwritableMetadataKeys>>;
 
-type TokenStoreType = {
+type TokenType = {
   owner: {
     principal: string;
     subaccount?: Subaccount;
   };
 };
-export type TokensStoreType = {
-  counter: number;
-  store: Map<number, TokenStoreType>;
-  ownerToTokenIndex: Map<string, Map<number, boolean>>;
-};
 
-export type TokensStoreExportType = ReadonlyMap<number, TokenStoreType>;
-export type OwnerToTokensIndexExportType = ReadonlyMap<string, ReadonlyMap<number, boolean>>;
+export type TokenStoreType = Map<number, TokenType>;
+export type OwnerToTokenIndexType = Map<string, Map<number, boolean>>;
+export type TokenStoreReadonlyType = ReadonlyMap<number, TokenType>;
+export type OwnerToTokensIndexReadonlyType = ReadonlyMap<string, ReadonlyMap<number, boolean>>;
 
-export const ICRC61Standards = Vec(Record({
-  name: text,
-  url: text,
-}));
+export const ICRC61Standards = Vec(
+  Record({
+    name: text,
+    url: text,
+  }),
+);
 export type ICRC61Standards = typeof ICRC61Standards.tsType;

@@ -1,14 +1,14 @@
 import { ic } from "azle";
-import { _incrementTxnIndex, _updateCollectionMetadata } from "./state";
+import { TxnIndexStore, MetadataStore } from "./store";
 import { InitArg } from "./types";
 
 export function inspectMessageImpl() {
-  _incrementTxnIndex();
+  TxnIndexStore.increment();
   ic.acceptMessage();
 }
 
 export function initImpl(args: InitArg) {
-  _updateCollectionMetadata({
+  MetadataStore.update({
     symbol: args.symbol,
     name: args.name,
     description: args.description.Some,

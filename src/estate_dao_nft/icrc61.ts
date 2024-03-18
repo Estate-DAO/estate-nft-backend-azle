@@ -1,4 +1,4 @@
-import { ICRC61Standards} from "./types";
+import { ICRC61Standards } from "./types";
 
 export function icrc61_supported_standards(): ICRC61Standards {
   return [

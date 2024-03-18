@@ -15,7 +15,7 @@ import {
   icrc7_tx_window,
   icrc7_permitted_drift,
   icrc7_collection_metadata,
-} from "./icrc7";
+} from "./metadata";
 import {
   MetadataResult,
   InitArg,

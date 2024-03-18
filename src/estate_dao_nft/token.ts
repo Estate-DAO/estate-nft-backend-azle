@@ -1,25 +1,18 @@
 import { Opt, Principal, Vec, ic, nat } from "azle";
 import { Account, BurnArg, MetadataResult, MintArg, TransferArg, TransferResult } from "./types";
-import {
-  OwnerToTokensIndex,
-  TokensStore,
-  TxnIndex,
-  _burnToken,
-  _mintToken,
-  _transferToken,
-} from "./state";
+import { TokenStore, TxnIndexStore } from "./store";
 import { bigIntToNumber, isSubaccountsEq, iterableToArray, toAccountId, toOpt } from "./utils";
 
 export function icrc7_token_metadata(tokenIds: Vec<nat>): Vec<Opt<MetadataResult>> {
   return tokenIds
     .map((id) => bigIntToNumber(id))
-    .map((id) => toOpt(TokensStore.get(id) ? [] : undefined));
+    .map((id) => toOpt(TokenStore.store.get(id) ? [] : undefined));
 }
 
 export function icrc7_owner_of(tokenIds: Vec<nat>): Vec<Opt<Account>> {
   return tokenIds
     .map((id) => bigIntToNumber(id))
-    .map((id) => TokensStore.get(id))
+    .map((id) => TokenStore.store.get(id))
     .map((token) =>
       toOpt(
         token
@@ -35,12 +28,12 @@ export function icrc7_owner_of(tokenIds: Vec<nat>): Vec<Opt<Account>> {
 export function icrc7_balance_of(accounts: Vec<Account>): Vec<nat> {
   return accounts
     .map((account) => toAccountId(account.owner.toString(), account.subaccount.Some))
-    .map((accountId) => OwnerToTokensIndex.get(accountId)?.size ?? 0)
+    .map((accountId) => TokenStore.ownerToTokenIndex.get(accountId)?.size ?? 0)
     .map((balance) => BigInt(balance));
 }
 
 export function icrc7_tokens(prev: Opt<nat>, take: Opt<nat>): Vec<nat> {
-  const tokens = iterableToArray(TokensStore.keys());
+  const tokens: number[] = iterableToArray(TokenStore.store.keys());
   const prevId = bigIntToNumber(prev.Some ?? 0n);
   const prevIndex = prevId ? tokens.findIndex((id) => prevId === id) : -1;
 
@@ -51,8 +44,8 @@ export function icrc7_tokens(prev: Opt<nat>, take: Opt<nat>): Vec<nat> {
 
 export function icrc7_tokens_of(account: Account, prev: Opt<nat>, take: Opt<nat>): Vec<nat> {
   const accountId = toAccountId(account.owner.toString(), account.subaccount.Some);
-  const accountTokensIndex = OwnerToTokensIndex.get(accountId);
-  const tokens = accountTokensIndex ? iterableToArray(accountTokensIndex.keys()) : [];
+  const accountTokensIndex = TokenStore.ownerToTokenIndex.get(accountId);
+  const tokens: number[] = accountTokensIndex ? iterableToArray(accountTokensIndex.keys()) : [];
 
   const prevId = bigIntToNumber(prev.Some ?? 0n);
   const prevIndex = prevId ? tokens.findIndex((id) => prevId === id) : -1;
@@ -66,22 +59,22 @@ export function icrc7_tokens_of(account: Account, prev: Opt<nat>, take: Opt<nat>
 // TODO: Implement memo and created_at_time checks
 export function mint(args: Vec<MintArg>): Vec<Opt<TransferResult>> {
   return args.map((arg) => {
-    _mintToken(ic.caller().toString(), arg.subaccount.Some);
-    return toOpt({ Ok: TxnIndex });
+    TokenStore.mint(ic.caller().toString(), arg.subaccount.Some);
+    return toOpt({ Ok: TxnIndexStore.index });
   });
 }
 
 export function burn(args: Vec<BurnArg>): Vec<Opt<TransferResult>> {
   return args.map((arg) => {
     const tokenId = bigIntToNumber(arg.token_id);
-    const token = TokensStore.get(tokenId);
+    const token = TokenStore.store.get(tokenId);
 
     if (!token) return toOpt({ Err: { NonExistingTokenId: null } });
     if (token.owner.principal !== ic.caller().toString())
       return toOpt({ Err: { Unauthorized: null } });
 
-    _burnToken(tokenId);
-    return toOpt({ Ok: TxnIndex });
+    TokenStore.burn(tokenId);
+    return toOpt({ Ok: TxnIndexStore.index });
   });
 }
 
@@ -90,7 +83,7 @@ export function icrc7_transfer(args: Vec<TransferArg>): Vec<Opt<TransferResult>>
 
   return args.map((arg) => {
     const tokenId = parseInt(arg.token_id.toString());
-    const token = TokensStore.get(tokenId);
+    const token = TokenStore.store.get(tokenId);
     if (!token) return toOpt({ Err: { NonExistingTokenId: null } });
 
     const holderSubaccount = arg.from_subaccount.Some;
@@ -109,8 +102,7 @@ export function icrc7_transfer(args: Vec<TransferArg>): Vec<Opt<TransferResult>>
     )
       return toOpt({ Err: { InvalidRecipient: null } });
 
-    _transferToken(tokenId, receiverPrincipal, receiverSubaccount);
-
-    return toOpt({ Ok: TxnIndex });
+    TokenStore.transfer(tokenId, receiverPrincipal, receiverSubaccount);
+    return toOpt({ Ok: TxnIndexStore.index });
   });
 }
