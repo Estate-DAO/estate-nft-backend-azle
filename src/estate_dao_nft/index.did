@@ -1,6 +1,8 @@
 service: (record {logo:opt text; name:text; description:opt text; symbol:text}) -> {
+    burn: (vec record {token_id:nat}) -> (vec opt variant {Ok:nat; Err:variant {GenericError:record {message:text; error_code:nat}; Duplicate:record {duplicate_of:nat}; NonExistingTokenId; Unauthorized; CreatedInFuture:record {ledger_time:nat64}; InvalidRecipient; GenericBatchError:record {message:text; error_code:nat}; TooOld}}) query;
     icrc61_supported_standards: () -> (vec record {url:text; name:text}) query;
     icrc7_atomic_batch_transfers: () -> (opt bool) query;
+    icrc7_balance_of: (vec record {owner:principal; subaccount:opt vec nat8}) -> (vec nat) query;
     icrc7_collection_metadata: () -> (vec record {text; variant {Int:int; Map:vec record {text; variant {Int:int; Nat:nat; Blob:vec nat8; Text:text}}; Nat:nat; Blob:vec nat8; Text:text; Array:vec variant {Int:int; Nat:nat; Blob:vec nat8; Text:text}}}) query;
     icrc7_description: () -> (opt text) query;
     icrc7_logo: () -> (opt text) query;
@@ -10,9 +12,15 @@ service: (record {logo:opt text; name:text; description:opt text; symbol:text}) 
     icrc7_max_take_value: () -> (opt nat) query;
     icrc7_max_update_batch_size: () -> (opt nat) query;
     icrc7_name: () -> (text) query;
+    icrc7_owner_of: (vec nat) -> (vec opt record {owner:principal; subaccount:opt vec nat8}) query;
     icrc7_permitted_drift: () -> (opt nat) query;
     icrc7_supply_cap: () -> (opt nat) query;
     icrc7_symbol: () -> (text) query;
+    icrc7_token_metadata: (vec nat) -> (vec opt vec record {text; variant {Int:int; Map:vec record {text; variant {Int:int; Nat:nat; Blob:vec nat8; Text:text}}; Nat:nat; Blob:vec nat8; Text:text; Array:vec variant {Int:int; Nat:nat; Blob:vec nat8; Text:text}}}) query;
+    icrc7_tokens: (opt nat, opt nat) -> (vec nat) query;
+    icrc7_tokens_of: (record {owner:principal; subaccount:opt vec nat8}, opt nat, opt nat) -> (vec nat) query;
     icrc7_total_supply: () -> (nat) query;
+    icrc7_transfer: (vec record {to:record {owner:principal; subaccount:opt vec nat8}; token_id:nat; memo:opt vec nat8; from_subaccount:opt vec nat8; created_at_time:opt nat64}) -> (vec opt variant {Ok:nat; Err:variant {GenericError:record {message:text; error_code:nat}; Duplicate:record {duplicate_of:nat}; NonExistingTokenId; Unauthorized; CreatedInFuture:record {ledger_time:nat64}; InvalidRecipient; GenericBatchError:record {message:text; error_code:nat}; TooOld}}) query;
     icrc7_tx_window: () -> (opt nat) query;
+    mint: (vec record {subaccount:opt vec nat8}) -> (vec opt variant {Ok:nat; Err:variant {GenericError:record {message:text; error_code:nat}; Duplicate:record {duplicate_of:nat}; NonExistingTokenId; Unauthorized; CreatedInFuture:record {ledger_time:nat64}; InvalidRecipient; GenericBatchError:record {message:text; error_code:nat}; TooOld}}) query;
 }
