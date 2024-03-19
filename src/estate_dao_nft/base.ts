@@ -1,11 +1,5 @@
-import { ic } from "azle";
-import { TxnIndexStore, MetadataStore } from "./store";
+import { MetadataStore } from "./store";
 import { InitArg } from "./types";
-
-export function inspectMessageImpl() {
-  TxnIndexStore.increment();
-  ic.acceptMessage();
-}
 
 export function initImpl(args: InitArg) {
   MetadataStore.update({

@@ -1,4 +1,3 @@
-import { ic } from "azle";
 import { MetadataStoreType, WritableMetadataType } from "../types";
 
 const _metadataStore: MetadataStoreType = {

@@ -1,4 +1,4 @@
-import { bool, Canister, init, inspectMessage, nat, Opt, query, text, update, Vec } from "azle";
+import { bool, Canister, init, nat, Opt, query, text, update, Vec } from "azle";
 import {
   icrc7_symbol,
   icrc7_name,
@@ -28,7 +28,6 @@ import {
 } from "./types";
 import { initImpl } from "./base";
 import { icrc61_supported_standards } from "./icrc61";
-import { inspectMessageImpl } from "./base";
 import {
   burn,
   icrc7_balance_of,
@@ -41,7 +40,6 @@ import {
 } from "./token";
 
 export default Canister({
-  inspectMessage: inspectMessage(inspectMessageImpl),
   init: init([InitArg], initImpl),
 
   icrc7_symbol: query([], text, icrc7_symbol),

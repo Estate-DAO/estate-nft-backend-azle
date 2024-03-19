@@ -58,7 +58,7 @@ export function icrc7_tokens_of(account: Account, prev: Opt<nat>, take: Opt<nat>
 // TODO: Implement memo and created_at_time checks
 export function mint(args: Vec<MintArg>): Vec<Opt<TransferResult>> {
   TxnIndexStore.increment();
-  if ( ic.caller().isAnonymous() ) return [toOpt({ Err: { Unauthorized: null } })];
+  // if ( ic.caller().isAnonymous() ) return [toOpt({ Err: { Unauthorized: null } })]; // DISABLED for local dev
 
   return args.map((arg) => {
     const tokenId = TokenStore.mint(ic.caller().toString(), arg.subaccount.Some);
