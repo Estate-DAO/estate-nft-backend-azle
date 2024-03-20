@@ -57,8 +57,8 @@ export function icrc7_tokens_of(account: Account, prev: Opt<nat>, take: Opt<nat>
 
 // TODO: Implement memo and created_at_time checks
 export function mint(args: Vec<MintArg>): Vec<Opt<TransferResult>> {
-  TxnIndexStore.increment();
-  // if ( ic.caller().isAnonymous() ) return [toOpt({ Err: { Unauthorized: null } })]; // DISABLED for local dev
+  // TODO: DISABLED for local dev
+  // if ( ic.caller().isAnonymous() ) return [toOpt({ Err: { Unauthorized: null } })];
 
   return args.map((arg) => {
     const tokenId = TokenStore.mint(ic.caller().toString(), arg.subaccount.Some);
@@ -67,7 +67,6 @@ export function mint(args: Vec<MintArg>): Vec<Opt<TransferResult>> {
 }
 
 export function burn(args: Vec<BurnArg>): Vec<Opt<TransferResult>> {
-  TxnIndexStore.increment();
   return args.map((arg) => {
     const tokenId = bigIntToNumber(arg.token_id);
     const token = TokenStore.store.get(tokenId);
@@ -82,7 +81,6 @@ export function burn(args: Vec<BurnArg>): Vec<Opt<TransferResult>> {
 }
 
 export function icrc7_transfer(args: Vec<TransferArg>): Vec<Opt<TransferResult>> {
-  TxnIndexStore.increment();
   const holderPrincipal = ic.caller().toString();
 
   return args.map((arg) => {

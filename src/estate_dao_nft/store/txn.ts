@@ -2,7 +2,7 @@ import { TxnIndexStoreType } from "../types";
 
 const _txnIndexStore: TxnIndexStoreType = {
   index: 0n,
-}
+};
 
 function _increment() {
   _txnIndexStore.index++;

@@ -1,7 +1,7 @@
-import { Opt, bool, ic, nat, text } from "azle";
-import { MetadataStore } from "./store";
-import { toOpt } from "./utils";
-import { MetadataResult } from "./types";
+import { Opt, bool, nat, text } from "azle";
+import { MetadataStore } from "../store";
+import { toOpt } from "../utils";
+import { MetadataResult } from "../types";
 
 export function icrc7_symbol(): text {
   return MetadataStore.store.symbol;
@@ -68,7 +68,11 @@ export function icrc7_collection_metadata(): MetadataResult {
 
   if (MetadataStore.store.description)
     metadata.push(["icrc7:description", { Text: MetadataStore.store.description }]);
-  if (MetadataStore.store.logo) metadata.push(["icrc7:logo", { Text: MetadataStore.store.logo }]);
+  
+  if (MetadataStore.store.logo)
+    metadata.push(["icrc7:logo", { Text: MetadataStore.store.logo }]);
+
+  metadata.push(["estate_dao:property_owner", { Text: MetadataStore.store.property_owner }]);
 
   return metadata;
 }

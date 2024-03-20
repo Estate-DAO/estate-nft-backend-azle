@@ -1,5 +1,6 @@
-import { Opt } from "azle";
+import { CandidType, Opt, update as azleUpdate } from "azle";
 import { Subaccount } from "./types";
+import { TxnIndexStore } from "./store";
 
 export function toOpt<T>(a?: T): Opt<T> {
   return a ? { Some: a } : { None: null };
@@ -27,4 +28,11 @@ export function iterableToArray<T>(a: Iterable<T>): T[] {
 export function isSubaccountsEq(a?: Subaccount, b?: Subaccount): boolean {
   const defaultSubaccount = Array(32).fill(0).toString();
   return (a?.toString() ?? defaultSubaccount) === (b?.toString() ?? defaultSubaccount);
+}
+
+export const update: typeof azleUpdate = (params, result, fn) => {
+  return azleUpdate(params, result, (...args) => {
+    TxnIndexStore.increment();
+    return fn.apply(null, args);
+  });
 }

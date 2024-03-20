@@ -12,6 +12,7 @@ import {
   bool,
   nat64,
   Null,
+  nat32,
 } from "azle";
 
 export const Subaccount = blob;
@@ -41,6 +42,7 @@ export const InitArg = Record({
   name: text,
   description: Opt(text),
   logo: Opt(text),
+  property_owner: Principal,
 });
 
 export type InitArg = typeof InitArg.tsType;
@@ -88,6 +90,20 @@ export type TransferResult = typeof TransferResult.tsType;
 export const MetadataResult = Vec(Tuple(text, Value));
 export type MetadataResult = typeof MetadataResult.tsType;
 
+export const UpdateMetadataArg = Record({
+  symbol: Opt(text),
+  name: Opt(text),
+  description: Opt(text),
+  logo: Opt(text),
+});
+export type UpdateMetadataArg = typeof UpdateMetadataArg.tsType;
+
+export const TxnResult = Variant({
+  Ok: nat,
+  Err: text,
+});
+export type TxnResult = typeof TxnResult.tsType;
+
 export type MetadataStoreType = {
   symbol: text;
   name: text;
@@ -104,6 +120,8 @@ export type MetadataStoreType = {
   atomic_batch_transfers?: bool;
   tx_window?: nat;
   permitted_drift?: nat;
+
+  property_owner: text;
 };
 
 type UnwritableMetadataKeys =
@@ -114,23 +132,24 @@ type UnwritableMetadataKeys =
   | "max_memo_size"
   | "atomic_batch_transfers"
   | "tx_window"
-  | "permitted_drift";
+  | "permitted_drift"
+  | "total_supply";
 export type WritableMetadataType = Partial<Omit<MetadataStoreType, UnwritableMetadataKeys>>;
 
 type TokenType = {
   owner: {
-    principal: string;
+    principal: text;
     subaccount?: Subaccount;
   };
 };
 
-export type TokenStoreType = Map<number, TokenType>;
-export type OwnerToTokenIndexType = Map<string, Map<number, boolean>>;
-export type TokenStoreReadonlyType = ReadonlyMap<number, TokenType>;
-export type OwnerToTokensIndexReadonlyType = ReadonlyMap<string, ReadonlyMap<number, boolean>>;
+export type TokenStoreType = Map<nat32, TokenType>;
+export type OwnerToTokenIndexType = Map<text, Map<nat32, bool>>;
+export type TokenStoreReadonlyType = ReadonlyMap<nat32, TokenType>;
+export type OwnerToTokensIndexReadonlyType = ReadonlyMap<text, ReadonlyMap<nat32, bool>>;
 
 export type TxnIndexStoreType = {
-  index: bigint;
+  index: nat;
 };
 
 export const ICRC61Standards = Vec(

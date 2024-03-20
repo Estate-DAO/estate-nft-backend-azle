@@ -7,5 +7,6 @@ export function initImpl(args: InitArg) {
     name: args.name,
     description: args.description.Some,
     logo: args.logo.Some,
+    property_owner: args.property_owner.toString(),
   });
 }

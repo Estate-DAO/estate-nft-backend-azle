@@ -1,4 +1,5 @@
-import { bool, Canister, init, nat, Opt, query, text, update, Vec } from "azle";
+import { bool, Canister, init, nat, Opt, Principal, query, text, Vec } from "azle";
+import { update } from './utils';
 import {
   icrc7_symbol,
   icrc7_name,
@@ -15,6 +16,8 @@ import {
   icrc7_tx_window,
   icrc7_permitted_drift,
   icrc7_collection_metadata,
+  update_property_owner,
+  update_metadata,
 } from "./metadata";
 import {
   MetadataResult,
@@ -25,6 +28,8 @@ import {
   BurnArg,
   TransferArg,
   ICRC61Standards,
+  TxnResult,
+  UpdateMetadataArg,
 } from "./types";
 import { initImpl } from "./base";
 import { icrc61_supported_standards } from "./icrc61";
@@ -70,4 +75,7 @@ export default Canister({
   icrc7_transfer: update([Vec(TransferArg)], Vec(Opt(TransferResult)), icrc7_transfer),
 
   icrc61_supported_standards: query([], ICRC61Standards, icrc61_supported_standards),
+
+  update_property_owner: update([Principal], TxnResult, update_property_owner),
+  update_metadata: update([UpdateMetadataArg], TxnResult, update_metadata),
 });

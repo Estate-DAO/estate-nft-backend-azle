@@ -1,10 +1,14 @@
+import { Principal } from "@dfinity/principal";
 import { estateDaoActor, initEstateDaoNft } from "../utils/pocket-ic";
+import { generateRandomIdentity } from "@hadronous/pic";
+import { OkResult } from "../utils/common";
 
 const initMetadata = {
   name: "EstateDaoNFT",
   symbol: "EST",
   logo: ["http://estatedao.org/test-image.png"],
   description: [],
+  property_owner: Principal.anonymous(),
 };
 
 describe("ICRC7 Metadata", () => {
@@ -88,10 +92,21 @@ describe("ICRC7 Metadata", () => {
   it("icrc7_collection_metadata", async () => {
     const metadata = await actor.icrc7_collection_metadata();
 
-    expect(metadata).toHaveLength(4);
+    expect(metadata).toHaveLength(5);
     expect(metadata).toContainEqual(["icrc7:name", { Text: initMetadata.name }]);
     expect(metadata).toContainEqual(["icrc7:symbol", { Text: initMetadata.symbol }]);
     expect(metadata).toContainEqual(["icrc7:total_supply", { Nat: 0n }]);
     expect(metadata).toContainEqual(["icrc7:logo", { Text: initMetadata.logo[0] }]);
+    expect(metadata).toContainEqual(["estate_dao:property_owner", { Text: initMetadata.property_owner.toString() }]);
   });
+
+  it("update_property_owner", async () => {
+    const alice = generateRandomIdentity();
+    
+    const res = await actor.update_property_owner(alice.getPrincipal()) as OkResult;
+    expect(res.Ok).toBeTruthy();
+
+    const metadata = await actor.icrc7_collection_metadata();
+    expect(metadata).toContainEqual(["estate_dao:property_owner", { Text: alice.getPrincipal().toString() }]);
+  })
 });

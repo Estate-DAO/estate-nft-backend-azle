@@ -1,15 +1,8 @@
 import { estateDaoActor, initEstateDaoNft } from "../utils/pocket-ic";
 
-const initMetadata = {
-  name: "EstateDaoNFT",
-  symbol: "EST",
-  logo: ["http://estatedao.org/test-image.png"],
-  description: [],
-};
-
 describe("ICRC61 Standard", () => {
   let actor: estateDaoActor;
-  const { setup, teardown } = initEstateDaoNft([initMetadata]);
+  const { setup, teardown } = initEstateDaoNft();
 
   beforeAll(async () => (actor = await setup()));
   afterAll(teardown);
