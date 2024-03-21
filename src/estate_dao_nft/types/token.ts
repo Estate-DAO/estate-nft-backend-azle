@@ -1,15 +1,4 @@
-import {
-  Record,
-  Opt,
-  blob,
-  Variant,
-  text,
-  nat,
-  bool,
-  nat64,
-  Null,
-  nat32,
-} from "azle";
+import { Record, Opt, blob, Variant, text, nat, bool, nat64, Null, nat32 } from "azle";
 import { Account, Subaccount } from "./common";
 
 type TokenType = {
@@ -23,7 +12,6 @@ export type TokenStoreType = Map<nat32, TokenType>;
 export type OwnerToTokenIndexType = Map<text, Map<nat32, bool>>;
 export type TokenStoreReadonlyType = ReadonlyMap<nat32, TokenType>;
 export type OwnerToTokensIndexReadonlyType = ReadonlyMap<text, ReadonlyMap<nat32, bool>>;
-
 
 export const MintArg = Record({
   subaccount: Opt(Subaccount),

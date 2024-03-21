@@ -1,5 +1,5 @@
 import { bool, Canister, init, nat, Opt, Principal, query, text, Vec } from "azle";
-import { update } from './utils';
+import { update } from "./utils";
 import {
   icrc7_symbol,
   icrc7_name,
@@ -85,7 +85,11 @@ export default Canister({
   icrc61_supported_standards: query([], ICRC61Standards, icrc61_supported_standards),
 
   update_property_owner: update([Principal], TxnResult, update_property_owner),
-  update_collection_metadata: update([CollectionMetadataArg], TxnResult, update_collection_metadata),
+  update_collection_metadata: update(
+    [CollectionMetadataArg],
+    TxnResult,
+    update_collection_metadata,
+  ),
   update_property_details: update([PropertyDetailsArg], TxnResult, update_property_details),
   update_market_details: update([MarketDetailsArg], TxnResult, update_market_details),
   update_financial_details: update([FinancialDetailsArg], TxnResult, update_financial_details),

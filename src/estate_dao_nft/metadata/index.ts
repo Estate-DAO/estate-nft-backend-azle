@@ -1,2 +1,2 @@
-export * from './icrc7';
-export * from './property';
+export * from "./icrc7";
+export * from "./property";

@@ -103,28 +103,37 @@ describe("Metadata", () => {
       expect(metadata).toContainEqual(["icrc7:symbol", { Text: initMetadata.symbol }]);
       expect(metadata).toContainEqual(["icrc7:total_supply", { Nat: 0n }]);
       expect(metadata).toContainEqual(["icrc7:logo", { Text: initMetadata.logo[0] }]);
-      expect(metadata).toContainEqual(["estate_dao:property_owner", { Text: initMetadata.property_owner.toString() }]);
+      expect(metadata).toContainEqual([
+        "estate_dao:property_owner",
+        { Text: initMetadata.property_owner.toString() },
+      ]);
     });
   });
 
   describe("Property Owner", () => {
     it("update_property_owner fails on non-owner calls", async () => {
       actor.setIdentity(bob);
-      const res = await actor.update_property_owner(alice.getPrincipal()) as OkResult;
+      const res = (await actor.update_property_owner(alice.getPrincipal())) as OkResult;
       actor.setIdentity(alice);
 
       expect(res.Ok).toBeFalsy();
-  
+
       const metadata = await actor.icrc7_collection_metadata();
-      expect(metadata).toContainEqual(["estate_dao:property_owner", { Text: alice.getPrincipal().toString() }]);
+      expect(metadata).toContainEqual([
+        "estate_dao:property_owner",
+        { Text: alice.getPrincipal().toString() },
+      ]);
     });
 
     it("update_property_owner success", async () => {
-      const res = await actor.update_property_owner(bob.getPrincipal()) as OkResult;
+      const res = (await actor.update_property_owner(bob.getPrincipal())) as OkResult;
       expect(res.Ok).toBeTruthy();
-  
+
       const metadata = await actor.icrc7_collection_metadata();
-      expect(metadata).toContainEqual(["estate_dao:property_owner", { Text: bob.getPrincipal().toString() }]);
+      expect(metadata).toContainEqual([
+        "estate_dao:property_owner",
+        { Text: bob.getPrincipal().toString() },
+      ]);
     });
   });
 
@@ -133,16 +142,16 @@ describe("Metadata", () => {
       const updatedName = "EstateDAO NFT by Bob";
 
       actor.setIdentity(alice);
-      const res = await actor.update_collection_metadata({
+      const res = (await actor.update_collection_metadata({
         name: [updatedName],
         symbol: [],
         logo: [],
-        description: []
-      }) as OkResult;
+        description: [],
+      })) as OkResult;
       actor.setIdentity(bob);
 
       expect(res.Ok).toBeFalsy();
-  
+
       const metadata = await actor.icrc7_collection_metadata();
       expect(metadata).toContainEqual(["icrc7:name", { Text: initMetadata.name }]);
     });
@@ -150,21 +159,21 @@ describe("Metadata", () => {
     it("update_property_owner success", async () => {
       const updatedName = "EstateDAO NFT by Bob";
 
-      const res = await actor.update_collection_metadata({
+      const res = (await actor.update_collection_metadata({
         name: [updatedName],
         symbol: [],
         logo: [],
-        description: []
-      }) as OkResult;
+        description: [],
+      })) as OkResult;
 
       expect(res.Ok).toBeTruthy();
-  
+
       const metadata = await actor.icrc7_collection_metadata();
       expect(metadata).toContainEqual(["icrc7:name", { Text: updatedName }]);
     });
 
     it("update_market_details success", async () => {
-      const res = await actor.update_market_details({
+      const res = (await actor.update_market_details({
         country: ["USA"],
         city: ["New York City"],
         state: [],
@@ -172,14 +181,14 @@ describe("Metadata", () => {
         average_rent: [],
         median_home_sale_price: [],
         coordinates: [],
-        annual_popullation_growth: []
-      }) as OkResult;
-      
+        annual_popullation_growth: [],
+      })) as OkResult;
+
       expect(res.Ok).toBeTruthy();
 
       const metadata = await actor.get_property_metadata();
       expect(metadata.country).toContain("USA");
       expect(metadata.city).toContain("New York City");
-    })
+    });
   });
 });

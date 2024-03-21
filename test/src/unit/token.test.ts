@@ -37,7 +37,7 @@ describe("Token", () => {
           created_at_time: [],
         },
       ]);
-  
+
       expect(transferRes).toHaveLength(1);
       expect(transferRes[0]).toHaveLength(1);
       expect((transferRes[0][0] as any).Err.Unauthorized).toBe(null);
@@ -57,7 +57,7 @@ describe("Token", () => {
           created_at_time: [],
         },
       ]);
-  
+
       expect(transferRes).toHaveLength(1);
       expect(transferRes[0]).toHaveLength(1);
       expect((transferRes[0][0] as any).Err.NonExistingTokenId).toBe(null);
@@ -77,7 +77,7 @@ describe("Token", () => {
           created_at_time: [],
         },
       ]);
-  
+
       expect(transferRes).toHaveLength(1);
       expect(transferRes[0]).toHaveLength(1);
       expect((transferRes[0][0] as any).Err.InvalidRecipient).toBe(null);
@@ -92,7 +92,7 @@ describe("Token", () => {
           token_id: mintedTokenId,
         },
       ]);
-  
+
       expect(burnRes).toHaveLength(1);
       expect(burnRes[0]).toHaveLength(1);
       expect((burnRes[0][0] as any).Err.Unauthorized).toBe(null);
@@ -105,7 +105,7 @@ describe("Token", () => {
           token_id: 1021n,
         },
       ]);
-  
+
       expect(burnRes).toHaveLength(1);
       expect(burnRes[0]).toHaveLength(1);
       expect((burnRes[0][0] as any).Err.NonExistingTokenId).toBe(null);

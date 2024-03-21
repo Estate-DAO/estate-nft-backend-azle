@@ -66,7 +66,8 @@ export function icrc7_collection_metadata(): MetadataResult {
   metadata.push(["icrc7:symbol", { Text: MetadataStore.store.symbol }]);
   metadata.push(["icrc7:total_supply", { Nat: MetadataStore.store.total_supply }]);
 
-  MetadataStore.store.description && metadata.push(["icrc7:description", { Text: MetadataStore.store.description }]);
+  MetadataStore.store.description &&
+    metadata.push(["icrc7:description", { Text: MetadataStore.store.description }]);
   MetadataStore.store.logo && metadata.push(["icrc7:logo", { Text: MetadataStore.store.logo }]);
   metadata.push(["estate_dao:property_owner", { Text: MetadataStore.store.property_owner }]);
 

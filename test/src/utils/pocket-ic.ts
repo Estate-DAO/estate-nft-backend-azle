@@ -42,14 +42,14 @@ const estateDaoNftInitMetadata = {
   symbol: "EST",
   logo: ["http://estatedao.org/test-image.png"],
   description: [],
-  property_owner: Principal.anonymous()
+  property_owner: Principal.anonymous(),
 };
 
 export function initEstateDaoNft(initArgs: any[] = [{}]) {
   const initMetadata = {
     ...estateDaoNftInitMetadata,
     ...initArgs[0],
-  }
+  };
 
   const wasm = path.resolve(".azle", "estate_dao_nft", "estate_dao_nft.wasm.gz");
   return initPocketIc<estateDaoNftService>(

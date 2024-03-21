@@ -24,7 +24,6 @@ export const InitArg = Record({
 
 export type InitArg = typeof InitArg.tsType;
 
-
 export const MetadataResult = Vec(Tuple(text, Value));
 export type MetadataResult = typeof MetadataResult.tsType;
 
@@ -81,7 +80,7 @@ export const MarketDetailsRaw = {
   median_home_sale_price: Opt(nat32),
   coordinates: Opt(text),
   annual_popullation_growth: Opt(nat32),
-}
+};
 
 export const CollectionMetadataArg = Record(CollectionMetadataRaw);
 export type CollectionMetadataArg = typeof CollectionMetadataArg.tsType;

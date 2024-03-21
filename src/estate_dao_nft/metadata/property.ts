@@ -1,6 +1,13 @@
 import { Principal, ic } from "azle";
 import { MetadataStore, TxnIndexStore } from "../store";
-import { PropertyMetadataResult, TxnResult, FinancialDetailsArg, MarketDetailsArg, CollectionMetadataArg, PropertyDetailsArg } from "../types";
+import {
+  PropertyMetadataResult,
+  TxnResult,
+  FinancialDetailsArg,
+  MarketDetailsArg,
+  CollectionMetadataArg,
+  PropertyDetailsArg,
+} from "../types";
 import { toOpt } from "../utils";
 
 export function isCallerPropertyOwner(): boolean {
@@ -8,17 +15,17 @@ export function isCallerPropertyOwner(): boolean {
 }
 
 export function update_property_owner(property_owner: Principal): TxnResult {
-  if ( !isCallerPropertyOwner() ) return { Err: "Unauthorized" };
+  if (!isCallerPropertyOwner()) return { Err: "Unauthorized" };
 
   MetadataStore.update({
-    property_owner: property_owner.toString()
+    property_owner: property_owner.toString(),
   });
 
   return { Ok: TxnIndexStore.store.index };
 }
 
 export function update_collection_metadata(args: CollectionMetadataArg): TxnResult {
-  if ( !isCallerPropertyOwner() ) return { Err: "Unauthorized" };
+  if (!isCallerPropertyOwner()) return { Err: "Unauthorized" };
 
   MetadataStore.update({
     symbol: args.symbol.Some,
@@ -31,7 +38,7 @@ export function update_collection_metadata(args: CollectionMetadataArg): TxnResu
 }
 
 export function update_property_details(args: PropertyDetailsArg): TxnResult {
-  if ( !isCallerPropertyOwner() ) return { Err: "Unauthorized" };
+  if (!isCallerPropertyOwner()) return { Err: "Unauthorized" };
 
   MetadataStore.update({
     year_built: args.year_built.Some,
@@ -52,7 +59,7 @@ export function update_property_details(args: PropertyDetailsArg): TxnResult {
 }
 
 export function update_financial_details(args: FinancialDetailsArg): TxnResult {
-  if ( !isCallerPropertyOwner() ) return { Err: "Unauthorized" };
+  if (!isCallerPropertyOwner()) return { Err: "Unauthorized" };
 
   MetadataStore.update({
     total_monthly_cost: args.total_monthly_cost.Some,
@@ -80,7 +87,7 @@ export function update_financial_details(args: FinancialDetailsArg): TxnResult {
 }
 
 export function update_market_details(args: MarketDetailsArg): TxnResult {
-  if ( !isCallerPropertyOwner() ) return { Err: "Unauthorized" };
+  if (!isCallerPropertyOwner()) return { Err: "Unauthorized" };
 
   MetadataStore.update({
     country: args.country.Some,
@@ -144,5 +151,5 @@ export function get_property_metadata(): PropertyMetadataResult {
     name: toOpt(MetadataStore.store.name),
     description: toOpt(MetadataStore.store.description),
     logo: toOpt(MetadataStore.store.logo),
-  }
+  };
 }

@@ -1,8 +1,4 @@
-import {
-  Record,
-  text,
-  Vec,
-} from "azle";
+import { Record, text, Vec } from "azle";
 
 export const ICRC61Standards = Vec(
   Record({

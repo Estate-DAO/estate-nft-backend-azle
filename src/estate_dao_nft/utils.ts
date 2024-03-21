@@ -35,4 +35,4 @@ export const update: typeof azleUpdate = (params, result, fn) => {
     TxnIndexStore.increment();
     return fn.apply(null, args);
   });
-}
+};
