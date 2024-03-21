@@ -129,11 +129,11 @@ describe("Metadata", () => {
   });
 
   describe("Property Metadata", () => {
-    it("update_metadata fails on non-owner calls", async () => {
+    it("update_collection_metadata fails on non-owner calls", async () => {
       const updatedName = "EstateDAO NFT by Bob";
 
       actor.setIdentity(alice);
-      const res = await actor.update_metadata({
+      const res = await actor.update_collection_metadata({
         name: [updatedName],
         symbol: [],
         logo: [],
@@ -150,7 +150,7 @@ describe("Metadata", () => {
     it("update_property_owner success", async () => {
       const updatedName = "EstateDAO NFT by Bob";
 
-      const res = await actor.update_metadata({
+      const res = await actor.update_collection_metadata({
         name: [updatedName],
         symbol: [],
         logo: [],
@@ -162,5 +162,24 @@ describe("Metadata", () => {
       const metadata = await actor.icrc7_collection_metadata();
       expect(metadata).toContainEqual(["icrc7:name", { Text: updatedName }]);
     });
+
+    it("update_market_details success", async () => {
+      const res = await actor.update_market_details({
+        country: ["USA"],
+        city: ["New York City"],
+        state: [],
+        market_description: [],
+        average_rent: [],
+        median_home_sale_price: [],
+        coordinates: [],
+        annual_popullation_growth: []
+      }) as OkResult;
+      
+      expect(res.Ok).toBeTruthy();
+
+      const metadata = await actor.get_property_metadata();
+      expect(metadata.country).toContain("USA");
+      expect(metadata.city).toContain("New York City");
+    })
   });
 });
