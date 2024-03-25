@@ -1,4 +1,4 @@
-name: Test
+name: Test Canisters
 on:
   pull_request:
     branches:
@@ -36,6 +36,9 @@ jobs:
 
       - name: Start DFX Server
         run: dfx start --background
+      
+      - name: Create canisters
+        run: dfx canister create --all
 
       - name: Build canister
         run: yarn build
