@@ -8,7 +8,19 @@
       "wasm": ".azle/estate_dao_nft/estate_dao_nft.wasm",
       "gzip": true,
       "declarations": {
-        "output": "test/dfx_generated/query",
+        "output": "test/dfx_generated/estate_dao_nft",
+        "node_compatibility": true
+      }
+    },
+    "provision": {
+      "type": "custom",
+      "main": "src/provision/index.ts",
+      "candid": "src/provision/index.did",
+      "build": "npx azle provision",
+      "wasm": ".azle/provision/provision.wasm",
+      "gzip": true,
+      "declarations": {
+        "output": "test/dfx_generated/provision",
         "node_compatibility": true
       }
     }

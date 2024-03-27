@@ -5,7 +5,7 @@ import {
   idlFactory as estateDaoNftIdlFactory,
   init as estateDaoNftInit,
   _SERVICE as estateDaoNftService,
-} from "../../dfx_generated/query/estate_dao_nft.did.js";
+} from "../../dfx_generated/estate_dao_nft/estate_dao_nft.did.js";
 import { Principal } from "@dfinity/principal";
 
 export function initPocketIc<_SERVICE>(
