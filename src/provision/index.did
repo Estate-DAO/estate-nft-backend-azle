@@ -1,5 +1,5 @@
 service: () -> {
-    deploy_collection: () -> (variant {Ok:text; Err:text});
+    deploy_collection: (text, text) -> (variant {Ok:text; Err:text});
     get_token_canister_wasm: () -> (vec nat8) query;
     set_token_canister_wasm: (vec nat8) -> (variant {Ok:bool; Err:text});
 }

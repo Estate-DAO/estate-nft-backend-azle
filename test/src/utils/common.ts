@@ -2,8 +2,8 @@ import { blob } from "azle";
 import { readFile } from "fs/promises";
 import path from "path";
 
-export type OkResult = {
-  Ok: bigint;
+export type Ok<T> = {
+  Ok: T;
 };
 
 export async function loadTokenCanisterWasm(): Promise<blob> {

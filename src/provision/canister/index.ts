@@ -1,9 +1,11 @@
-import { Result, blob, bool, ic, text } from "azle";
+import { None, Result, Some, blob, bool, ic, text } from "azle";
 import { managementCanister } from "azle/canisters/management";
 import { WasmStore } from "../store";
 import { validateControllerPermissions } from "../validate";
+import { encode } from "azle/src/lib/candid/serde";
+import { InitArg } from "../../estate_dao_nft/types";
 
-export async function deploy_collection(): Promise<Result<text, text>> {
+export async function deploy_collection(name: text, symbol: text): Promise<Result<text, text>> {
   const { canister_id } = await ic.call(
     managementCanister.create_canister,
     {
@@ -19,20 +21,10 @@ export async function deploy_collection(): Promise<Result<text, text>> {
         },
         sender_canister_version: { None: null }
       }],
-      cycles: 1_000_000_000_0000n,
+      cycles: 200_000_000_000n,
     }
   );
-
-  await ic.call(
-    managementCanister.deposit_cycles,
-    {
-      args: [{
-        canister_id
-      }],
-      cycles: 1_000_000_000_0000n,
-    }
-  );
-
+  
   await ic.call(
     managementCanister.install_code,
     {
@@ -42,10 +34,15 @@ export async function deploy_collection(): Promise<Result<text, text>> {
         },
         canister_id,
         wasm_module: WasmStore.tokenCanisterWasm,
-        arg: new Uint8Array(),
+        arg: encode(InitArg, {
+          symbol,
+          name,
+          description: None,
+          logo: None,
+          property_owner: ic.caller()
+        }),
         sender_canister_version: { None: null }
-      }],
-      cycles: 1_000_000_000_0000n,
+      }]
     }
   );
 

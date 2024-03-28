@@ -13,6 +13,12 @@ import {
   _SERVICE as provisionService,
 } from "../../dfx_generated/provision/provision.did.js";
 
+function createPocketIcInstance(): Promise<PocketIc> {
+  if ( process.env.DEBUG )
+    return PocketIc.createFromUrl('http://localhost:7000');
+  return PocketIc.create();
+}
+
 export function initPocketIc<_SERVICE>(
   idlFactory: IDL.InterfaceFactory,
   wasmPath: string,
@@ -21,11 +27,11 @@ export function initPocketIc<_SERVICE>(
   let instance: PocketIc;
 
   const setup = async () => {
-    instance = await PocketIc.create();
+    instance = await createPocketIcInstance();
     const fixture = await instance.setupCanister<_SERVICE>({
       idlFactory,
       wasm: wasmPath,
-      cycles: 100_000_000_000_000n,
+      cycles: 10_000_000_000_000n,
       arg: initArgs,
     });
 

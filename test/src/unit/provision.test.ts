@@ -1,4 +1,5 @@
-import { loadTokenCanisterWasm } from "../utils/common";
+import { Principal } from "@dfinity/principal";
+import { Ok, loadTokenCanisterWasm } from "../utils/common";
 import { provisionActor, initProvisionCanister } from "../utils/pocket-ic";
 
 describe("Provision Canister", () => {
@@ -17,11 +18,7 @@ describe("Provision Canister", () => {
   })
 
   it("deploy_collection", async () => {
-    const result = await actor.deploy_collection();
-
-    if ( 'Ok' in result ) {
-      console.log(result);
-      expect(result.Ok.length).toBeGreaterThan(0);
-    }
+    const result = (await actor.deploy_collection('EstateDAO', 'EST') as Ok<string>);
+    expect(result.Ok).toBeDefined();
   });
 });
