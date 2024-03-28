@@ -1,11 +1,28 @@
-cd .azle/estate_dao_nft
+cd .azle
 
-GZIP_FILE=estate_dao_nft.wasm.gz
-FILE=estate_dao_nft.wasm
+TOKEN_CANISTER_NAME=estate_dao_nft
+PROVISION_CANISTER_NAME=provision
 
-if [ ! -f $GZIP_FILE ]; then
-  if [ -f $FILE ]; then
-    gzip -k $FILE
+GZIP_FILE_TOKEN="${TOKEN_CANISTER_NAME}.wasm.gz"
+FILE_TOKEN="${TOKEN_CANISTER_NAME}.wasm"
+
+GZIP_FILE_PROVISION="${PROVISION_CANISTER_NAME}.wasm.gz"
+FILE_PROVISION="${PROVISION_CANISTER_NAME}.wasm"
+
+cd $TOKEN_CANISTER_NAME
+if [ ! -f $GZIP_FILE_TOKEN ]; then
+  if [ -f $FILE_TOKEN ]; then
+    gzip -k $FILE_TOKEN
+  else
+    echo "Can't find wasm binary"
+    exit 1
+  fi
+fi
+
+cd ../$PROVISION_CANISTER_NAME
+if [ ! -f $GZIP_FILE_PROVISION ]; then
+  if [ -f $FILE_PROVISION ]; then
+    gzip -k $FILE_PROVISION
   else
     echo "Can't find wasm binary"
     exit 1

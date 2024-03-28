@@ -3,7 +3,7 @@ import { managementCanister } from "azle/canisters/management";
 import { WasmStore } from "../store";
 import { validateControllerPermissions } from "../validate";
 
-export async function deploy_collection() {
+export async function deploy_collection(): Promise<Result<text, text>> {
   const { canister_id } = await ic.call(
     managementCanister.create_canister,
     {
@@ -19,7 +19,17 @@ export async function deploy_collection() {
         },
         sender_canister_version: { None: null }
       }],
-      cycles: 5_000_0000n,
+      cycles: 1_000_000_000_0000n,
+    }
+  );
+
+  await ic.call(
+    managementCanister.deposit_cycles,
+    {
+      args: [{
+        canister_id
+      }],
+      cycles: 1_000_000_000_0000n,
     }
   );
 
@@ -34,9 +44,12 @@ export async function deploy_collection() {
         wasm_module: WasmStore.tokenCanisterWasm,
         arg: new Uint8Array(),
         sender_canister_version: { None: null }
-      }]
+      }],
+      cycles: 1_000_000_000_0000n,
     }
   );
+
+  return Result.Ok(canister_id.toString());
 }
 
 export function set_token_canister_wasm(wasm: blob): Result<bool, text> {

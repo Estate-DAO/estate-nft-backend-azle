@@ -333,6 +333,11 @@
   resolved "https://registry.yarnpkg.com/@dfinity/candid/-/candid-1.0.1.tgz#8176dc1f9940b630ba71e00b9aefe966b4e2b464"
   integrity sha512-PfZNV1fTOWtl+NhLOw71ACLYGugKF9HdEJKtkyBJqbj+6pqshvK6rllCUkGwMsmXfP8YopLzmoNVdy1rp/eOgg==
 
+"@dfinity/ic-management@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@dfinity/ic-management/-/ic-management-3.1.1.tgz#e79c54d23338e140ee0735806e0d6bf169d19b35"
+  integrity sha512-M0QRTfQWFNjg3Eey55VxHvmI5v6NyagMWNoAb1eyPGKJfg5JLddamctdDQSyKCq7TNRZ6PRuuLdibz1Jl2lc4Q==
+
 "@dfinity/identity@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@dfinity/identity/-/identity-1.0.1.tgz#0e282c9ee1c156a50678b9698f94a09578703911"

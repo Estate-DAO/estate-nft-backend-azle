@@ -7,6 +7,11 @@ import {
   _SERVICE as estateDaoNftService,
 } from "../../dfx_generated/estate_dao_nft/estate_dao_nft.did.js";
 import { Principal } from "@dfinity/principal";
+import {
+  idlFactory as provisionIdlFactory,
+  init as provisionInit,
+  _SERVICE as provisionService,
+} from "../../dfx_generated/provision/provision.did.js";
 
 export function initPocketIc<_SERVICE>(
   idlFactory: IDL.InterfaceFactory,
@@ -59,3 +64,13 @@ export function initEstateDaoNft(initArgs: any[] = [{}]) {
   );
 }
 export type estateDaoActor = Actor<estateDaoNftService>;
+
+export function initProvisionCanister() {
+  const wasm = path.resolve(".azle", "provision", "provision.wasm.gz");
+  return initPocketIc<provisionService>(
+    provisionIdlFactory,
+    wasm,
+    IDL.encode(provisionInit({ IDL }), []),
+  );
+}
+export type provisionActor = Actor<provisionService>;
