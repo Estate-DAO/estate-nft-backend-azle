@@ -1,6 +1,6 @@
 import { generateRandomIdentity } from "@hadronous/pic";
 import { estateDaoActor, initEstateDaoNft } from "../utils/pocket-ic";
-import { OkResult } from "../utils/common";
+import { Ok } from "../utils/common";
 
 describe("User mints, transfer and burns a token successfully", () => {
   let actor: estateDaoActor;
@@ -20,7 +20,7 @@ describe("User mints, transfer and burns a token successfully", () => {
     expect(mintRes).toHaveLength(1);
     expect(mintRes[0]).toHaveLength(1);
 
-    mintedTokenId = (mintRes[0][0] as OkResult).Ok;
+    mintedTokenId = (mintRes[0][0] as Ok<bigint>).Ok;
     expect(mintedTokenId).toBe(1n);
 
     const totalSupplyRes = await actor.icrc7_total_supply();
@@ -78,7 +78,7 @@ describe("User mints, transfer and burns a token successfully", () => {
     expect(transferRes).toHaveLength(1);
     expect(transferRes[0]).toHaveLength(1);
 
-    const transferTxnIndex = (transferRes[0][0] as OkResult).Ok;
+    const transferTxnIndex = (transferRes[0][0] as Ok<bigint>).Ok;
     expect(transferTxnIndex).toBe(2n);
 
     const totalSupplyRes = await actor.icrc7_total_supply();
@@ -148,7 +148,7 @@ describe("User mints, transfer and burns a token successfully", () => {
     expect(burnRes).toHaveLength(1);
     expect(burnRes[0]).toHaveLength(1);
 
-    const burnTxnIndex = (burnRes[0][0] as OkResult).Ok;
+    const burnTxnIndex = (burnRes[0][0] as Ok<bigint>).Ok;
     expect(burnTxnIndex).toBe(3n);
 
     const totalSupplyRes = await actor.icrc7_total_supply();

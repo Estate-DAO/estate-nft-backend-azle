@@ -1,6 +1,6 @@
 import { estateDaoActor, initEstateDaoNft } from "../utils/pocket-ic";
 import { generateRandomIdentity } from "@hadronous/pic";
-import { OkResult } from "../utils/common";
+import { Ok } from "../utils/common";
 
 describe("Metadata", () => {
   let actor: estateDaoActor;
@@ -113,7 +113,7 @@ describe("Metadata", () => {
   describe("Property Owner", () => {
     it("update_property_owner fails on non-owner calls", async () => {
       actor.setIdentity(bob);
-      const res = (await actor.update_property_owner(alice.getPrincipal())) as OkResult;
+      const res = (await actor.update_property_owner(alice.getPrincipal())) as Ok<bigint>;
       actor.setIdentity(alice);
 
       expect(res.Ok).toBeFalsy();
@@ -126,7 +126,7 @@ describe("Metadata", () => {
     });
 
     it("update_property_owner success", async () => {
-      const res = (await actor.update_property_owner(bob.getPrincipal())) as OkResult;
+      const res = (await actor.update_property_owner(bob.getPrincipal())) as Ok<bigint>;
       expect(res.Ok).toBeTruthy();
 
       const metadata = await actor.icrc7_collection_metadata();
@@ -147,7 +147,7 @@ describe("Metadata", () => {
         symbol: [],
         logo: [],
         description: [],
-      })) as OkResult;
+      })) as Ok<bigint>;
       actor.setIdentity(bob);
 
       expect(res.Ok).toBeFalsy();
@@ -164,7 +164,7 @@ describe("Metadata", () => {
         symbol: [],
         logo: [],
         description: [],
-      })) as OkResult;
+      })) as Ok<bigint>;
 
       expect(res.Ok).toBeTruthy();
 
@@ -182,7 +182,7 @@ describe("Metadata", () => {
         median_home_sale_price: [],
         coordinates: [],
         annual_popullation_growth: [],
-      })) as OkResult;
+      })) as Ok<bigint>;
 
       expect(res.Ok).toBeTruthy();
 

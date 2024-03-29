@@ -1,6 +1,6 @@
 import { generateRandomIdentity } from "@hadronous/pic";
 import { estateDaoActor, initEstateDaoNft } from "../utils/pocket-ic";
-import { OkResult } from "../utils/common";
+import { Ok } from "../utils/common";
 
 describe("Token", () => {
   let actor: estateDaoActor;
@@ -15,7 +15,7 @@ describe("Token", () => {
     actor.setIdentity(bob);
 
     const mintRes = await actor.mint([{ subaccount: [] }]);
-    mintedTokenId = (mintRes[0][0] as OkResult).Ok;
+    mintedTokenId = (mintRes[0][0] as Ok<bigint>).Ok;
 
     actor.setIdentity(alice);
   });
