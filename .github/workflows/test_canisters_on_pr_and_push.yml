@@ -1,4 +1,4 @@
-name: Test Canisters
+name: Test canisters on PRs and push to main
 on:
   pull_request:
     branches:
