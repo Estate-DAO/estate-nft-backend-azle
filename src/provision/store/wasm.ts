@@ -1,4 +1,4 @@
-import { Vec, blob, nat8 } from "azle";
+import { blob } from "azle";
 
 export class WasmStore {
   private _tokenCanisterWasm: blob;

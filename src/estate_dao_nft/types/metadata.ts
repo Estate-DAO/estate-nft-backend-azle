@@ -14,14 +14,14 @@ import {
 } from "azle";
 import { Value } from "./common";
 
-export const InitArg = Record({
+export const InitArgRaw = {
   symbol: text,
   name: text,
   description: Opt(text),
   logo: Opt(text),
   property_owner: Principal,
-});
-
+};
+export const InitArg = Record(InitArgRaw);
 export type InitArg = typeof InitArg.tsType;
 
 export const MetadataResult = Vec(Tuple(text, Value));

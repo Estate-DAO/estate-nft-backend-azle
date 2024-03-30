@@ -11,14 +11,14 @@ describe("Provision Canister", () => {
 
   it("set_token_canister_wasm", async () => {
     const wasm = await loadTokenCanisterWasm();
-    const result = (await actor.set_token_canister_wasm(wasm));
+    const result = await actor.set_token_canister_wasm(wasm);
 
-    if ( 'Ok' in result ) expect(result.Ok).toBe(true);
+    if ("Ok" in result) expect(result.Ok).toBe(true);
     else expect(false).toBe(true);
-  })
+  });
 
   it("deploy_collection", async () => {
-    const result = (await actor.deploy_collection('EstateDAO', 'EST') as Ok<string>);
+    const result = (await actor.deploy_collection("EstateDAO", "EST")) as Ok<string>;
     expect(result.Ok).toBeDefined();
   });
 });

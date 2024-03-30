@@ -14,8 +14,7 @@ import {
 } from "../../dfx_generated/provision/provision.did.js";
 
 function createPocketIcInstance(): Promise<PocketIc> {
-  if ( process.env.DEBUG )
-    return PocketIc.createFromUrl('http://localhost:7000');
+  if (process.env.DEBUG) return PocketIc.createFromUrl("http://localhost:7000");
   return PocketIc.create();
 }
 
