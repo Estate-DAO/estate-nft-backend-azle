@@ -1,7 +1,8 @@
 import { Opt, Principal, Vec, ic, nat } from "azle";
 import { Account, BurnArg, MetadataResult, MintArg, TransferArg, TransferResult } from "./types";
 import { TokenStore, TxnIndexStore } from "./store";
-import { bigIntToNumber, isSubaccountsEq, iterableToArray, toAccountId, toOpt } from "./utils";
+import { bigIntToNumber, isSubaccountsEq, toAccountId, toOpt } from "./utils";
+import { iterableToArray } from "../common/utils";
 
 export function icrc7_token_metadata(tokenIds: Vec<nat>): Vec<Opt<MetadataResult>> {
   return tokenIds

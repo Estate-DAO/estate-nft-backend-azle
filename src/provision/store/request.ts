@@ -1,17 +1,23 @@
-import { nat64 } from "azle";
-import { InitArg } from "../../estate_dao_nft/types";
+import { Principal, nat } from "azle";
+import { PropertyMetadata, RequestConfig } from "../types";
 
 export class RequestStore {
-  private _counter: nat64;
-  private _requestMetadata: Map<nat64, InitArg>;
+  private _counter: nat;
+  private _requestMetadata: Map<nat, PropertyMetadata>;
+  private _requestConfig: Map<nat, RequestConfig>;
 
   constructor() {
     this._counter = 0n;
     this._requestMetadata = new Map();
+    this._requestConfig = new Map();
   }
 
-  get metadata(): ReadonlyMap<nat64, InitArg> {
+  get metadata(): ReadonlyMap<nat, PropertyMetadata> {
     return this._requestMetadata;
+  }
+
+  get config(): ReadonlyMap<nat, RequestConfig> {
+    return this._requestConfig;
   }
 
   private _nextRequestIndex() {
@@ -19,9 +25,12 @@ export class RequestStore {
     return this._counter;
   }
 
-  addRequest(metadata: InitArg): nat64 {
+  addRequest(metadata: PropertyMetadata, owner: Principal): nat {
     const id = this._nextRequestIndex();
     this._requestMetadata.set(id, metadata);
+    this._requestConfig.set(id, {
+      property_owner: owner.toString()
+    });
     return id;
   }
 }
