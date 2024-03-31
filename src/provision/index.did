@@ -1,5 +1,8 @@
 service: () -> {
+    add_property_request: (record {logo:opt text; name:text; description:opt text; symbol:text}) -> (variant {Ok:nat; Err:text});
     deploy_collection: (text, text) -> (variant {Ok:text; Err:text});
+    get_pending_requests: () -> (vec nat) query;
+    get_request_metadata: (nat) -> (opt record {logo:opt text; name:text; description:opt text; symbol:text}) query;
     get_token_canister_wasm: () -> (vec nat8) query;
     set_token_canister_wasm: (vec nat8) -> (variant {Ok:bool; Err:text});
 }

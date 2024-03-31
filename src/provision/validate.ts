@@ -12,7 +12,7 @@ export function validatePropertyRequester(id: Principal): Result<bool, text> {
 }
 
 export function validatePropertyOwner(id: Principal, propertyId: nat64): Result<bool, text> {
-  const property = RequestStore.getRequestMetadata(propertyId);
+  const property = RequestStore.config.get(propertyId);
 
   if (!property) return Result.Err("Property does not exist");
   if (property.property_owner.toString() !== id.toString())

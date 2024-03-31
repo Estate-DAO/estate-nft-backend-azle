@@ -1,4 +1,3 @@
-import { Principal } from "@dfinity/principal";
 import { Ok, loadTokenCanisterWasm } from "../utils/common";
 import { provisionActor, initProvisionCanister } from "../utils/pocket-ic";
 
