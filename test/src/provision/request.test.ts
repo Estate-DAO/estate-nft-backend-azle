@@ -22,12 +22,12 @@ describe("Property Requests", () => {
     it("fails on anonymous user", async () => {
       actor.setPrincipal(Principal.anonymous());
 
-      const addPropertyRes = await actor.add_property_request(testPropertyMetadata);
+      const addPropertyResult = await actor.add_property_request(testPropertyMetadata);
 
-      expect(isErrResult(addPropertyRes)).toBe(true);
-      if ( !isErrResult(addPropertyRes) ) return;
+      expect(isErrResult(addPropertyResult)).toBe(true);
+      if ( !isErrResult(addPropertyResult) ) return;
 
-      expect(addPropertyRes.Err).toBe("Anonymous users not allowed");
+      expect(addPropertyResult.Err).toBe("Anonymous users not allowed");
 
       const pendingRequestIds = await actor.get_pending_requests();
       expect(pendingRequestIds).toHaveLength(0);
@@ -36,13 +36,13 @@ describe("Property Requests", () => {
     });
 
     it("success - adds request", async () => {
-      const addPropertyRes = await actor.add_property_request(testPropertyMetadata);
+      const addPropertyResult = await actor.add_property_request(testPropertyMetadata);
 
-      expect(isOkResult(addPropertyRes)).toBe(true);
-      if ( !isOkResult(addPropertyRes) ) return;
+      expect(isOkResult(addPropertyResult)).toBe(true);
+      if ( !isOkResult(addPropertyResult) ) return;
 
-      expect(addPropertyRes.Ok).toBeGreaterThanOrEqual(0);
-      const id = addPropertyRes.Ok;
+      expect(addPropertyResult.Ok).toBeGreaterThanOrEqual(0);
+      const id = addPropertyResult.Ok;
 
       const pendingRequestIds = await actor.get_pending_requests();
       expect(pendingRequestIds).toEqual([id]);

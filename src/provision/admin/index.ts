@@ -1,6 +1,6 @@
 import { Opt, Principal, Result, bool, ic, text } from "azle";
 import { AdminStore } from "../store";
-import { validateAdmin } from "../validate";
+import { validateController } from "../validate";
 
 export function is_admin(principal: Opt<Principal>): bool {
   const user = (principal.Some ?? ic.caller()).toString();
@@ -8,7 +8,7 @@ export function is_admin(principal: Opt<Principal>): bool {
 }
 
 export function add_admin(principal: Principal): Result<bool, text> {
-  const validationResult = validateAdmin(ic.caller());
+  const validationResult = validateController(ic.caller());
   if ( validationResult.Err ) return validationResult;
 
   AdminStore.addAdmin(principal.toString());
