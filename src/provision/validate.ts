@@ -1,5 +1,5 @@
 import { Principal, Result, bool, ic, nat64, text } from "azle";
-import { RequestStore } from "./store";
+import { AdminStore, RequestStore } from "./store";
 
 export function validateController(id: Principal): Result<bool, text> {
   if (!ic.isController(id)) return Result.Err("Only controllers are allowed");
@@ -17,5 +17,10 @@ export function validatePropertyOwner(id: Principal, propertyId: nat64): Result<
   if (!property) return Result.Err("Property does not exist");
   if (property.property_owner.toString() !== id.toString())
     return Result.Err("User is not the property owner");
+  return Result.Ok(true);
+}
+
+export function validateAdmin(id: Principal): Result<bool, text> {
+  if ( !AdminStore.admins.get(id.toString()) ) return Result.Err("The user does not have admin access.");
   return Result.Ok(true);
 }

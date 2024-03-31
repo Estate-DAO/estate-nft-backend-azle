@@ -1,7 +1,8 @@
-import { blob, bool, Canister, nat, Opt, query, Result, text, update, Vec } from "azle";
+import { blob, bool, Canister, nat, Opt, Principal, query, Result, text, update, Vec } from "azle";
 import { deploy_collection, get_token_canister_wasm, set_token_canister_wasm } from "./token";
 import { PropertyMetadata } from "./types";
 import { add_property_request, get_pending_requests, get_request_metadata } from "./request";
+import { add_admin, is_admin } from "./admin";
 
 export default Canister({
   deploy_collection: update([text, text], Result(text, text), deploy_collection),
@@ -11,4 +12,7 @@ export default Canister({
   add_property_request: update([PropertyMetadata], Result(nat, text), add_property_request),
   get_pending_requests: query([], Vec(nat), get_pending_requests),
   get_request_metadata: query([nat], Opt(PropertyMetadata), get_request_metadata),
+
+  is_admin: query([Opt(Principal)], bool, is_admin),
+  add_admin: update([Principal], Result(bool, text), add_admin),
 });
