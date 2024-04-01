@@ -1,6 +1,6 @@
 import path from "path";
 import { IDL } from "@dfinity/candid";
-import { Actor, PocketIc } from "@hadronous/pic";
+import { Actor, PocketIc, SetupCanisterOptions } from "@hadronous/pic";
 import {
   idlFactory as estateDaoNftIdlFactory,
   init as estateDaoNftInit,
@@ -25,9 +25,10 @@ export function initPocketIc<_SERVICE>(
 ) {
   let instance: PocketIc;
 
-  const setup = async () => {
+  const setup = async (args?: Partial<SetupCanisterOptions>) => {
     instance = await createPocketIcInstance();
     const fixture = await instance.setupCanister<_SERVICE>({
+      ...(args ?? {}),
       idlFactory,
       wasm: wasmPath,
       cycles: 10_000_000_000_000n,

@@ -6,5 +6,6 @@ service: () -> {
     get_request_metadata: (nat) -> (opt record {logo:opt text; name:text; description:opt text; symbol:text}) query;
     get_token_canister_wasm: () -> (vec nat8) query;
     is_admin: (opt principal) -> (bool) query;
+    remove_admin: (principal) -> (variant {Ok:bool; Err:text});
     set_token_canister_wasm: (vec nat8) -> (variant {Ok:bool; Err:text});
 }
