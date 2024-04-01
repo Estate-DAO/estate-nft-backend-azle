@@ -2,7 +2,7 @@ import { blob, bool, Canister, init, nat, Opt, Principal, query, Result, text, u
 import { deploy_collection, get_token_canister_wasm, set_token_canister_wasm } from "./token";
 import { PropertyMetadata } from "./types";
 import { add_property_request, get_pending_requests, get_request_metadata } from "./request";
-import { add_admin, is_admin } from "./admin";
+import { add_admin, is_admin, remove_admin } from "./admin";
 import { initImpl } from "./base";
 
 export default Canister({
@@ -18,4 +18,5 @@ export default Canister({
 
   is_admin: query([Opt(Principal)], bool, is_admin),
   add_admin: update([Principal], Result(bool, text), add_admin),
+  remove_admin: update([Principal], Result(bool, text), remove_admin),
 });
