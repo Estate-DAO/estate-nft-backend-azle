@@ -11,8 +11,8 @@ describe("Provision Canister Admins", () => {
 
   beforeAll(async () => {
     actor = await setup({
-      sender: chloe.getPrincipal()
-    })
+      sender: chloe.getPrincipal(),
+    });
     actor.setIdentity(chloe);
   });
   afterAll(teardown);
@@ -21,12 +21,12 @@ describe("Provision Canister Admins", () => {
     it("true for deployer", async () => {
       const result = await actor.is_admin([]);
       expect(result).toBe(true);
-    })
+    });
 
     it("false for non-admins", async () => {
       const result = await actor.is_admin([alice.getPrincipal()]);
       expect(result).toBe(false);
-    })
+    });
   });
 
   describe("add_admin", () => {
@@ -40,10 +40,10 @@ describe("Provision Canister Admins", () => {
 
     it("fails for non-controllers", async () => {
       actor.setIdentity(alice);
-      
+
       const addAdminResult = await actor.add_admin(bob.getPrincipal());
       expect(isErrResult(addAdminResult)).toBe(true);
-      if ( !isErrResult(addAdminResult) ) return;
+      if (!isErrResult(addAdminResult)) return;
 
       expect(addAdminResult.Err).toBe("Only controllers are allowed");
 
@@ -65,10 +65,10 @@ describe("Provision Canister Admins", () => {
 
     it("fails for non-controllers", async () => {
       actor.setIdentity(alice);
-      
+
       const removeAdminResult = await actor.remove_admin(chloe.getPrincipal());
       expect(isErrResult(removeAdminResult)).toBe(true);
-      if ( !isErrResult(removeAdminResult) ) return;
+      if (!isErrResult(removeAdminResult)) return;
 
       expect(removeAdminResult.Err).toBe("Only controllers are allowed");
 
@@ -77,5 +77,5 @@ describe("Provision Canister Admins", () => {
 
       actor.setIdentity(chloe);
     });
-  })
+  });
 });

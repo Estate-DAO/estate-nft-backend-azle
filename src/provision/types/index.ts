@@ -10,11 +10,11 @@ export type PropertyMetadata = typeof PropertyMetadata.tsType;
 export enum RequestApprovalStatus {
   PENDING,
   APPROVED,
-  REJECTED
-};
+  REJECTED,
+}
 
 export type RequestConfig = {
   property_owner: text;
   approval_status: RequestApprovalStatus;
   token_canister?: text;
-}
+};

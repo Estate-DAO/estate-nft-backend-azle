@@ -23,7 +23,6 @@ export function isNone<T>(opt: Some<T> | None): opt is None {
   return (opt as None).length == 0;
 }
 
-
 export async function loadTokenCanisterWasm(): Promise<blob> {
   const wasm = path.resolve(".azle", "estate_dao_nft", "estate_dao_nft.wasm.gz");
   const wasmBlob = await readFile(wasm);

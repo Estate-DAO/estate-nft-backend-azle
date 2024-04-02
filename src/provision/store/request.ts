@@ -30,7 +30,7 @@ export class RequestStore {
     this._requestMetadata.set(id, metadata);
     this._requestConfig.set(id, {
       property_owner: owner.toString(),
-      approval_status: RequestApprovalStatus.PENDING
+      approval_status: RequestApprovalStatus.PENDING,
     });
     return id;
   }

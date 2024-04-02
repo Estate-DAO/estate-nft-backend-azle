@@ -21,6 +21,7 @@ export function validatePropertyOwner(id: Principal, propertyId: nat64): Result<
 }
 
 export function validateAdmin(id: Principal): Result<bool, text> {
-  if ( !AdminStore.admins.get(id.toString()) ) return Result.Err("The user does not have admin access.");
+  if (!AdminStore.admins.get(id.toString()))
+    return Result.Err("The user does not have admin access.");
   return Result.Ok(true);
 }

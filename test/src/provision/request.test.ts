@@ -6,8 +6,8 @@ import { isErrResult, isNone, isOkResult, isSome } from "../utils/common";
 const testPropertyMetadata = {
   logo: [] as [],
   description: [] as [],
-  name: 'Test Estate',
-  symbol: 'TEST'
+  name: "Test Estate",
+  symbol: "TEST",
 };
 
 describe("Property Requests", () => {
@@ -25,7 +25,7 @@ describe("Property Requests", () => {
       const addPropertyResult = await actor.add_property_request(testPropertyMetadata);
 
       expect(isErrResult(addPropertyResult)).toBe(true);
-      if ( !isErrResult(addPropertyResult) ) return;
+      if (!isErrResult(addPropertyResult)) return;
 
       expect(addPropertyResult.Err).toBe("Anonymous users not allowed");
 
@@ -39,7 +39,7 @@ describe("Property Requests", () => {
       const addPropertyResult = await actor.add_property_request(testPropertyMetadata);
 
       expect(isOkResult(addPropertyResult)).toBe(true);
-      if ( !isOkResult(addPropertyResult) ) return;
+      if (!isOkResult(addPropertyResult)) return;
 
       expect(addPropertyResult.Ok).toBeGreaterThanOrEqual(0);
       const id = addPropertyResult.Ok;

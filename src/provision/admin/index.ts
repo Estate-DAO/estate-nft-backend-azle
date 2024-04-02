@@ -9,7 +9,7 @@ export function is_admin(principal: Opt<Principal>): bool {
 
 export function add_admin(principal: Principal): Result<bool, text> {
   const validationResult = validateController(ic.caller());
-  if ( validationResult.Err ) return validationResult;
+  if (validationResult.Err) return validationResult;
 
   AdminStore.addAdmin(principal.toString());
   return Result.Ok(true);
@@ -17,7 +17,7 @@ export function add_admin(principal: Principal): Result<bool, text> {
 
 export function remove_admin(principal: Principal): Result<bool, text> {
   const validationResult = validateController(ic.caller());
-  if ( validationResult.Err ) return validationResult;
+  if (validationResult.Err) return validationResult;
 
   AdminStore.removeAdmin(principal.toString());
   return Result.Ok(true);
