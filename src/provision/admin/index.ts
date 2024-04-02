@@ -11,7 +11,7 @@ export function add_admin(principal: Principal): Result<bool, text> {
   const validationResult = validateController(ic.caller());
   if (validationResult.Err) return validationResult;
 
-  AdminStore.addAdmin(principal.toString());
+  AdminStore.addAdmin(principal);
   return Result.Ok(true);
 }
 
@@ -19,6 +19,6 @@ export function remove_admin(principal: Principal): Result<bool, text> {
   const validationResult = validateController(ic.caller());
   if (validationResult.Err) return validationResult;
 
-  AdminStore.removeAdmin(principal.toString());
+  AdminStore.removeAdmin(principal);
   return Result.Ok(true);
 }

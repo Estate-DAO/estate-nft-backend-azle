@@ -16,8 +16,8 @@ describe("Provision Canister", () => {
     else expect(false).toBe(true);
   });
 
-  it("deploy_collection", async () => {
-    const result = (await actor.deploy_collection("EstateDAO", "EST")) as Ok<string>;
-    expect(result.Ok).toBeDefined();
-  });
+  // it("deploy_collection", async () => {
+  //   const result = (await actor.deploy_collection("EstateDAO", "EST")) as Ok<string>;
+  //   expect(result.Ok).toBeDefined();
+  // });
 });

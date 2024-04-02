@@ -1,5 +1,5 @@
-import { Principal, nat } from "azle";
-import { PropertyMetadata, RequestApprovalStatus, RequestConfig } from "../types";
+import { None, Principal, Some, nat } from "azle";
+import { PropertyMetadata, RequestConfig } from "../types";
 
 export class RequestStore {
   private _counter: nat;
@@ -29,16 +29,17 @@ export class RequestStore {
     const id = this._nextRequestIndex();
     this._requestMetadata.set(id, metadata);
     this._requestConfig.set(id, {
-      property_owner: owner.toString(),
-      approval_status: RequestApprovalStatus.PENDING,
+      property_owner: owner,
+      approval_status: { Pending: null },
+      token_canister: None,
     });
     return id;
   }
 
-  approveRequest(id: nat, tokenCanister: string) {
+  approveRequest(id: nat, tokenCanister: Principal) {
     const config = this._requestConfig.get(id)!;
-    config.approval_status = RequestApprovalStatus.APPROVED;
-    config.token_canister = tokenCanister;
+    config.approval_status = { Approved: null };
+    config.token_canister = Some(tokenCanister);
 
     this._requestMetadata.delete(id);
     this._requestConfig.set(id, config);
@@ -46,7 +47,7 @@ export class RequestStore {
 
   rejectRequest(id: nat) {
     const config = this._requestConfig.get(id)!;
-    config.approval_status = RequestApprovalStatus.REJECTED;
+    config.approval_status = { Rejected: null };
 
     this._requestMetadata.delete(id);
     this._requestConfig.set(id, config);

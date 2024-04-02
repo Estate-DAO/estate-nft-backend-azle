@@ -1,4 +1,4 @@
-import { bool, text } from "azle";
+import { Principal, bool, text } from "azle";
 
 export class AdminStore {
   private _admins: Map<text, bool>;
@@ -11,11 +11,11 @@ export class AdminStore {
     return this._admins;
   }
 
-  addAdmin(principal: text) {
-    this._admins.set(principal, true);
+  addAdmin(principal: Principal) {
+    this._admins.set(principal.toString(), true);
   }
 
-  removeAdmin(principal: text) {
-    this._admins.delete(principal);
+  removeAdmin(principal: Principal) {
+    this._admins.delete(principal.toString());
   }
 }

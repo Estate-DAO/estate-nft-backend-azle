@@ -1,5 +1,5 @@
 import { None, Opt, Principal, Result, Some, Vec, bool, ic, nat, text } from "azle";
-import { PropertyMetadata, RequestApprovalStatus } from "../types";
+import { PropertyMetadata, RequestInfo } from "../types";
 import { RequestStore } from "../store";
 import { validateAdmin, validatePropertyRequester } from "../validate";
 import { isErr, isOk, iterableToArray } from "../../common/utils";
@@ -20,16 +20,25 @@ export function add_property_request(metadata: PropertyMetadata): Result<nat, te
   return Result.Ok(id);
 }
 
-export function get_request_metadata(id: nat): Opt<PropertyMetadata> {
-  const metadata = RequestStore.metadata.get(id);
-  if (metadata) return Some(metadata);
-  return None;
-}
-
 // TODO: add pagination
 export function get_pending_requests(): Vec<nat> {
   const ids = iterableToArray(RequestStore.metadata.keys());
   return ids;
+}
+
+export function get_request_info(id: nat): Opt<RequestInfo> {
+  const requestMetadata = RequestStore.metadata.get(id);
+  const requestConfig = RequestStore.config.get(id);
+  if ( !requestConfig ) return None;
+  
+  const requestInfo: RequestInfo = {
+    metadata: (
+      requestMetadata ? Some(requestMetadata) : None
+    ),
+    ...requestConfig
+  }
+
+  return Some(requestInfo);
 }
 
 export async function approve_request(id: nat): Promise<Result<bool, text>> {
@@ -38,17 +47,20 @@ export async function approve_request(id: nat): Promise<Result<bool, text>> {
 
   const requestConfig = RequestStore.config.get(id);
   const requestMetadata = RequestStore.metadata.get(id);
-  if (!requestConfig || !requestMetadata) return Result.Err("No request exists with the given id.");
-  if (requestConfig.approval_status !== RequestApprovalStatus.PENDING)
+
+  if (!requestConfig || !requestMetadata)
+    return Result.Err("No request exists with the given id.");
+  
+  if (requestConfig.approval_status.Pending !== undefined)
     return Result.Err("Request already processed.");
 
   const deployResult = await deploy_collection({
     ...requestMetadata,
-    property_owner: Principal.fromText(requestConfig.property_owner),
+    property_owner: requestConfig.property_owner,
   });
   if (isErr(deployResult)) return deployResult;
 
-  RequestStore.approveRequest(id, deployResult.Ok.toString());
+  RequestStore.approveRequest(id, deployResult.Ok);
   return Result.Ok(true);
 }
 
@@ -58,7 +70,7 @@ export function reject_request(id: nat): Result<bool, text> {
 
   const requestConfig = RequestStore.config.get(id);
   if (!requestConfig) return Result.Err("No request exists with the given id.");
-  if (requestConfig.approval_status !== RequestApprovalStatus.PENDING)
+  if (requestConfig.approval_status.Pending !== undefined)
     return Result.Err("Request already processed.");
 
   RequestStore.rejectRequest(id);

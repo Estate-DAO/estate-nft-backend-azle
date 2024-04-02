@@ -47,15 +47,20 @@ describe("Property Requests", () => {
       const pendingRequestIds = await actor.get_pending_requests();
       expect(pendingRequestIds).toEqual([id]);
 
-      const metadata = await actor.get_request_metadata(id);
-      expect(metadata).toEqual([testPropertyMetadata]);
+      const request = await actor.get_request_info(id);
+      expect(request).toEqual([{
+        metadata: [testPropertyMetadata],
+        property_owner: alice.getPrincipal(),
+        approval_status: { Pending: null },
+        token_canister: []
+      }]);
     });
   });
 
-  describe("get_request_metadata", () => {
+  describe("get_request_info", () => {
     it("returns None on non-existent request id", async () => {
-      const metadata = await actor.get_request_metadata(999n);
-      expect(isNone(metadata)).toBe(true);
+      const request = await actor.get_request_info(999n);
+      expect(isNone(request)).toBe(true);
     });
   });
 });

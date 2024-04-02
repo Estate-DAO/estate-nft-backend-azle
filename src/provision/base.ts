@@ -3,5 +3,5 @@ import { AdminStore } from "./store";
 
 export function initImpl() {
   const controller = ic.caller();
-  AdminStore.addAdmin(controller.toString());
+  AdminStore.addAdmin(controller);
 }
