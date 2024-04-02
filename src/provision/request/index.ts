@@ -51,7 +51,7 @@ export async function approve_request(id: nat): Promise<Result<bool, text>> {
   if (!requestConfig || !requestMetadata)
     return Result.Err("No request exists with the given id.");
   
-  if (requestConfig.approval_status.Pending !== undefined)
+  if (requestConfig.approval_status.Pending === undefined)
     return Result.Err("Request already processed.");
 
   const deployResult = await deploy_collection({
@@ -70,7 +70,7 @@ export function reject_request(id: nat): Result<bool, text> {
 
   const requestConfig = RequestStore.config.get(id);
   if (!requestConfig) return Result.Err("No request exists with the given id.");
-  if (requestConfig.approval_status.Pending !== undefined)
+  if (requestConfig.approval_status.Pending === undefined)
     return Result.Err("Request already processed.");
 
   RequestStore.rejectRequest(id);

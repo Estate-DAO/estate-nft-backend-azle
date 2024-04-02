@@ -2,7 +2,6 @@ service: () -> {
     add_admin: (principal) -> (variant {Ok:bool; Err:text});
     add_property_request: (record {logo:opt text; name:text; description:opt text; symbol:text}) -> (variant {Ok:nat; Err:text});
     approve_request: (nat) -> (variant {Ok:bool; Err:text});
-    deploy_collection: (record {logo:opt text; name:text; description:opt text; property_owner:principal; symbol:text}) -> (variant {Ok:principal; Err:text});
     get_pending_requests: () -> (vec nat) query;
     get_request_info: (nat) -> (opt record {metadata:opt record {logo:opt text; name:text; description:opt text; symbol:text}; token_canister:opt principal; approval_status:variant {Approved; Rejected; Pending}; property_owner:principal}) query;
     get_token_canister_wasm: () -> (vec nat8) query;

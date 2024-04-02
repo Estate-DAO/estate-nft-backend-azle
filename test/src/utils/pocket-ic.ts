@@ -42,9 +42,14 @@ export function initPocketIc<_SERVICE>(
     await instance?.tearDown();
   };
 
+  const attachToToken = (principal: Principal): estateDaoActor => {
+    return instance.createActor(estateDaoNftIdlFactory, principal);
+  }
+
   return {
     setup,
     teardown,
+    attachToToken
   };
 }
 
