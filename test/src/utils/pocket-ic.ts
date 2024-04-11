@@ -1,45 +1,90 @@
 import path from "path";
 import { IDL } from "@dfinity/candid";
-import { Actor, PocketIc, SetupCanisterOptions } from "@hadronous/pic";
-import {
-  idlFactory as estateDaoNftIdlFactory,
-  init as estateDaoNftInit,
-  _SERVICE as estateDaoNftService,
-} from "../../dfx_generated/estate_dao_nft/estate_dao_nft.did.js";
+import { Actor, CanisterFixture, PocketIc, SetupCanisterOptions } from "@hadronous/pic";
 import { Principal } from "@dfinity/principal";
-import {
-  idlFactory as provisionIdlFactory,
-  init as provisionInit,
-  _SERVICE as provisionService,
-} from "../../dfx_generated/provision/provision.did.js";
-import {
-  idlFactory as assetIdlFactory,
-  _SERVICE as assetService,
-} from "../../dfx_generated/asset/asset.did.js";
+import * as estateDaoNft from "../../dfx_generated/estate_dao_nft/estate_dao_nft.did.js";
+import * as provision from "../../dfx_generated/provision/provision.did.js";
+import * as asset from "../../dfx_generated/asset/asset.did.js";
+import * as assetProxy from "../../dfx_generated/asset_proxy/asset_proxy.did.js";
 
 function createPocketIcInstance(): Promise<PocketIc> {
   if (process.env.DEBUG) return PocketIc.createFromUrl("http://localhost:7000");
   return PocketIc.create();
 }
 
-export function initPocketIc<_SERVICE>(
+async function deployCanister<_SERVICE> (
+  instance: PocketIc,
   idlFactory: IDL.InterfaceFactory,
-  wasmPath: string,
-  initArgs?: ArrayBufferLike,
-) {
+  wasm: string,
+  initArgs: ArrayBufferLike,
+  args?: Partial<SetupCanisterOptions>
+ ) {
+  return await instance.setupCanister<_SERVICE>({
+    ...(args ?? {}),
+    idlFactory,
+    wasm,
+    cycles: 10_000_000_000_000n,
+    arg: initArgs,
+  });
+}
+
+export function initTestSuite() {
   let instance: PocketIc;
 
-  const setup = async (args?: Partial<SetupCanisterOptions>) => {
-    instance = await createPocketIcInstance();
-    const fixture = await instance.setupCanister<_SERVICE>({
-      ...(args ?? {}),
-      idlFactory,
-      wasm: wasmPath,
-      cycles: 10_000_000_000_000n,
-      arg: initArgs,
-    });
+  const deployProvisionCanister = async (args?: Partial<SetupCanisterOptions>) => {
+    return deployCanister<provision._SERVICE>(
+      instance,
+      provision.idlFactory,
+      path.resolve(".azle", "provision", "provision.wasm.gz"),
+      IDL.encode(provision.init({ IDL }), []),
+      args
+    )
+  }
 
-    return fixture.actor;
+  const deployAssetCanister = async (args?: Partial<SetupCanisterOptions>) => {
+    return deployCanister<asset._SERVICE>(
+      instance,
+      asset.idlFactory,
+      path.resolve("test", "asset-canister", "assetstorage.wasm.gz"),
+      IDL.encode(asset.init({ IDL }), [[{ Init: {} }]]),
+      args
+    )
+  }
+
+  const deployAssetProxyCanister = async (args?: Partial<SetupCanisterOptions>) => {
+    return deployCanister<assetProxy._SERVICE>(
+      instance,
+      assetProxy.idlFactory,
+      path.resolve(".azle", "asset_proxy", "asset_proxy.wasm.gz"),
+      IDL.encode(assetProxy.init({ IDL }), []),
+      args
+    )
+  }
+
+  const deployEstateDaoNftCanister = async (
+    initArgs: any,
+    args?: Partial<SetupCanisterOptions>
+  ) => {
+    const initMetadata = {
+      name: "EstateDaoNFT",
+      symbol: "EST",
+      logo: ["http://estatedao.org/test-image.png"],
+      description: [],
+      property_owner: Principal.anonymous(),
+      ...initArgs
+    };
+
+    return deployCanister<estateDaoNft._SERVICE>(
+      instance,
+      estateDaoNft.idlFactory,
+      path.resolve(".azle", "estate_dao_nft", "estate_dao_nft.wasm.gz"),
+      IDL.encode(estateDaoNft.init({ IDL }), [initMetadata]),
+      args
+    )
+  }
+
+  const setup = async () => {
+    instance = await createPocketIcInstance();
   };
 
   const teardown = async () => {
@@ -47,52 +92,30 @@ export function initPocketIc<_SERVICE>(
   };
 
   const attachToTokenCanister = (principal: Principal): estateDaoActor => {
-    return instance.createActor(estateDaoNftIdlFactory, principal);
+    return instance.createActor(estateDaoNft.idlFactory, principal);
   };
 
   const attachToAssetCanister = (principal: Principal): assetActor => {
-    return instance.createActor(assetIdlFactory, principal);
+    return instance.createActor(asset.idlFactory, principal);
   };
 
   return {
     setup,
     teardown,
+    deployProvisionCanister,
+    deployEstateDaoNftCanister,
+    deployAssetCanister,
+    deployAssetProxyCanister,
     attachToTokenCanister,
     attachToAssetCanister,
   };
 }
 
-const estateDaoNftInitMetadata = {
-  name: "EstateDaoNFT",
-  symbol: "EST",
-  logo: ["http://estatedao.org/test-image.png"],
-  description: [],
-  property_owner: Principal.anonymous(),
-};
-
-export function initEstateDaoNft(initArgs: any[] = [{}]) {
-  const initMetadata = {
-    ...estateDaoNftInitMetadata,
-    ...initArgs[0],
-  };
-
-  const wasm = path.resolve(".azle", "estate_dao_nft", "estate_dao_nft.wasm.gz");
-  return initPocketIc<estateDaoNftService>(
-    estateDaoNftIdlFactory,
-    wasm,
-    IDL.encode(estateDaoNftInit({ IDL }), [initMetadata]),
-  );
-}
-export type estateDaoActor = Actor<estateDaoNftService>;
-
-export function initProvisionCanister() {
-  const wasm = path.resolve(".azle", "provision", "provision.wasm.gz");
-  return initPocketIc<provisionService>(
-    provisionIdlFactory,
-    wasm,
-    IDL.encode(provisionInit({ IDL }), []),
-  );
-}
-export type provisionActor = Actor<provisionService>;
-
-export type assetActor = Actor<assetService>;
+export type estateDaoFixture = CanisterFixture<estateDaoNft._SERVICE>;
+export type estateDaoActor = Actor<estateDaoNft._SERVICE>;
+export type provisionFixture = CanisterFixture<provision._SERVICE>;
+export type provisionActor = Actor<provision._SERVICE>;
+export type assetFixture = CanisterFixture<asset._SERVICE>;
+export type assetActor = Actor<asset._SERVICE>;
+export type assetProxyFixture = CanisterFixture<assetProxy._SERVICE>;
+export type assetProxyActor = Actor<assetProxy._SERVICE>;

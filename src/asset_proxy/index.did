@@ -1,0 +1,9 @@
+service: () -> {
+    approve_files: (record {files:vec text; asset_canister:principal}) -> (variant {Ok:bool; Err:text});
+    get_provision_canister: () -> (principal) query;
+    get_temp_asset_canister: () -> (principal) query;
+    reject_files: (vec text) -> (variant {Ok:bool; Err:text});
+    set_provision_canister: (principal) -> (variant {Ok:bool; Err:text});
+    set_temp_asset_canister: (principal) -> (variant {Ok:bool; Err:text});
+    store: (record {chunk:vec nat8; content_type:text; file_name:text; content_encoding:text}) -> (variant {Ok:bool; Err:text});
+}

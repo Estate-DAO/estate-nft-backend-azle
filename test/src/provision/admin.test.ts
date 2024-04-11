@@ -1,21 +1,23 @@
 import { generateRandomIdentity } from "@hadronous/pic";
-import { provisionActor, initProvisionCanister } from "../utils/pocket-ic";
+import { provisionActor, initTestSuite } from "../utils/pocket-ic";
 import { expectResultIsErr, expectResultIsOk } from "../utils/common";
 
 describe("Provision Canister Admins", () => {
   let actor: provisionActor;
-  const { setup, teardown } = initProvisionCanister();
+  const suite = initTestSuite();
   const alice = generateRandomIdentity();
   const bob = generateRandomIdentity();
   const chloe = generateRandomIdentity();
 
   beforeAll(async () => {
-    actor = await setup({
+    await suite.setup();
+    actor = (await suite.deployProvisionCanister({
       sender: chloe.getPrincipal(),
-    });
+    })).actor;
     actor.setIdentity(chloe);
   });
-  afterAll(teardown);
+
+  afterAll(suite.teardown);
 
   describe("is_admin", () => {
     it("true for deployer", async () => {

@@ -1,11 +1,15 @@
-import { estateDaoActor, initEstateDaoNft } from "../utils/pocket-ic";
+import { estateDaoActor, initTestSuite } from "../utils/pocket-ic";
 
 describe("ICRC61 Standard", () => {
   let actor: estateDaoActor;
-  const { setup, teardown } = initEstateDaoNft();
+  const suite = initTestSuite();
 
-  beforeAll(async () => (actor = await setup()));
-  afterAll(teardown);
+  beforeAll(async () => {
+    await suite.setup();
+    actor = (await suite.deployEstateDaoNftCanister({})).actor;
+  });
+
+  afterAll(suite.teardown);
 
   it("icrc61_supported_standards", async () => {
     const standards = await actor.icrc61_supported_standards();

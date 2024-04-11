@@ -1,16 +1,20 @@
 import { generateRandomIdentity } from "@hadronous/pic";
-import { estateDaoActor, initEstateDaoNft } from "../utils/pocket-ic";
+import { estateDaoActor, initTestSuite } from "../utils/pocket-ic";
 import { Ok } from "../utils/common";
 
 describe("User mints, transfer and burns a token successfully", () => {
   let actor: estateDaoActor;
-  const { setup, teardown } = initEstateDaoNft();
+  const suite = initTestSuite();
   const alice = generateRandomIdentity();
   const bob = generateRandomIdentity();
   let mintedTokenId: bigint;
 
-  beforeAll(async () => (actor = await setup()));
-  afterAll(teardown);
+  beforeAll(async () => {
+    await suite.setup();
+    actor = (await suite.deployEstateDaoNftCanister({})).actor;
+  });
+
+  afterAll(suite.teardown);
 
   it("mints token.", async () => {
     actor.setIdentity(alice);

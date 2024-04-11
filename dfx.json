@@ -35,6 +35,18 @@
         "output": "test/dfx_generated/asset",
         "node_compatibility": true
       }
+    },
+    "asset_proxy": {
+      "type": "custom",
+      "main": "src/asset_proxy/index.ts",
+      "candid": "src/asset_proxy/index.did",
+      "build": "npx azle asset_proxy",
+      "wasm": ".azle/asset_proxy/asset_proxy.wasm",
+      "gzip": true,
+      "declarations": {
+        "output": "test/dfx_generated/asset_proxy",
+        "node_compatibility": true
+      }
     }
   }
 }

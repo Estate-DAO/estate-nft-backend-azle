@@ -1,10 +1,8 @@
-import { provisionActor, initProvisionCanister } from "../utils/pocket-ic";
+import { provisionActor, initTestSuite } from "../utils/pocket-ic";
 import { generateRandomIdentity } from "@hadronous/pic";
 import {
   expectResultIsErr,
   expectResultIsOk,
-  isNone,
-  isOkResult,
   isSome,
   loadAssetCanisterWasm,
   loadTokenCanisterWasm,
@@ -19,7 +17,7 @@ const testPropertyMetadata = {
 
 describe("Property Requests", () => {
   let actor: provisionActor;
-  const { setup, teardown, attachToTokenCanister } = initProvisionCanister();
+  const suite = initTestSuite();
   const alice = generateRandomIdentity();
   const bob = generateRandomIdentity();
 
@@ -27,11 +25,14 @@ describe("Property Requests", () => {
     actor.setIdentity(bob);
     const res = await actor.add_property_request(testPropertyMetadata);
     actor.setIdentity(alice);
-    return isOkResult(res) ? res.Ok : undefined;
+
+    expectResultIsOk(res);
+    return res.Ok;
   }
 
   beforeAll(async () => {
-    actor = await setup();
+    await suite.setup();
+    actor = (await suite.deployProvisionCanister()).actor;
 
     const tokenWasm = await loadTokenCanisterWasm();
     await actor.set_token_canister_wasm(tokenWasm);
@@ -42,7 +43,8 @@ describe("Property Requests", () => {
     await actor.add_admin(alice.getPrincipal());
     actor.setIdentity(alice);
   });
-  afterAll(teardown);
+
+  afterAll(suite.teardown);
 
   describe("reject_request", () => {
     let requestId: bigint | undefined;
@@ -161,7 +163,7 @@ describe("Property Requests", () => {
       if (!isSome(request[0]!.token_canister)) return;
 
       const canisterId = request[0]!.token_canister[0];
-      const tokenActor = attachToTokenCanister(canisterId);
+      const tokenActor = suite.attachToTokenCanister(canisterId);
 
       const name = await tokenActor.icrc7_name();
       const symbol = await tokenActor.icrc7_symbol();

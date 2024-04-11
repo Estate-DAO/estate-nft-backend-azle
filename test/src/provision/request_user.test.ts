@@ -1,5 +1,5 @@
 import { Principal } from "@dfinity/principal";
-import { provisionActor, initProvisionCanister } from "../utils/pocket-ic";
+import { provisionActor, initTestSuite } from "../utils/pocket-ic";
 import { generateRandomIdentity } from "@hadronous/pic";
 import { expectResultIsErr, expectResultIsOk, isNone, isSome } from "../utils/common";
 
@@ -12,11 +12,15 @@ const testPropertyMetadata = {
 
 describe("Property Requests", () => {
   let actor: provisionActor;
-  const { setup, teardown } = initProvisionCanister();
+  const suite = initTestSuite();
   const alice = generateRandomIdentity();
 
-  beforeAll(async () => (actor = await setup()));
-  afterAll(teardown);
+  beforeAll(async () => {
+    await suite.setup();
+    actor = (await suite.deployProvisionCanister()).actor;
+  });
+
+  afterAll(suite.teardown);
 
   describe("add_property_request", () => {
     it("fails on anonymous user", async () => {

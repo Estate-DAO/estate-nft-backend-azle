@@ -1,28 +1,30 @@
 import { generateRandomIdentity } from "@hadronous/pic";
 import {
-  Ok,
   expectResultIsErr,
   expectResultIsOk,
-  isErrResult,
-  isOkResult,
   loadAssetCanisterWasm,
   loadTokenCanisterWasm,
 } from "../utils/common";
-import { provisionActor, initProvisionCanister } from "../utils/pocket-ic";
+import { provisionActor, initTestSuite } from "../utils/pocket-ic";
 
 describe("Provision Canister", () => {
   let actor: provisionActor;
-  const { setup, teardown } = initProvisionCanister();
-  let tokenCanisterWasm: Uint8Array, assetCanisterWasm: Uint8Array;
+  const suite = initTestSuite();
   const alice = generateRandomIdentity();
   const bob = generateRandomIdentity();
 
+  let tokenCanisterWasm: Uint8Array;
+  let assetCanisterWasm: Uint8Array;
+
   beforeAll(async () => {
-    actor = await setup({ sender: alice.getPrincipal() });
+    await suite.setup();
+    actor = (await suite.deployProvisionCanister({ sender: alice.getPrincipal() })).actor;
+
     tokenCanisterWasm = await loadTokenCanisterWasm();
     assetCanisterWasm = await loadAssetCanisterWasm();
   });
-  afterAll(teardown);
+
+  afterAll(suite.teardown);
 
   describe("set_token_canister_wasm", () => {
     it("fails for non-controllers", async () => {

@@ -1,17 +1,18 @@
 import { generateRandomIdentity } from "@hadronous/pic";
-import { estateDaoActor, initEstateDaoNft } from "../utils/pocket-ic";
+import { estateDaoActor, initTestSuite } from "../utils/pocket-ic";
 import { Ok } from "../utils/common";
 
 describe("Token", () => {
   let actor: estateDaoActor;
-  const { setup, teardown } = initEstateDaoNft();
+  const suite = initTestSuite();
   const alice = generateRandomIdentity();
   const bob = generateRandomIdentity();
   const cleo = generateRandomIdentity();
   let mintedTokenId: bigint;
 
   beforeAll(async () => {
-    actor = await setup();
+    await suite.setup();
+    actor = (await suite.deployEstateDaoNftCanister({})).actor;
     actor.setIdentity(bob);
 
     const mintRes = await actor.mint([{ subaccount: [] }]);
@@ -20,7 +21,7 @@ describe("Token", () => {
     actor.setIdentity(alice);
   });
 
-  afterAll(teardown);
+  afterAll(suite.teardown);
 
   describe("icrc7_transfer", () => {
     it("Unauthorized user fails", async () => {

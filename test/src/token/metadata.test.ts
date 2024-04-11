@@ -1,9 +1,10 @@
-import { estateDaoActor, initEstateDaoNft } from "../utils/pocket-ic";
+import { estateDaoActor, initTestSuite } from "../utils/pocket-ic";
 import { generateRandomIdentity } from "@hadronous/pic";
 import { Ok } from "../utils/common";
 
 describe("Metadata", () => {
   let actor: estateDaoActor;
+  const suite = initTestSuite();
   const alice = generateRandomIdentity();
   const bob = generateRandomIdentity();
 
@@ -15,13 +16,13 @@ describe("Metadata", () => {
     property_owner: alice.getPrincipal(),
   };
 
-  const { setup, teardown } = initEstateDaoNft([initMetadata]);
-
   beforeAll(async () => {
-    actor = await setup();
+    await suite.setup();
+    actor = await (await suite.deployEstateDaoNftCanister(initMetadata)).actor;
     actor.setIdentity(alice);
   });
-  afterAll(teardown);
+
+  afterAll(suite.teardown);
 
   describe("ICRC7 Compliant", () => {
     it("icrc7_name", async () => {
