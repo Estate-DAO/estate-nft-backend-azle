@@ -23,6 +23,18 @@
         "output": "test/dfx_generated/provision",
         "node_compatibility": true
       }
+    },
+    "asset": {
+      "type": "custom",
+      "main": "",
+      "build": "",
+      "candid": "src/asset/index.did",
+      "candid_gen": "custom",
+      "wasm": "test/asset-canister/assetstorage.wasm.gz",
+      "declarations": {
+        "output": "test/dfx_generated/asset",
+        "node_compatibility": true
+      }
     }
   }
 }

@@ -12,7 +12,6 @@ import {
   update,
   Vec,
 } from "azle";
-import { deploy_collection, get_token_canister_wasm, set_token_canister_wasm } from "./token";
 import { PropertyMetadata, RequestInfo } from "./types";
 import {
   add_property_request,
@@ -24,12 +23,21 @@ import {
 import { add_admin, is_admin, remove_admin } from "./admin";
 import { initImpl } from "./base";
 import { InitArg } from "../estate_dao_nft/types";
+import {
+  get_asset_canister_wasm,
+  get_token_canister_wasm,
+  set_asset_canister_wasm,
+  set_token_canister_wasm,
+} from "./canister";
 
 export default Canister({
   init: init([], initImpl),
 
   set_token_canister_wasm: update([blob], Result(bool, text), set_token_canister_wasm),
   get_token_canister_wasm: query([], blob, get_token_canister_wasm),
+
+  set_asset_canister_wasm: update([blob], Result(bool, text), set_asset_canister_wasm),
+  get_asset_canister_wasm: query([], blob, get_asset_canister_wasm),
 
   is_admin: query([Opt(Principal)], bool, is_admin),
   add_admin: update([Principal], Result(bool, text), add_admin),

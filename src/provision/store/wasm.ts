@@ -1,17 +1,17 @@
 import { blob } from "azle";
 
 export class WasmStore {
-  private _tokenCanisterWasm: blob;
+  private _wasm: blob;
 
   constructor() {
-    this._tokenCanisterWasm = new Uint8Array();
+    this._wasm = new Uint8Array();
   }
 
-  get tokenCanisterWasm(): blob {
-    return this._tokenCanisterWasm;
+  getWasm(): blob {
+    return this._wasm;
   }
 
-  updateTokenCanisterWasm(wasm: blob) {
-    this._tokenCanisterWasm = wasm;
+  updateWasm(wasm: blob) {
+    this._wasm = wasm;
   }
 }

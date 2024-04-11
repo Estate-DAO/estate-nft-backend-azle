@@ -3,7 +3,7 @@ import { PropertyMetadata, RequestInfo } from "../types";
 import { RequestStore } from "../store";
 import { validateAdmin, validatePropertyRequester } from "../validate";
 import { isErr, isOk, iterableToArray } from "../../common/utils";
-import { deploy_collection } from "../token";
+import { deploy_asset, deploy_token } from "../canister";
 
 export function add_property_request(metadata: PropertyMetadata): Result<nat, text> {
   const caller = ic.caller();
@@ -29,14 +29,12 @@ export function get_pending_requests(): Vec<nat> {
 export function get_request_info(id: nat): Opt<RequestInfo> {
   const requestMetadata = RequestStore.metadata.get(id);
   const requestConfig = RequestStore.config.get(id);
-  if ( !requestConfig ) return None;
-  
+  if (!requestConfig) return None;
+
   const requestInfo: RequestInfo = {
-    metadata: (
-      requestMetadata ? Some(requestMetadata) : None
-    ),
-    ...requestConfig
-  }
+    metadata: requestMetadata ? Some(requestMetadata) : None,
+    ...requestConfig,
+  };
 
   return Some(requestInfo);
 }
@@ -47,20 +45,22 @@ export async function approve_request(id: nat): Promise<Result<bool, text>> {
 
   const requestConfig = RequestStore.config.get(id);
   const requestMetadata = RequestStore.metadata.get(id);
-
-  if (!requestConfig || !requestMetadata)
-    return Result.Err("No request exists with the given id.");
-  
+  if (!requestConfig || !requestMetadata) return Result.Err("No request exists with the given id.");
   if (requestConfig.approval_status.Pending === undefined)
     return Result.Err("Request already processed.");
 
-  const deployResult = await deploy_collection({
+  const deployTokenResult = await deploy_token({
     ...requestMetadata,
     property_owner: requestConfig.property_owner,
   });
-  if (isErr(deployResult)) return deployResult;
+  if (isErr(deployTokenResult)) return deployTokenResult;
 
-  RequestStore.approveRequest(id, deployResult.Ok);
+  const deployAssetResult = await deploy_asset();
+  if (isErr(deployAssetResult)) return deployAssetResult;
+
+  RequestStore.approveRequest(id);
+  RequestStore.setTokenCanister(id, deployTokenResult.Ok);
+  RequestStore.setAssetCanister(id, deployAssetResult.Ok);
   return Result.Ok(true);
 }
 

@@ -1,7 +1,7 @@
 import { Principal } from "@dfinity/principal";
 import { provisionActor, initProvisionCanister } from "../utils/pocket-ic";
 import { generateRandomIdentity } from "@hadronous/pic";
-import { isErrResult, isNone, isOkResult, isSome } from "../utils/common";
+import { expectResultIsErr, expectResultIsOk, isNone, isSome } from "../utils/common";
 
 const testPropertyMetadata = {
   logo: [] as [],
@@ -23,10 +23,7 @@ describe("Property Requests", () => {
       actor.setPrincipal(Principal.anonymous());
 
       const addPropertyResult = await actor.add_property_request(testPropertyMetadata);
-
-      expect(isErrResult(addPropertyResult)).toBe(true);
-      if (!isErrResult(addPropertyResult)) return;
-
+      expectResultIsErr(addPropertyResult);
       expect(addPropertyResult.Err).toBe("Anonymous users not allowed");
 
       const pendingRequestIds = await actor.get_pending_requests();
@@ -37,10 +34,7 @@ describe("Property Requests", () => {
 
     it("success - adds request", async () => {
       const addPropertyResult = await actor.add_property_request(testPropertyMetadata);
-
-      expect(isOkResult(addPropertyResult)).toBe(true);
-      if (!isOkResult(addPropertyResult)) return;
-
+      expectResultIsOk(addPropertyResult);
       expect(addPropertyResult.Ok).toBeGreaterThanOrEqual(0);
       const id = addPropertyResult.Ok;
 
@@ -48,12 +42,15 @@ describe("Property Requests", () => {
       expect(pendingRequestIds).toEqual([id]);
 
       const request = await actor.get_request_info(id);
-      expect(request).toEqual([{
-        metadata: [testPropertyMetadata],
-        property_owner: alice.getPrincipal(),
-        approval_status: { Pending: null },
-        token_canister: []
-      }]);
+      expect(request).toEqual([
+        {
+          metadata: [testPropertyMetadata],
+          property_owner: alice.getPrincipal(),
+          approval_status: { Pending: null },
+          token_canister: [],
+          asset_canister: [],
+        },
+      ]);
     });
   });
 

@@ -12,6 +12,10 @@ import {
   init as provisionInit,
   _SERVICE as provisionService,
 } from "../../dfx_generated/provision/provision.did.js";
+import {
+  idlFactory as assetIdlFactory,
+  _SERVICE as assetService,
+} from "../../dfx_generated/asset/asset.did.js";
 
 function createPocketIcInstance(): Promise<PocketIc> {
   if (process.env.DEBUG) return PocketIc.createFromUrl("http://localhost:7000");
@@ -42,14 +46,19 @@ export function initPocketIc<_SERVICE>(
     await instance?.tearDown();
   };
 
-  const attachToToken = (principal: Principal): estateDaoActor => {
+  const attachToTokenCanister = (principal: Principal): estateDaoActor => {
     return instance.createActor(estateDaoNftIdlFactory, principal);
-  }
+  };
+
+  const attachToAssetCanister = (principal: Principal): assetActor => {
+    return instance.createActor(assetIdlFactory, principal);
+  };
 
   return {
     setup,
     teardown,
-    attachToToken
+    attachToTokenCanister,
+    attachToAssetCanister,
   };
 }
 
@@ -85,3 +94,5 @@ export function initProvisionCanister() {
   );
 }
 export type provisionActor = Actor<provisionService>;
+
+export type assetActor = Actor<assetService>;

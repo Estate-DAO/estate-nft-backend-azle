@@ -32,16 +32,28 @@ export class RequestStore {
       property_owner: owner,
       approval_status: { Pending: null },
       token_canister: None,
+      asset_canister: None,
     });
     return id;
   }
 
-  approveRequest(id: nat, tokenCanister: Principal) {
+  approveRequest(id: nat) {
     const config = this._requestConfig.get(id)!;
     config.approval_status = { Approved: null };
-    config.token_canister = Some(tokenCanister);
 
     this._requestMetadata.delete(id);
+    this._requestConfig.set(id, config);
+  }
+
+  setTokenCanister(id: nat, tokenCanister: Principal) {
+    const config = this._requestConfig.get(id)!;
+    config.token_canister = Some(tokenCanister);
+    this._requestConfig.set(id, config);
+  }
+
+  setAssetCanister(id: nat, assetCanister: Principal) {
+    const config = this._requestConfig.get(id)!;
+    config.asset_canister = Some(assetCanister);
     this._requestConfig.set(id, config);
   }
 

@@ -1,11 +1,11 @@
 import { None, Principal, Result, Some, blob, bool, ic, text } from "azle";
 import { managementCanister } from "azle/canisters/management";
-import { WasmStore } from "../store";
+import { AssetCanisterWasmStore } from "../store";
 import { validateController } from "../validate";
+import { AssetCanisterArgs } from "../types";
 import { encode } from "azle/src/lib/candid/serde";
-import { InitArg } from "../../estate_dao_nft/types";
 
-export async function deploy_collection(args: InitArg): Promise<Result<Principal, text>> {
+export async function deploy_asset(): Promise<Result<Principal, text>> {
   const { canister_id } = await ic.call(managementCanister.create_canister, {
     args: [
       {
@@ -31,8 +31,8 @@ export async function deploy_collection(args: InitArg): Promise<Result<Principal
           install: null,
         },
         canister_id,
-        wasm_module: WasmStore.tokenCanisterWasm,
-        arg: encode(InitArg, args),
+        wasm_module: AssetCanisterWasmStore.getWasm(),
+        arg: encode(AssetCanisterArgs, { Init: {} }),
         sender_canister_version: None,
       },
     ],
@@ -41,14 +41,14 @@ export async function deploy_collection(args: InitArg): Promise<Result<Principal
   return Result.Ok(canister_id);
 }
 
-export function set_token_canister_wasm(wasm: blob): Result<bool, text> {
+export function set_asset_canister_wasm(wasm: blob): Result<bool, text> {
   const validationResult = validateController(ic.caller());
   if (!validationResult.Ok) return validationResult;
 
-  WasmStore.updateTokenCanisterWasm(wasm);
+  AssetCanisterWasmStore.updateWasm(wasm);
   return Result.Ok(true);
 }
 
-export function get_token_canister_wasm(): blob {
-  return WasmStore.tokenCanisterWasm;
+export function get_asset_canister_wasm(): blob {
+  return AssetCanisterWasmStore.getWasm();
 }

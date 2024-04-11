@@ -1,6 +1,6 @@
 import { generateRandomIdentity } from "@hadronous/pic";
 import { provisionActor, initProvisionCanister } from "../utils/pocket-ic";
-import { isErrResult, isOkResult } from "../utils/common";
+import { expectResultIsErr, expectResultIsOk } from "../utils/common";
 
 describe("Provision Canister Admins", () => {
   let actor: provisionActor;
@@ -32,7 +32,7 @@ describe("Provision Canister Admins", () => {
   describe("add_admin", () => {
     it("success - controllers can add admins", async () => {
       const addAdminResult = await actor.add_admin(alice.getPrincipal());
-      expect(isOkResult(addAdminResult)).toBe(true);
+      expectResultIsOk(addAdminResult);
 
       const isAliceAdmin = await actor.is_admin([alice.getPrincipal()]);
       expect(isAliceAdmin).toBe(true);
@@ -42,9 +42,7 @@ describe("Provision Canister Admins", () => {
       actor.setIdentity(alice);
 
       const addAdminResult = await actor.add_admin(bob.getPrincipal());
-      expect(isErrResult(addAdminResult)).toBe(true);
-      if (!isErrResult(addAdminResult)) return;
-
+      expectResultIsErr(addAdminResult);
       expect(addAdminResult.Err).toBe("Only controllers are allowed");
 
       const isBobAdmin = await actor.is_admin([bob.getPrincipal()]);
@@ -57,7 +55,7 @@ describe("Provision Canister Admins", () => {
   describe("remove_admin", () => {
     it("success - removes admin", async () => {
       const removeAdminResult = await actor.remove_admin(alice.getPrincipal());
-      expect(isOkResult(removeAdminResult)).toBe(true);
+      expectResultIsOk(removeAdminResult);
 
       const isAliceAdmin = await actor.is_admin([alice.getPrincipal()]);
       expect(isAliceAdmin).toBe(false);
@@ -67,9 +65,7 @@ describe("Provision Canister Admins", () => {
       actor.setIdentity(alice);
 
       const removeAdminResult = await actor.remove_admin(chloe.getPrincipal());
-      expect(isErrResult(removeAdminResult)).toBe(true);
-      if (!isErrResult(removeAdminResult)) return;
-
+      expectResultIsErr(removeAdminResult);
       expect(removeAdminResult.Err).toBe("Only controllers are allowed");
 
       const isChloeAdmin = await actor.is_admin([chloe.getPrincipal()]);

@@ -46,6 +46,9 @@ jobs:
       - name: Create canisters
         run: dfx canister create --all
 
+      - name: Get Asset Canister WASM
+        run: yarn wasm:setup
+
       - name: Build canister
         run: yarn build
       

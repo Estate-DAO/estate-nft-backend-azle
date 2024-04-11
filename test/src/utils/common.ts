@@ -28,3 +28,17 @@ export async function loadTokenCanisterWasm(): Promise<blob> {
   const wasmBlob = await readFile(wasm);
   return wasmBlob;
 }
+
+export async function loadAssetCanisterWasm(): Promise<blob> {
+  const wasm = path.resolve("test", "asset-canister", "assetstorage.wasm.gz");
+  const wasmBlob = await readFile(wasm);
+  return wasmBlob;
+}
+
+export function expectResultIsOk<O, E>(result: Result<O, E>): asserts result is Ok<O> {
+  expect(isOkResult(result)).toBe(true);
+}
+
+export function expectResultIsErr<O, E>(result: Result<O, E>): asserts result is Err<E> {
+  expect(isErrResult(result)).toBe(true);
+}
