@@ -7,12 +7,12 @@ export function validateController(id: Principal): Result<bool, text> {
 }
 
 export function validateProvisionCanister(id: Principal): Result<bool, text> {
-  if ( ProvisionCanisterStore.getPrincipal().toString() !== id.toString() )
+  if (ProvisionCanisterStore.getPrincipal().toString() !== id.toString())
     return Result.Err("Only Provision Canister can call.");
   return Result.Ok(true);
 }
 
 export function validateAssetUploader(id: Principal): Result<bool, text> {
-  if ( id.isAnonymous() ) return Result.Err("Anonymous users not allowed");
+  if (id.isAnonymous()) return Result.Err("Anonymous users not allowed");
   return Result.Ok(true);
 }

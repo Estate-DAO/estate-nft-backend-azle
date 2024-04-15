@@ -22,13 +22,13 @@ import {
 } from "./request";
 import { add_admin, is_admin, remove_admin } from "./admin";
 import { initImpl } from "./base";
-import { InitArg } from "../estate_dao_nft/types";
 import {
   get_asset_canister_wasm,
   get_token_canister_wasm,
   set_asset_canister_wasm,
   set_token_canister_wasm,
 } from "./canister";
+import { get_asset_proxy_canister, set_asset_proxy_canister } from "./canister/asset_proxy";
 
 export default Canister({
   init: init([], initImpl),
@@ -38,6 +38,9 @@ export default Canister({
 
   set_asset_canister_wasm: update([blob], Result(bool, text), set_asset_canister_wasm),
   get_asset_canister_wasm: query([], blob, get_asset_canister_wasm),
+
+  set_asset_proxy_canister: update([Principal], Result(bool, text), set_asset_proxy_canister),
+  get_asset_proxy_canister: query([], Principal, get_asset_proxy_canister),
 
   is_admin: query([Opt(Principal)], bool, is_admin),
   add_admin: update([Principal], Result(bool, text), add_admin),

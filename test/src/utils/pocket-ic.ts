@@ -6,19 +6,20 @@ import * as estateDaoNft from "../../dfx_generated/estate_dao_nft/estate_dao_nft
 import * as provision from "../../dfx_generated/provision/provision.did.js";
 import * as asset from "../../dfx_generated/asset/asset.did.js";
 import * as assetProxy from "../../dfx_generated/asset_proxy/asset_proxy.did.js";
+import { SamplePropertyInit } from "./sample";
 
 function createPocketIcInstance(): Promise<PocketIc> {
   if (process.env.DEBUG) return PocketIc.createFromUrl("http://localhost:7000");
   return PocketIc.create();
 }
 
-async function deployCanister<_SERVICE> (
+async function deployCanister<_SERVICE>(
   instance: PocketIc,
   idlFactory: IDL.InterfaceFactory,
   wasm: string,
   initArgs: ArrayBufferLike,
-  args?: Partial<SetupCanisterOptions>
- ) {
+  args?: Partial<SetupCanisterOptions>,
+) {
   return await instance.setupCanister<_SERVICE>({
     ...(args ?? {}),
     idlFactory,
@@ -37,9 +38,9 @@ export function initTestSuite() {
       provision.idlFactory,
       path.resolve(".azle", "provision", "provision.wasm.gz"),
       IDL.encode(provision.init({ IDL }), []),
-      args
-    )
-  }
+      args,
+    );
+  };
 
   const deployAssetCanister = async (args?: Partial<SetupCanisterOptions>) => {
     return deployCanister<asset._SERVICE>(
@@ -47,9 +48,9 @@ export function initTestSuite() {
       asset.idlFactory,
       path.resolve("test", "asset-canister", "assetstorage.wasm.gz"),
       IDL.encode(asset.init({ IDL }), [[{ Init: {} }]]),
-      args
-    )
-  }
+      args,
+    );
+  };
 
   const deployAssetProxyCanister = async (args?: Partial<SetupCanisterOptions>) => {
     return deployCanister<assetProxy._SERVICE>(
@@ -57,21 +58,20 @@ export function initTestSuite() {
       assetProxy.idlFactory,
       path.resolve(".azle", "asset_proxy", "asset_proxy.wasm.gz"),
       IDL.encode(assetProxy.init({ IDL }), []),
-      args
-    )
-  }
+      args,
+    );
+  };
 
   const deployEstateDaoNftCanister = async (
     initArgs: any,
-    args?: Partial<SetupCanisterOptions>
+    args?: Partial<SetupCanisterOptions>,
   ) => {
     const initMetadata = {
+      ...SamplePropertyInit,
       name: "EstateDaoNFT",
       symbol: "EST",
-      logo: ["http://estatedao.org/test-image.png"],
-      description: [],
-      property_owner: Principal.anonymous(),
-      ...initArgs
+      logo: "http://estatedao.org/test-image.png",
+      ...initArgs,
     };
 
     return deployCanister<estateDaoNft._SERVICE>(
@@ -79,9 +79,9 @@ export function initTestSuite() {
       estateDaoNft.idlFactory,
       path.resolve(".azle", "estate_dao_nft", "estate_dao_nft.wasm.gz"),
       IDL.encode(estateDaoNft.init({ IDL }), [initMetadata]),
-      args
-    )
-  }
+      args,
+    );
+  };
 
   const setup = async () => {
     instance = await createPocketIcInstance();

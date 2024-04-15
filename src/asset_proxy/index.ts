@@ -1,6 +1,11 @@
 import { Canister, Principal, Result, Vec, bool, query, text, update } from "azle";
 import { ApproveFilesArg, AssetStoreArg } from "./types";
-import { get_provision_canister, get_temp_asset_canister, set_provision_canister, set_temp_asset_canister } from "./canister";
+import {
+  get_provision_canister,
+  get_temp_asset_canister,
+  set_provision_canister,
+  set_temp_asset_canister,
+} from "./canister";
 import { approve_files, reject_files, store } from "./asset";
 
 export default Canister({

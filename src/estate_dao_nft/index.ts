@@ -16,11 +16,8 @@ import {
   icrc7_tx_window,
   icrc7_permitted_drift,
   icrc7_collection_metadata,
-  update_property_owner,
-  update_collection_metadata,
-  update_property_details,
-  update_market_details,
-  update_financial_details,
+  update_metadata,
+  change_ownership,
   get_property_metadata,
 } from "./metadata";
 import {
@@ -33,10 +30,7 @@ import {
   TransferArg,
   ICRC61Standards,
   TxnResult,
-  CollectionMetadataArg,
-  PropertyDetailsArg,
-  MarketDetailsArg,
-  FinancialDetailsArg,
+  MetadataUpdateArg,
   PropertyMetadataResult,
 } from "./types";
 import { initImpl } from "./base";
@@ -84,14 +78,7 @@ export default Canister({
 
   icrc61_supported_standards: query([], ICRC61Standards, icrc61_supported_standards),
 
-  update_property_owner: update([Principal], TxnResult, update_property_owner),
-  update_collection_metadata: update(
-    [CollectionMetadataArg],
-    TxnResult,
-    update_collection_metadata,
-  ),
-  update_property_details: update([PropertyDetailsArg], TxnResult, update_property_details),
-  update_market_details: update([MarketDetailsArg], TxnResult, update_market_details),
-  update_financial_details: update([FinancialDetailsArg], TxnResult, update_financial_details),
+  change_ownership: update([Principal], TxnResult, change_ownership),
+  update_metadata: update([MetadataUpdateArg], TxnResult, update_metadata),
   get_property_metadata: query([], PropertyMetadataResult, get_property_metadata),
 });

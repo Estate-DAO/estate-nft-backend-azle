@@ -11,9 +11,11 @@ describe("Provision Canister Admins", () => {
 
   beforeAll(async () => {
     await suite.setup();
-    actor = (await suite.deployProvisionCanister({
-      sender: chloe.getPrincipal(),
-    })).actor;
+    actor = (
+      await suite.deployProvisionCanister({
+        sender: chloe.getPrincipal(),
+      })
+    ).actor;
     actor.setIdentity(chloe);
   });
 

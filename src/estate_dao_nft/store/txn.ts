@@ -1,14 +1,13 @@
-import { TxnIndexStoreType } from "../types";
+import { nat } from "azle";
 
-const _txnIndexStore: TxnIndexStoreType = {
-  index: 0n,
-};
+export class TxnIndexStore {
+  private _index: nat = 0n;
 
-function _increment() {
-  _txnIndexStore.index++;
+  get index() {
+    return this._index;
+  }
+
+  increment() {
+    this._index++;
+  }
 }
-
-export default {
-  store: _txnIndexStore as Readonly<TxnIndexStoreType>,
-  increment: _increment,
-};

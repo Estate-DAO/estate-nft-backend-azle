@@ -2,10 +2,10 @@ import { Principal } from "@dfinity/principal";
 import { provisionActor, initTestSuite } from "../utils/pocket-ic";
 import { generateRandomIdentity } from "@hadronous/pic";
 import { expectResultIsErr, expectResultIsOk, isNone, isSome } from "../utils/common";
+import { SamplePropertyRequest } from "../utils/sample";
 
 const testPropertyMetadata = {
-  logo: [] as [],
-  description: [] as [],
+  ...SamplePropertyRequest,
   name: "Test Estate",
   symbol: "TEST",
 };

@@ -1,10 +1,9 @@
 import { Null, Opt, Principal, Record, Some, Variant, text } from "azle";
-import { InitArgRaw } from "../../estate_dao_nft/types";
+import { MetadataRaw } from "../../estate_dao_nft/types";
 
-const { property_owner: _, ...PropertyMetadataRaw } = InitArgRaw;
-export const PropertyMetadata = Record({
-  ...PropertyMetadataRaw,
-});
+const { property_owner: _1, asset_canister: _3, ...PropertyMetadataRaw } = MetadataRaw;
+
+export const PropertyMetadata = Record(PropertyMetadataRaw);
 export type PropertyMetadata = typeof PropertyMetadata.tsType;
 
 const RequestApprovalStatus = Variant({

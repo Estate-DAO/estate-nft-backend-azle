@@ -4,6 +4,7 @@ import { AssetCanisterWasmStore } from "../store";
 import { validateController } from "../validate";
 import { AssetCanisterArgs } from "../types";
 import { encode } from "azle/src/lib/candid/serde";
+import { getAssetCanister } from "../../common/utils";
 
 export async function deploy_asset(): Promise<Result<Principal, text>> {
   const { canister_id } = await ic.call(managementCanister.create_canister, {
@@ -39,6 +40,42 @@ export async function deploy_asset(): Promise<Result<Principal, text>> {
   });
 
   return Result.Ok(canister_id);
+}
+
+export async function grant_asset_admin_perms(
+  canister: Principal,
+  user: Principal,
+): Promise<Result<bool, text>> {
+  await ic.call(getAssetCanister(canister).grant_permission, {
+    args: [
+      {
+        to_principal: user,
+        permission: {
+          ManagePermissions: null,
+        },
+      },
+    ],
+  });
+
+  return Result.Ok(true);
+}
+
+export async function grant_asset_edit_perms(
+  canister: Principal,
+  user: Principal,
+): Promise<Result<bool, text>> {
+  await ic.call(getAssetCanister(canister).grant_permission, {
+    args: [
+      {
+        to_principal: user,
+        permission: {
+          Commit: null,
+        },
+      },
+    ],
+  });
+
+  return Result.Ok(true);
 }
 
 export function set_asset_canister_wasm(wasm: blob): Result<bool, text> {

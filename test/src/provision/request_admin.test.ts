@@ -7,10 +7,10 @@ import {
   loadAssetCanisterWasm,
   loadTokenCanisterWasm,
 } from "../utils/common";
+import { SamplePropertyRequest } from "../utils/sample";
 
 const testPropertyMetadata = {
-  logo: [] as [],
-  description: [] as [],
+  ...SamplePropertyRequest,
   name: "Test Estate",
   symbol: "TEST",
 };
@@ -32,13 +32,21 @@ describe("Property Requests", () => {
 
   beforeAll(async () => {
     await suite.setup();
-    actor = (await suite.deployProvisionCanister()).actor;
+    const provision = await suite.deployProvisionCanister();
+    actor = provision.actor;
 
     const tokenWasm = await loadTokenCanisterWasm();
     await actor.set_token_canister_wasm(tokenWasm);
 
     const assetWasm = await loadAssetCanisterWasm();
     await actor.set_asset_canister_wasm(assetWasm);
+
+    const assetProxy = await suite.deployAssetProxyCanister();
+    const tempAsset = await suite.deployAssetCanister();
+
+    await assetProxy.actor.set_provision_canister(provision.canisterId);
+    await assetProxy.actor.set_temp_asset_canister(tempAsset.canisterId);
+    await provision.actor.set_asset_proxy_canister(assetProxy.canisterId);
 
     await actor.add_admin(alice.getPrincipal());
     actor.setIdentity(alice);

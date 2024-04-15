@@ -1,4 +1,4 @@
-import { CandidType, Opt, update as azleUpdate } from "azle";
+import { Opt, update as azleUpdate, AzleOpt, CandidType } from "azle";
 import { Subaccount } from "./types";
 import { TxnIndexStore } from "./store";
 
@@ -21,8 +21,34 @@ export function isSubaccountsEq(a?: Subaccount, b?: Subaccount): boolean {
 }
 
 export const update: typeof azleUpdate = (params, result, fn) => {
-  return azleUpdate(params, result, (...args) => {
-    TxnIndexStore.increment();
-    return fn.apply(null, args);
-  });
+  return azleUpdate(
+    params,
+    result,
+    fn
+      ? (...args) => {
+          TxnIndexStore.increment();
+          return fn.apply(null, args);
+        }
+      : undefined,
+  );
 };
+
+export function makePopulatedOptState<Schema extends Record<string, any>>(schema: Schema) {
+  return Object.entries(schema).reduce((acc, [key, _]) => {
+    acc[key] = { None: null };
+    return acc;
+  }, {});
+}
+
+type toOptionalSchema<T> = {
+  [Prop in keyof T]: AzleOpt<T[Prop]>;
+};
+
+export function toOptionalSchema<T extends { [name: string]: CandidType }>(
+  schema: T,
+): toOptionalSchema<T> {
+  return Object.entries(schema).reduce((acc, [key, value]) => {
+    acc[key] = Opt(value);
+    return acc;
+  }, {} as any);
+}

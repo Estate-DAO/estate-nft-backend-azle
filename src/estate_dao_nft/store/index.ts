@@ -1,3 +1,7 @@
-export { default as MetadataStore } from "./metadata";
-export { default as TokenStore } from "./token";
-export { default as TxnIndexStore } from "./txn";
+import { MetadataStore as MetadataStoreClass } from "./metadata";
+import { TokenStore as TokenStoreClass } from "./token";
+import { TxnIndexStore as TxnIndexStoreClass } from "./txn";
+
+export const MetadataStore = new MetadataStoreClass();
+export const TxnIndexStore = new TxnIndexStoreClass();
+export const TokenStore = new TokenStoreClass();

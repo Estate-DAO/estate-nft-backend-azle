@@ -1,4 +1,15 @@
 import { Result } from "azle";
+import { Principal } from "azle";
+import AssetCanister from "../asset";
+import AssetProxyCanister from "../asset_proxy";
+
+export function getAssetCanister(principal: Principal) {
+  return AssetCanister(principal);
+}
+
+export function getAssetProxyCanister(principal: Principal) {
+  return AssetProxyCanister(principal);
+}
 
 export function iterableToArray<T>(a: Iterable<T>): T[] {
   const arr: T[] = [];

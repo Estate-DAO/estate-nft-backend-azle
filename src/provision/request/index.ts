@@ -3,7 +3,13 @@ import { PropertyMetadata, RequestInfo } from "../types";
 import { RequestStore } from "../store";
 import { validateAdmin, validatePropertyRequester } from "../validate";
 import { isErr, isOk, iterableToArray } from "../../common/utils";
-import { deploy_asset, deploy_token } from "../canister";
+import {
+  deploy_asset,
+  deploy_token,
+  grant_asset_admin_perms,
+  grant_asset_edit_perms,
+} from "../canister";
+import { approve_files_from_proxy } from "../canister/asset_proxy";
 
 export function add_property_request(metadata: PropertyMetadata): Result<nat, text> {
   const caller = ic.caller();
@@ -49,14 +55,33 @@ export async function approve_request(id: nat): Promise<Result<bool, text>> {
   if (requestConfig.approval_status.Pending === undefined)
     return Result.Err("Request already processed.");
 
+  const deployAssetResult = await deploy_asset();
+  if (isErr(deployAssetResult)) return deployAssetResult;
+
+  const approveAssetsResult = await approve_files_from_proxy(
+    deployAssetResult.Ok,
+    requestMetadata.documents.map((doc) => doc[1]),
+  );
+  if (isErr(approveAssetsResult)) return approveAssetsResult;
+
   const deployTokenResult = await deploy_token({
     ...requestMetadata,
     property_owner: requestConfig.property_owner,
+    asset_canister: deployAssetResult.Ok,
   });
   if (isErr(deployTokenResult)) return deployTokenResult;
 
-  const deployAssetResult = await deploy_asset();
-  if (isErr(deployAssetResult)) return deployAssetResult;
+  const grantAssetAdminAccessResult = await grant_asset_admin_perms(
+    deployAssetResult.Ok,
+    deployTokenResult.Ok,
+  );
+  if (isErr(grantAssetAdminAccessResult)) return grantAssetAdminAccessResult;
+
+  const grantAssetEditAccessResult = await grant_asset_edit_perms(
+    deployAssetResult.Ok,
+    requestConfig.property_owner,
+  );
+  if (isErr(grantAssetEditAccessResult)) return grantAssetEditAccessResult;
 
   RequestStore.approveRequest(id);
   RequestStore.setTokenCanister(id, deployTokenResult.Ok);

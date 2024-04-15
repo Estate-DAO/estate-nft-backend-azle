@@ -1,32 +1,52 @@
-import { MetadataStoreType, WritableMetadataType } from "../types";
+import { Principal } from "azle";
+import { ConfigStoreType, InitArg, MetadataStoreType, MetadataUpdateArg } from "../types";
 
-const _metadataStore: MetadataStoreType = {
-  symbol: "",
-  name: "",
-  total_supply: 0n,
+export class MetadataStore {
+  private _metadata: MetadataStoreType;
+  private _config: ConfigStoreType;
 
-  property_owner: "",
-};
+  constructor() {
+    this._config = {
+      total_supply: 0n,
+    };
+  }
 
-function _update(args: WritableMetadataType) {
-  Object.keys(args)
-    .filter((key) => args[key as keyof WritableMetadataType] === undefined)
-    .forEach((key) => delete args[key as keyof WritableMetadataType]);
+  get metadata(): Readonly<MetadataStoreType> {
+    return this._metadata;
+  }
 
-  Object.assign(_metadataStore, args);
+  get config(): Readonly<ConfigStoreType> {
+    return this._config;
+  }
+
+  private _updateMetadataAttribute<K extends keyof MetadataStoreType>(
+    key: K,
+    value: MetadataStoreType[K],
+  ) {
+    this._metadata[key] = value;
+  }
+
+  init(args: InitArg) {
+    this._metadata = args;
+  }
+
+  update(args: MetadataUpdateArg) {
+    const keys = Object.keys(args) as (keyof MetadataUpdateArg)[];
+    keys.forEach((key) => {
+      const val = args[key].Some;
+      if (val) this._updateMetadataAttribute(key, val);
+    });
+  }
+
+  changeOwnership(owner: Principal) {
+    this._metadata.property_owner = owner;
+  }
+
+  incrementSupply() {
+    this._config.total_supply++;
+  }
+
+  decrementSupply() {
+    this._config.total_supply--;
+  }
 }
-
-function _incrementSupply() {
-  _metadataStore.total_supply++;
-}
-
-function _decrementSupply() {
-  _metadataStore.total_supply--;
-}
-
-export default {
-  store: _metadataStore as Readonly<MetadataStoreType>,
-  update: _update,
-  incrementSupply: _incrementSupply,
-  decrementSupply: _decrementSupply,
-};
