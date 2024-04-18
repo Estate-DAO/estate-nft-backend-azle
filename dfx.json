@@ -47,6 +47,18 @@
         "output": "test/dfx_generated/asset_proxy",
         "node_compatibility": true
       }
+    },
+    "management": {
+      "type": "custom",
+      "main": "",
+      "build": "",
+      "candid": "src/management/index.did",
+      "candid_gen": "custom",
+      "wasm": "",
+      "declarations": {
+        "output": "test/dfx_generated/management",
+        "node_compatibility": true
+      }
     }
   }
 }

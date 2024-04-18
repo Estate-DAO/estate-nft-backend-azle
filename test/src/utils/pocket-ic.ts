@@ -6,6 +6,7 @@ import * as estateDaoNft from "../../dfx_generated/estate_dao_nft/estate_dao_nft
 import * as provision from "../../dfx_generated/provision/provision.did.js";
 import * as asset from "../../dfx_generated/asset/asset.did.js";
 import * as assetProxy from "../../dfx_generated/asset_proxy/asset_proxy.did.js";
+import * as management from "../../dfx_generated/management/management.did.js";
 import { SamplePropertyInit } from "./sample";
 
 function createPocketIcInstance(): Promise<PocketIc> {
@@ -99,6 +100,10 @@ export function initTestSuite() {
     return instance.createActor(asset.idlFactory, principal);
   };
 
+  const attachToManagementCanister = (): managementActor => {
+    return instance.createActor(management.idlFactory, Principal.fromText('aaaaa-aa'));
+  }
+
   return {
     setup,
     teardown,
@@ -108,6 +113,7 @@ export function initTestSuite() {
     deployAssetProxyCanister,
     attachToTokenCanister,
     attachToAssetCanister,
+    attachToManagementCanister,
   };
 }
 
@@ -119,3 +125,5 @@ export type assetFixture = CanisterFixture<asset._SERVICE>;
 export type assetActor = Actor<asset._SERVICE>;
 export type assetProxyFixture = CanisterFixture<assetProxy._SERVICE>;
 export type assetProxyActor = Actor<assetProxy._SERVICE>;
+export type managementFixture = CanisterFixture<management._SERVICE>;
+export type managementActor = Actor<management._SERVICE>;
