@@ -1,4 +1,4 @@
-import { Null, Opt, Principal, Record, Some, Variant, text } from "azle";
+import { Null, Opt, Principal, Record, Some, Variant, Vec, blob, bool, text } from "azle";
 import { MetadataRaw } from "../../estate_dao_nft/types";
 
 const { property_owner: _1, asset_canister: _3, ...PropertyMetadataRaw } = MetadataRaw;
@@ -32,3 +32,9 @@ export const AssetCanisterArgs = Variant({
   Init: Record({}),
   Upgrade: Null,
 });
+
+export const WasmChunked = Record({
+  chunkHashes: Vec(blob),
+  moduleHash: blob
+});
+export type WasmChunked = typeof WasmChunked.tsType;

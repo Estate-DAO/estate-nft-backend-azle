@@ -12,7 +12,7 @@ import {
   update,
   Vec,
 } from "azle";
-import { PropertyMetadata, RequestInfo } from "./types";
+import { PropertyMetadata, RequestInfo, WasmChunked } from "./types";
 import {
   add_property_request,
   approve_request,
@@ -33,11 +33,11 @@ import { get_asset_proxy_canister, set_asset_proxy_canister } from "./canister/a
 export default Canister({
   init: init([], initImpl),
 
-  set_token_canister_wasm: update([blob], Result(bool, text), set_token_canister_wasm),
-  get_token_canister_wasm: query([], blob, get_token_canister_wasm),
+  set_token_canister_wasm: update([WasmChunked], Result(bool, text), set_token_canister_wasm),
+  get_token_canister_wasm: query([], WasmChunked, get_token_canister_wasm),
 
-  set_asset_canister_wasm: update([blob], Result(bool, text), set_asset_canister_wasm),
-  get_asset_canister_wasm: query([], blob, get_asset_canister_wasm),
+  set_asset_canister_wasm: update([WasmChunked], Result(bool, text), set_asset_canister_wasm),
+  get_asset_canister_wasm: query([], WasmChunked, get_asset_canister_wasm),
 
   set_asset_proxy_canister: update([Principal], Result(bool, text), set_asset_proxy_canister),
   get_asset_proxy_canister: query([], Principal, get_asset_proxy_canister),
