@@ -33,7 +33,7 @@ export async function deploy_token(args: InitArg): Promise<Result<Principal, tex
           install: null,
         },
         target_canister: canister_id,
-        storage_canister: Some(ic.id()),
+        store_canister: Some(ic.id()),
         chunk_hashes_list: TokenCanisterWasmStore.wasm.chunkHashes,
         wasm_module_hash: TokenCanisterWasmStore.wasm.moduleHash,
         arg: encode(InitArg, args),

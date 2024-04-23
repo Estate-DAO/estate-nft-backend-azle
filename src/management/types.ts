@@ -3,7 +3,9 @@ import { Null, Opt, Principal, Record, Variant, Vec, blob, nat64 } from "azle";
 export const CanisterId = Principal;
 export type CanisterId = Principal;
 
-export const ChunkHash = blob;
+export const ChunkHash = Record({
+  hash: blob
+});
 export type ChunkHash = typeof ChunkHash.tsType;
 
 export const UploadChunkArgs = Record({
@@ -38,8 +40,8 @@ export type InstallCodeMode = typeof InstallCodeMode.tsType;
 export const InstallChunkedCodeArgs = Record({
   mode: InstallCodeMode,
   target_canister: CanisterId,
-  storage_canister: Opt(CanisterId),
-  chunk_hashes_list: Vec(ChunkHash),
+  store_canister: Opt(CanisterId),
+  chunk_hashes_list: Vec(blob),
   wasm_module_hash: blob,
   arg: blob,
   sender_canister_version: Opt(nat64)

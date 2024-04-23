@@ -104,7 +104,12 @@ export function initTestSuite() {
     return instance.createActor(management.idlFactory, Principal.fromText('aaaaa-aa'));
   }
 
+  const getInstance = (): PocketIc => {
+    return instance;
+  }
+
   return {
+    getInstance,
     setup,
     teardown,
     deployProvisionCanister,
