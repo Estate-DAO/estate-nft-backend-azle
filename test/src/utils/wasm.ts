@@ -60,7 +60,7 @@ export async function chunkifyModule(path: text): Promise<Vec<blob>> {
 export async function loadWasmChunksToCanister(management: managementActor, path: text, canister: Principal) {
   const chunks = await chunkifyModule(path);
   const chunkHashes: blob[] = [];
-
+  
   for ( const chunk of chunks ) {
     await management.upload_chunk({
       chunk,
