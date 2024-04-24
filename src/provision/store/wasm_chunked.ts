@@ -21,7 +21,7 @@ export class WasmChunkedStore {
   async clear() {
     this._wasm = {
       chunkHashes: [],
-      moduleHash: new Uint8Array()
-    }
+      moduleHash: new Uint8Array(),
+    };
   }
 }

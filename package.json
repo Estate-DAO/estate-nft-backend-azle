@@ -17,6 +17,7 @@
     "@dfinity/agent": "^1.0.1",
     "@dfinity/ic-management": "^3.1.1",
     "@dfinity/identity": "^1.0.1",
+    "@dfinity/identity-secp256k1": "^1.0.1",
     "@hadronous/pic": "^0.6.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.26",

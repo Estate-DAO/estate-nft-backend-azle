@@ -32,7 +32,7 @@ describe("Provision Canister", () => {
 
       const result = await actor.set_token_canister_wasm({
         moduleHash: [],
-        chunkHashes: []
+        chunkHashes: [],
       });
       expectResultIsErr(result);
       expect(result.Err).toBe("Only controllers are allowed");
@@ -43,7 +43,7 @@ describe("Provision Canister", () => {
 
       const result = await actor.set_token_canister_wasm({
         moduleHash: [],
-        chunkHashes: []
+        chunkHashes: [],
       });
       expectResultIsOk(result);
     });
@@ -55,7 +55,7 @@ describe("Provision Canister", () => {
 
       const result = await actor.set_asset_canister_wasm({
         moduleHash: [],
-        chunkHashes: []
+        chunkHashes: [],
       });
       expectResultIsErr(result);
       expect(result.Err).toBe("Only controllers are allowed");
@@ -66,7 +66,7 @@ describe("Provision Canister", () => {
 
       const result = await actor.set_asset_canister_wasm({
         moduleHash: [],
-        chunkHashes: []
+        chunkHashes: [],
       });
       expectResultIsOk(result);
     });
