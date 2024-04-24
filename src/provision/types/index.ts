@@ -35,6 +35,6 @@ export const AssetCanisterArgs = Variant({
 
 export const WasmChunked = Record({
   chunkHashes: Vec(blob),
-  moduleHash: blob
+  moduleHash: blob,
 });
 export type WasmChunked = typeof WasmChunked.tsType;

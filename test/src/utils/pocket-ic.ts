@@ -2,31 +2,23 @@ import path from "path";
 import { IDL } from "@dfinity/candid";
 import { Actor, CanisterFixture, PocketIc, SetupCanisterOptions } from "@hadronous/pic";
 import { Principal } from "@dfinity/principal";
-import * as estateDaoNft from "../../dfx_generated/estate_dao_nft/estate_dao_nft.did.js";
-import * as provision from "../../dfx_generated/provision/provision.did.js";
-import * as asset from "../../dfx_generated/asset/asset.did.js";
-import * as assetProxy from "../../dfx_generated/asset_proxy/asset_proxy.did.js";
 import { SamplePropertyInit } from "./sample";
-import { ActorMethod, ManagementCanisterRecord } from "@dfinity/agent";
-import managementCanisterIdl from "@dfinity/agent/lib/cjs/canisters/management_idl.js";
-import { InterfaceFactory } from "@dfinity/candid/lib/cjs/idl.js";
-
-export const managementCanisterIdlPatched: InterfaceFactory = ({ IDL }) => (
-  IDL.Service({
-    ...(managementCanisterIdl({ IDL }) as IDL.ServiceClass)
-        ._fields
-        .reduce((acc, curr) => {
-          acc[curr[0]] = curr[1];
-          return acc;
-        }, {} as any),
-    upload_chunk: IDL.Func([
-      IDL.Record({
-          chunk: IDL.Vec(IDL.Nat8),
-          canister_id: IDL.Principal,
-      }),
-    ], [], []),
-  })
-);
+import {
+  assetIdl,
+  assetInit,
+  assetProxyIdl,
+  assetProxyInit,
+  assetProxyService,
+  assetService,
+  estateDaoNftIdl,
+  estateDaoNftInit,
+  estateDaoNftService,
+  managementIdl,
+  managementService,
+  provisionIdl,
+  provisionInit,
+  provisionService,
+} from "./canister";
 
 function createPocketIcInstance(): Promise<PocketIc> {
   if (process.env.DEBUG) return PocketIc.createFromUrl("http://localhost:7000");
@@ -53,31 +45,31 @@ export function initTestSuite() {
   let instance: PocketIc;
 
   const deployProvisionCanister = async (args?: Partial<SetupCanisterOptions>) => {
-    return deployCanister<provision._SERVICE>(
+    return deployCanister<provisionService>(
       instance,
-      provision.idlFactory,
+      provisionIdl,
       path.resolve(".azle", "provision", "provision.wasm.gz"),
-      IDL.encode(provision.init({ IDL }), []),
+      IDL.encode(provisionInit({ IDL }), []),
       args,
     );
   };
 
   const deployAssetCanister = async (args?: Partial<SetupCanisterOptions>) => {
-    return deployCanister<asset._SERVICE>(
+    return deployCanister<assetService>(
       instance,
-      asset.idlFactory,
+      assetIdl,
       path.resolve("test", "asset-canister", "assetstorage.wasm.gz"),
-      IDL.encode(asset.init({ IDL }), [[{ Init: {} }]]),
+      IDL.encode(assetInit({ IDL }), [[{ Init: {} }]]),
       args,
     );
   };
 
   const deployAssetProxyCanister = async (args?: Partial<SetupCanisterOptions>) => {
-    return deployCanister<assetProxy._SERVICE>(
+    return deployCanister<assetProxyService>(
       instance,
-      assetProxy.idlFactory,
+      assetProxyIdl,
       path.resolve(".azle", "asset_proxy", "asset_proxy.wasm.gz"),
-      IDL.encode(assetProxy.init({ IDL }), []),
+      IDL.encode(assetProxyInit({ IDL }), []),
       args,
     );
   };
@@ -94,11 +86,11 @@ export function initTestSuite() {
       ...initArgs,
     };
 
-    return deployCanister<estateDaoNft._SERVICE>(
+    return deployCanister<estateDaoNftService>(
       instance,
-      estateDaoNft.idlFactory,
+      estateDaoNftIdl,
       path.resolve(".azle", "estate_dao_nft", "estate_dao_nft.wasm.gz"),
-      IDL.encode(estateDaoNft.init({ IDL }), [initMetadata]),
+      IDL.encode(estateDaoNftInit({ IDL }), [initMetadata]),
       args,
     );
   };
@@ -112,20 +104,20 @@ export function initTestSuite() {
   };
 
   const attachToTokenCanister = (principal: Principal): estateDaoActor => {
-    return instance.createActor(estateDaoNft.idlFactory, principal);
+    return instance.createActor(estateDaoNftIdl, principal);
   };
 
   const attachToAssetCanister = (principal: Principal): assetActor => {
-    return instance.createActor(asset.idlFactory, principal);
+    return instance.createActor(assetIdl, principal);
   };
 
   const attachToManagementCanister = (): managementActor => {
-    return instance.createActor(managementCanisterIdlPatched, Principal.fromText("aaaaa-aa"));
-  }
+    return instance.createActor(managementIdl, Principal.fromText("aaaaa-aa"));
+  };
 
   const getInstance = (): PocketIc => {
     return instance;
-  }
+  };
 
   return {
     getInstance,
@@ -141,18 +133,13 @@ export function initTestSuite() {
   };
 }
 
-export type estateDaoFixture = CanisterFixture<estateDaoNft._SERVICE>;
-export type estateDaoActor = Actor<estateDaoNft._SERVICE>;
-export type provisionFixture = CanisterFixture<provision._SERVICE>;
-export type provisionActor = Actor<provision._SERVICE>;
-export type assetFixture = CanisterFixture<asset._SERVICE>;
-export type assetActor = Actor<asset._SERVICE>;
-export type assetProxyFixture = CanisterFixture<assetProxy._SERVICE>;
-export type assetProxyActor = Actor<assetProxy._SERVICE>;
-export type managementFixture = CanisterFixture<ManagementCanisterRecord>;
-export type managementActor = Actor<Omit<ManagementCanisterRecord, 'upload_chunk'> & {
-  upload_chunk: ActorMethod<[{
-    chunk: Uint8Array | number[];
-    canister_id: Principal;
-  }], undefined>
-}>;
+export type estateDaoFixture = CanisterFixture<estateDaoNftService>;
+export type estateDaoActor = Actor<estateDaoNftService>;
+export type provisionFixture = CanisterFixture<provisionService>;
+export type provisionActor = Actor<provisionService>;
+export type assetFixture = CanisterFixture<assetService>;
+export type assetActor = Actor<assetService>;
+export type assetProxyFixture = CanisterFixture<assetProxyService>;
+export type assetProxyActor = Actor<assetProxyService>;
+export type managementFixture = CanisterFixture<managementService>;
+export type managementActor = Actor<managementService>;

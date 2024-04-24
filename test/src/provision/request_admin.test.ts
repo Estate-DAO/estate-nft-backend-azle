@@ -1,12 +1,13 @@
 import { provisionActor, initTestSuite } from "../utils/pocket-ic";
 import { generateRandomIdentity } from "@hadronous/pic";
-import {
-  expectResultIsErr,
-  expectResultIsOk,
-  isSome,
-} from "../utils/common";
+import { expectResultIsErr, expectResultIsOk, isSome } from "../utils/common";
 import { SamplePropertyRequest } from "../utils/sample";
-import { ASSET_CANISTER_WASM, TOKEN_CANISTER_WASM, getModuleHash, loadWasmChunksToCanister } from "../utils/wasm";
+import {
+  ASSET_CANISTER_WASM,
+  TOKEN_CANISTER_WASM,
+  getModuleHash,
+  loadWasmChunksToCanister,
+} from "../utils/wasm";
 
 const testPropertyMetadata = {
   ...SamplePropertyRequest,
@@ -38,12 +39,20 @@ describe("Property Requests", () => {
 
     await actor.set_token_canister_wasm({
       moduleHash: await getModuleHash(TOKEN_CANISTER_WASM),
-      chunkHashes: await loadWasmChunksToCanister(managementActor, TOKEN_CANISTER_WASM, provision.canisterId)
+      chunkHashes: await loadWasmChunksToCanister(
+        managementActor,
+        TOKEN_CANISTER_WASM,
+        provision.canisterId,
+      ),
     });
 
     await actor.set_asset_canister_wasm({
       moduleHash: await getModuleHash(ASSET_CANISTER_WASM),
-      chunkHashes: await loadWasmChunksToCanister(managementActor, ASSET_CANISTER_WASM, provision.canisterId)
+      chunkHashes: await loadWasmChunksToCanister(
+        managementActor,
+        ASSET_CANISTER_WASM,
+        provision.canisterId,
+      ),
     });
 
     const assetProxy = await suite.deployAssetProxyCanister();

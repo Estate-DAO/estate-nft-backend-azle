@@ -25,7 +25,7 @@ export async function deploy_asset(): Promise<Result<Principal, text>> {
     ],
     cycles: 200_000_000_000n,
   });
-  
+
   await ic.call(managementCanisterExtended.install_chunked_code, {
     args: [
       {

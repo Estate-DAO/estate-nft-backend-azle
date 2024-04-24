@@ -6,8 +6,8 @@ import { createActor as createAssetProxyActor } from "../test/dfx_generated/asse
 import { createActor as createAssetActor } from "../test/dfx_generated/asset";
 import { createActor as createProvisionActor } from "../test/dfx_generated/provision";
 import { Principal } from "@dfinity/principal";
-import { ASSET_CANISTER_WASM, TOKEN_CANISTER_WASM, getModuleHash, loadWasmChunksToCanister } from "../test/src/utils/wasm";
-import { managementActor, managementCanisterIdlPatched } from "../test/src/utils/pocket-ic";
+import { configureCanisters } from "../test/src/utils/deploy";
+import { managementIdl, managementService } from "../test/src/utils/canister";
 
 async function getAgent(): Promise<HttpAgent> {
   const host = process.env.DFX_NETWORK === 'ic' ? 'https://icp-api.io' : 'http://127.0.0.1:4943';
@@ -73,49 +73,35 @@ async function main() {
   const provisionCanisterId = Principal.fromText(await deployCanister('provision'));
   const assetProxyCanisterId = Principal.fromText(await deployCanister('asset_proxy'));
   const tempAssetCanisterId = Principal.fromText(await deployCanister('asset'));
+  const managementCanisterId = Principal.fromText('aaaaa-aa');
   await buildCanister("estate_dao_nft");
 
   const assetProxyActor = createAssetProxyActor(assetProxyCanisterId, { agent });
   const tempAssetActor = createAssetActor(tempAssetCanisterId, { agent });
   const provisionActor = createProvisionActor(provisionCanisterId, { agent });
-  const managementActor: managementActor = Actor.createActor(managementCanisterIdlPatched, {
-    canisterId: Principal.fromText('aaaaa-aa'),
+  const managementActor = Actor.createActor<managementService>(managementIdl, {
+    canisterId: managementCanisterId,
     agent
   });
 
-  await tempAssetActor.grant_permission({
-    to_principal: assetProxyCanisterId,
-    permission: {
-      Commit: null
-    }
+  await configureCanisters({
+    provision: {
+      canisterId: provisionCanisterId,
+      actor: provisionActor
+    },
+    assetProxy: {
+      canisterId: assetProxyCanisterId,
+      actor: assetProxyActor
+    },
+    tempAsset: {
+      canisterId: tempAssetCanisterId ,
+      actor: tempAssetActor
+    },
+    management: {
+      canisterId: managementCanisterId,
+      actor: managementActor
+    },
   });
-
-  console.log('Granted temp_asset write permission to asset_proxy.');
-
-  await assetProxyActor.set_provision_canister(provisionCanisterId);
-  await assetProxyActor.set_temp_asset_canister(tempAssetCanisterId);
-  
-  console.log('Set up done for asset_proxy canister.');
-
-  const assetWasmChunks = await loadWasmChunksToCanister(managementActor, ASSET_CANISTER_WASM, provisionCanisterId);
-  const tokenWasmChunks = await loadWasmChunksToCanister(managementActor, TOKEN_CANISTER_WASM, provisionCanisterId);
-  
-  console.log('Loaded wasm chunks in provision canister.');
-
-  await provisionActor.set_asset_proxy_canister(assetProxyCanisterId);
-  await addCanisterController('provision', provisionCanisterId);
-  
-  await provisionActor.set_asset_canister_wasm({
-    moduleHash: await getModuleHash(ASSET_CANISTER_WASM),
-    chunkHashes: assetWasmChunks
-  });
-
-  await provisionActor.set_token_canister_wasm({
-    moduleHash: await getModuleHash(TOKEN_CANISTER_WASM),
-    chunkHashes: tokenWasmChunks
-  });
-
-  console.log('Set up done for provision canister.');
 }
 
 main();
