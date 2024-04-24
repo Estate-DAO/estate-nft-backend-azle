@@ -7,6 +7,26 @@ import * as provision from "../../dfx_generated/provision/provision.did.js";
 import * as asset from "../../dfx_generated/asset/asset.did.js";
 import * as assetProxy from "../../dfx_generated/asset_proxy/asset_proxy.did.js";
 import { SamplePropertyInit } from "./sample";
+import { ActorMethod, ManagementCanisterRecord } from "@dfinity/agent";
+import managementCanisterIdl from "@dfinity/agent/lib/cjs/canisters/management_idl.js";
+import { InterfaceFactory } from "@dfinity/candid/lib/cjs/idl.js";
+
+const managementCanisterIdlPatched: InterfaceFactory = ({ IDL }) => (
+  IDL.Service({
+    ...(managementCanisterIdl({ IDL }) as IDL.ServiceClass)
+        ._fields
+        .reduce((acc, curr) => {
+          acc[curr[0]] = curr[1];
+          return acc;
+        }, {} as any),
+    upload_chunk: IDL.Func([
+      IDL.Record({
+          chunk: IDL.Vec(IDL.Nat8),
+          canister_id: IDL.Principal,
+      }),
+    ], [], []),
+  })
+);
 
 function createPocketIcInstance(): Promise<PocketIc> {
   if (process.env.DEBUG) return PocketIc.createFromUrl("http://localhost:7000");
@@ -99,7 +119,16 @@ export function initTestSuite() {
     return instance.createActor(asset.idlFactory, principal);
   };
 
+  const attachToManagementCanister = (): managementActor => {
+    return instance.createActor(managementCanisterIdlPatched, Principal.fromText("aaaaa-aa"));
+  }
+
+  const getInstance = (): PocketIc => {
+    return instance;
+  }
+
   return {
+    getInstance,
     setup,
     teardown,
     deployProvisionCanister,
@@ -108,6 +137,7 @@ export function initTestSuite() {
     deployAssetProxyCanister,
     attachToTokenCanister,
     attachToAssetCanister,
+    attachToManagementCanister,
   };
 }
 
@@ -119,3 +149,10 @@ export type assetFixture = CanisterFixture<asset._SERVICE>;
 export type assetActor = Actor<asset._SERVICE>;
 export type assetProxyFixture = CanisterFixture<assetProxy._SERVICE>;
 export type assetProxyActor = Actor<assetProxy._SERVICE>;
+export type managementFixture = CanisterFixture<ManagementCanisterRecord>;
+export type managementActor = Actor<Omit<ManagementCanisterRecord, 'upload_chunk'> & {
+  upload_chunk: ActorMethod<[{
+    chunk: Uint8Array | number[];
+    canister_id: Principal;
+  }], undefined>
+}>;

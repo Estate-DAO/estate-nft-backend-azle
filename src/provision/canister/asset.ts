@@ -2,9 +2,10 @@ import { None, Principal, Result, Some, blob, bool, ic, text } from "azle";
 import { managementCanister } from "azle/canisters/management";
 import { AssetCanisterWasmStore } from "../store";
 import { validateController } from "../validate";
-import { AssetCanisterArgs } from "../types";
+import { AssetCanisterArgs, WasmChunked } from "../types";
 import { encode } from "azle/src/lib/candid/serde";
 import { getAssetCanister } from "../../common/utils";
+import { managementCanisterExtended } from "../../common/management";
 
 export async function deploy_asset(): Promise<Result<Principal, text>> {
   const { canister_id } = await ic.call(managementCanister.create_canister, {
@@ -25,19 +26,24 @@ export async function deploy_asset(): Promise<Result<Principal, text>> {
     cycles: 200_000_000_000n,
   });
 
-  await ic.call(managementCanister.install_code, {
+  console.log(ic.id(), canister_id);
+
+  await ic.call(managementCanisterExtended.install_chunked_code, {
     args: [
       {
         mode: {
           install: null,
         },
-        canister_id,
-        wasm_module: AssetCanisterWasmStore.getWasm(),
+        target_canister: canister_id,
+        store_canister: Some(ic.id()),
+        chunk_hashes_list: AssetCanisterWasmStore.wasm.chunkHashes,
+        wasm_module_hash: AssetCanisterWasmStore.wasm.moduleHash,
         arg: encode(AssetCanisterArgs, { Init: {} }),
         sender_canister_version: None,
       },
     ],
   });
+  console.log(ic.id(), canister_id);
 
   return Result.Ok(canister_id);
 }
@@ -78,14 +84,14 @@ export async function grant_asset_edit_perms(
   return Result.Ok(true);
 }
 
-export function set_asset_canister_wasm(wasm: blob): Result<bool, text> {
+export function set_asset_canister_wasm(wasm: WasmChunked): Result<bool, text> {
   const validationResult = validateController(ic.caller());
   if (!validationResult.Ok) return validationResult;
 
-  AssetCanisterWasmStore.updateWasm(wasm);
+  AssetCanisterWasmStore.store(wasm);
   return Result.Ok(true);
 }
 
-export function get_asset_canister_wasm(): blob {
-  return AssetCanisterWasmStore.getWasm();
+export function get_asset_canister_wasm(): WasmChunked {
+  return AssetCanisterWasmStore.wasm;
 }

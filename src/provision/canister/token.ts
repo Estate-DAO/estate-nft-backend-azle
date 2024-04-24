@@ -1,9 +1,11 @@
-import { None, Principal, Result, Some, blob, bool, ic, text } from "azle";
+import { None, Principal, Result, Some, Vec, blob, bool, ic, text } from "azle";
 import { managementCanister } from "azle/canisters/management";
 import { TokenCanisterWasmStore } from "../store";
 import { validateController } from "../validate";
 import { encode } from "azle/src/lib/candid/serde";
 import { InitArg } from "../../estate_dao_nft/types";
+import { managementCanisterExtended } from "../../common/management";
+import { WasmChunked } from "../types";
 
 export async function deploy_token(args: InitArg): Promise<Result<Principal, text>> {
   const { canister_id } = await ic.call(managementCanister.create_canister, {
@@ -24,14 +26,16 @@ export async function deploy_token(args: InitArg): Promise<Result<Principal, tex
     cycles: 200_000_000_000n,
   });
 
-  await ic.call(managementCanister.install_code, {
+  await ic.call(managementCanisterExtended.install_chunked_code, {
     args: [
       {
         mode: {
           install: null,
         },
-        canister_id,
-        wasm_module: TokenCanisterWasmStore.getWasm(),
+        target_canister: canister_id,
+        store_canister: Some(ic.id()),
+        chunk_hashes_list: TokenCanisterWasmStore.wasm.chunkHashes,
+        wasm_module_hash: TokenCanisterWasmStore.wasm.moduleHash,
         arg: encode(InitArg, args),
         sender_canister_version: None,
       },
@@ -41,14 +45,14 @@ export async function deploy_token(args: InitArg): Promise<Result<Principal, tex
   return Result.Ok(canister_id);
 }
 
-export function set_token_canister_wasm(wasm: blob): Result<bool, text> {
+export function set_token_canister_wasm(wasm: WasmChunked): Result<bool, text> {
   const validationResult = validateController(ic.caller());
   if (!validationResult.Ok) return validationResult;
 
-  TokenCanisterWasmStore.updateWasm(wasm);
+  TokenCanisterWasmStore.store(wasm);
   return Result.Ok(true);
 }
 
-export function get_token_canister_wasm(): blob {
-  return TokenCanisterWasmStore.getWasm();
+export function get_token_canister_wasm(): WasmChunked {
+  return TokenCanisterWasmStore.wasm;
 }

@@ -4,10 +4,9 @@ import {
   expectResultIsErr,
   expectResultIsOk,
   isSome,
-  loadAssetCanisterWasm,
-  loadTokenCanisterWasm,
 } from "../utils/common";
 import { SamplePropertyRequest } from "../utils/sample";
+import { ASSET_CANISTER_WASM, TOKEN_CANISTER_WASM, getModuleHash, loadWasmChunksToCanister } from "../utils/wasm";
 
 const testPropertyMetadata = {
   ...SamplePropertyRequest,
@@ -35,11 +34,17 @@ describe("Property Requests", () => {
     const provision = await suite.deployProvisionCanister();
     actor = provision.actor;
 
-    const tokenWasm = await loadTokenCanisterWasm();
-    await actor.set_token_canister_wasm(tokenWasm);
+    const managementActor = await suite.attachToManagementCanister();
 
-    const assetWasm = await loadAssetCanisterWasm();
-    await actor.set_asset_canister_wasm(assetWasm);
+    await actor.set_token_canister_wasm({
+      moduleHash: await getModuleHash(TOKEN_CANISTER_WASM),
+      chunkHashes: await loadWasmChunksToCanister(managementActor, TOKEN_CANISTER_WASM, provision.canisterId)
+    });
+
+    await actor.set_asset_canister_wasm({
+      moduleHash: await getModuleHash(ASSET_CANISTER_WASM),
+      chunkHashes: await loadWasmChunksToCanister(managementActor, ASSET_CANISTER_WASM, provision.canisterId)
+    });
 
     const assetProxy = await suite.deployAssetProxyCanister();
     const tempAsset = await suite.deployAssetCanister();
