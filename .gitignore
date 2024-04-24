@@ -4,3 +4,4 @@ dfx_generated
 node_modules
 pocket-ic
 asset-canister
+secrets

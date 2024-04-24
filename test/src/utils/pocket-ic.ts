@@ -11,7 +11,7 @@ import { ActorMethod, ManagementCanisterRecord } from "@dfinity/agent";
 import managementCanisterIdl from "@dfinity/agent/lib/cjs/canisters/management_idl.js";
 import { InterfaceFactory } from "@dfinity/candid/lib/cjs/idl.js";
 
-const managementCanisterIdlPatched: InterfaceFactory = ({ IDL }) => (
+export const managementCanisterIdlPatched: InterfaceFactory = ({ IDL }) => (
   IDL.Service({
     ...(managementCanisterIdl({ IDL }) as IDL.ServiceClass)
         ._fields
