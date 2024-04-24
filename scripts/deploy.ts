@@ -63,11 +63,6 @@ async function getCanisterId(canisterName: string) {
   return id;
 }
 
-async function addCanisterController(canisterName: string, principal: Principal) {
-  const networkFlag = process.env.DFX_NETWORK === 'ic' ? '--ic' : '';
-  await exec(`dfx canister update-settings --add-controller ${principal.toText()} ${canisterName} ${networkFlag}`);
-}
-
 async function main() {
   const agent = await getAgent();
   const provisionCanisterId = Principal.fromText(await deployCanister('provision'));
