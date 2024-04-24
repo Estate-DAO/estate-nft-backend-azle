@@ -54,7 +54,7 @@ async function buildCanister(canisterName: string) {
   console.log(`Building ${canisterName}...`);
   await exec(`dfx canister create ${canisterName}`);
   await exec(`dfx build ${canisterName}`);
-  console.log(`Built ${canisterName} canister`);
+  console.log(`Build success for ${canisterName} canister`);
 }
 
 async function getCanisterId(canisterName: string) {
@@ -97,6 +97,8 @@ async function main() {
       actor: managementActor
     },
   });
+
+  console.log("Canister configuration success.");
 }
 
 main();
