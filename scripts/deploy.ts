@@ -96,7 +96,7 @@ async function main() {
       canisterId: managementCanisterId,
       actor: managementActor
     },
-  });
+  }, await agent.getPrincipal());
 
   console.log("Canister configuration success.");
 }

@@ -17,7 +17,7 @@ export async function configureCanisters(fixtures: {
   tempAsset: CanisterFixture<assetService>;
   assetProxy: CanisterFixture<assetProxyService>;
   management: CanisterFixture<managementService>;
-}) {
+}, caller?: Principal) {
   // Grant asset_proxy permissions for temp_asset
   await fixtures.tempAsset.actor.grant_permission({
     to_principal: fixtures.assetProxy.canisterId,
@@ -31,10 +31,9 @@ export async function configureCanisters(fixtures: {
   await fixtures.assetProxy.actor.set_temp_asset_canister(fixtures.tempAsset.canisterId);
   await fixtures.provision.actor.set_asset_proxy_canister(fixtures.assetProxy.canisterId);
 
-  // make provision canister a controller of itself
-  const { controllers: provisionControllers } = await fixtures.management.actor.canister_info({
+  // make provision canister a controller of itself (for use as store_canister for chunks)
+  const { settings: { controllers: provisionControllers } } = await fixtures.management.actor.canister_status({
     canister_id: fixtures.provision.canisterId,
-    num_requested_changes: [],
   });
   await fixtures.management.actor.update_settings({
     canister_id: fixtures.provision.canisterId,
@@ -68,4 +67,7 @@ export async function configureCanisters(fixtures: {
     moduleHash: await getModuleHash(TOKEN_CANISTER_WASM),
     chunkHashes: tokenWasmChunks,
   });
+
+  // set caller principal as admin
+  if ( caller ) await fixtures.provision.actor.add_admin(caller);
 }
