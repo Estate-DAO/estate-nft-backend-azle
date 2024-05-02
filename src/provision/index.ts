@@ -12,7 +12,7 @@ import {
   update,
   Vec,
 } from "azle";
-import { PropertyMetadata, PropertyStatus, RequestInfo, WasmChunked } from "./types";
+import { PropertyMetadata, ListPropertiesResult, RequestInfo, WasmChunked } from "./types";
 import {
   add_property_request,
   approve_request,
@@ -54,5 +54,5 @@ export default Canister({
   approve_request: update([nat], Result(bool, text), approve_request),
   reject_request: update([nat], Result(bool, text), reject_request),
 
-  list_properties: update([Opt(PropertyStatus)], Vec(nat), list_properties),
+  list_properties: update([], Vec(ListPropertiesResult), list_properties),
 });
