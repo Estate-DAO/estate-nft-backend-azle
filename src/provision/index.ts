@@ -12,7 +12,7 @@ import {
   update,
   Vec,
 } from "azle";
-import { PropertyMetadata, RequestInfo, WasmChunked } from "./types";
+import { PropertyMetadata, PropertyStatus, RequestInfo, WasmChunked } from "./types";
 import {
   add_property_request,
   approve_request,
@@ -29,6 +29,7 @@ import {
   set_token_canister_wasm,
 } from "./canister";
 import { get_asset_proxy_canister, set_asset_proxy_canister } from "./canister/asset_proxy";
+import { list_properties } from "./property";
 
 export default Canister({
   init: init([], initImpl),
@@ -52,4 +53,6 @@ export default Canister({
 
   approve_request: update([nat], Result(bool, text), approve_request),
   reject_request: update([nat], Result(bool, text), reject_request),
+
+  list_properties: update([Opt(PropertyStatus)], Vec(nat), list_properties),
 });
