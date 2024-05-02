@@ -54,5 +54,5 @@ export default Canister({
   approve_request: update([nat], Result(bool, text), approve_request),
   reject_request: update([nat], Result(bool, text), reject_request),
 
-  list_properties: update([], Vec(ListPropertiesResult), list_properties),
+  list_properties: query([], Vec(ListPropertiesResult), list_properties),
 });
