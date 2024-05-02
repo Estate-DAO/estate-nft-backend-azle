@@ -38,3 +38,9 @@ export const WasmChunked = Record({
   moduleHash: blob,
 });
 export type WasmChunked = typeof WasmChunked.tsType;
+
+export const PropertyStatus = Variant({
+  Draft: Null,
+  Published: Null,
+})
+export type PropertyStatus = typeof PropertyStatus.tsType;

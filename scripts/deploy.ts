@@ -52,8 +52,7 @@ async function deployCanister(canisterName: string) {
 
 async function buildCanister(canisterName: string) {
   console.log(`Building ${canisterName}...`);
-  await exec(`dfx canister create ${canisterName}`);
-  await exec(`dfx build ${canisterName}`);
+  await exec(`dfx build --check ${canisterName}`);
   console.log(`Build success for ${canisterName} canister`);
 }
 
@@ -76,6 +75,7 @@ async function main() {
   const provisionActor = createProvisionActor(provisionCanisterId, { agent });
   const managementActor = Actor.createActor<managementService>(managementIdl, {
     canisterId: managementCanisterId,
+    effectiveCanisterId: provisionCanisterId,
     agent
   });
 
