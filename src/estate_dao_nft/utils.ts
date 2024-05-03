@@ -1,4 +1,4 @@
-import { Opt, update as azleUpdate, AzleOpt, CandidType } from "azle";
+import { Opt, update as azleUpdate, AzleOpt, CandidType, Principal } from "azle";
 import { Subaccount } from "./types";
 import { TxnIndexStore } from "./store";
 
@@ -51,4 +51,13 @@ export function toOptionalSchema<T extends { [name: string]: CandidType }>(
     acc[key] = Opt(value);
     return acc;
   }, {} as any);
+}
+
+export function deriveSubaccount(principal: Principal): Subaccount {
+  const principalInBytes = principal.toUint8Array();
+  const subaccount = new Uint8Array(32);
+  const startIndex = subaccount.length - principalInBytes.length;
+
+  principalInBytes.forEach((val, ind) => subaccount[startIndex+ind] = val);
+  return subaccount;
 }
