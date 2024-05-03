@@ -1,4 +1,4 @@
-import { None, Opt, bool, nat, text } from "azle";
+import { None, Opt, Some, bool, nat, text } from "azle";
 import { MetadataStore } from "../store";
 import { toOpt } from "../utils";
 import { MetadataResult } from "../types";
@@ -24,7 +24,7 @@ export function icrc7_total_supply(): nat {
 }
 
 export function icrc7_supply_cap(): Opt<nat> {
-  return None;
+  return Some(MetadataStore.metadata.supply_cap);
 }
 
 export function icrc7_max_query_batch_size(): Opt<nat> {
@@ -65,7 +65,7 @@ export function icrc7_collection_metadata(): MetadataResult {
   metadata.push(["icrc7:name", { Text: MetadataStore.metadata.name }]);
   metadata.push(["icrc7:symbol", { Text: MetadataStore.metadata.symbol }]);
   metadata.push(["icrc7:total_supply", { Nat: MetadataStore.config.total_supply }]);
-
+  metadata.push(["icrc7:supply_cap", { Nat: MetadataStore.metadata.supply_cap }]);
   metadata.push(["icrc7:description", { Text: MetadataStore.metadata.description }]);
   metadata.push(["icrc7:logo", { Text: MetadataStore.metadata.logo }]);
 

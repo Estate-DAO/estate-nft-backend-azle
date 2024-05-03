@@ -6,6 +6,7 @@ export class MetadataStore {
   private _config: ConfigStoreType;
 
   constructor() {
+    this._metadata = {} as MetadataStoreType;
     this._config = {
       total_supply: 0n,
     };
