@@ -27,6 +27,7 @@ export const CollectionMetadataRaw = {
   price: nat,
   treasury: Principal,
   asset_canister: Principal,
+  token: Principal,
   documents: Vec(Tuple(text, text)),
 };
 

@@ -1,12 +1,13 @@
 import { None, Opt, Result, Some, blob, bool, ic, nat, nat32, text } from "azle";
 import { deriveSubaccount } from "../utils";
 import { validateInvestor } from "../validate";
-import { icpLedger, TRANSFER_FEE } from "../../common/ledger";
+import { getTokenLedger, TRANSFER_FEE } from "../../common/ledger";
 import { MetadataStore, TokenStore } from "../store";
 import { Subaccount } from "../types";
 
 export async function refund(to_subaccount: Opt<Subaccount>): Promise<Result<bool, text>> {
   const principal = ic.caller();
+  const icpLedger = getTokenLedger(MetadataStore.metadata.token);
 
   const validationResult = validateInvestor(principal);
   if ( validationResult.Err ) return validationResult;
@@ -34,6 +35,7 @@ export async function refund(to_subaccount: Opt<Subaccount>): Promise<Result<boo
 
 export async function mint(to_subaccount: Opt<Subaccount>): Promise<Result<nat32, text>> {
   const principal = ic.caller();
+  const icpLedger = getTokenLedger(MetadataStore.metadata.token);
 
   const validationResult = validateInvestor(principal);
   if ( validationResult.Err ) return validationResult;
