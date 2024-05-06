@@ -16,14 +16,15 @@ describe("Metadata", () => {
     logo: "http://estatedao.org/test-image.png",
     property_owner: alice.getPrincipal(),
     asset_canister: Principal.anonymous(),
+    supply_cap: 10n,
   };
 
   beforeAll(async () => {
     await suite.setup();
-    const assetCanister = await await suite.deployAssetCanister();
+    const assetCanister = await suite.deployAssetCanister();
     initMetadata["asset_canister"] = assetCanister.canisterId;
 
-    const tokenCanister = await await suite.deployEstateDaoNftCanister(initMetadata);
+    const tokenCanister = await suite.deployEstateDaoNftCanister(initMetadata);
     actor = tokenCanister.actor;
     actor.setIdentity(alice);
 
@@ -61,7 +62,8 @@ describe("Metadata", () => {
 
     it("icrc7_supply_cap", async () => {
       const supply_cap = await actor.icrc7_supply_cap();
-      expect(supply_cap).toHaveLength(0);
+      expect(supply_cap).toHaveLength(1);
+      expect(supply_cap).toContain(initMetadata.supply_cap);
     });
 
     it("icrc7_total_supply", async () => {
@@ -112,10 +114,11 @@ describe("Metadata", () => {
     it("icrc7_collection_metadata", async () => {
       const metadata = await actor.icrc7_collection_metadata();
 
-      expect(metadata).toHaveLength(5);
+      expect(metadata).toHaveLength(6);
       expect(metadata).toContainEqual(["icrc7:name", { Text: initMetadata.name }]);
       expect(metadata).toContainEqual(["icrc7:symbol", { Text: initMetadata.symbol }]);
       expect(metadata).toContainEqual(["icrc7:total_supply", { Nat: 0n }]);
+      expect(metadata).toContainEqual(["icrc7:supply_cap", { Nat: initMetadata.supply_cap }]);
       expect(metadata).toContainEqual(["icrc7:logo", { Text: initMetadata.logo }]);
     });
   });
