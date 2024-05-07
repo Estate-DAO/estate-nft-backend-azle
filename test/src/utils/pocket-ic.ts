@@ -1,6 +1,6 @@
 import path from "path";
 import { IDL } from "@dfinity/candid";
-import { Actor, CanisterFixture, PocketIc, SetupCanisterOptions } from "@hadronous/pic";
+import { Actor, CanisterFixture, CreateInstanceOptions, PocketIc, SetupCanisterOptions } from "@hadronous/pic";
 import { Principal } from "@dfinity/principal";
 import { SamplePropertyInit } from "./sample";
 import {
@@ -20,9 +20,9 @@ import {
   provisionService,
 } from "./canister";
 
-function createPocketIcInstance(): Promise<PocketIc> {
-  if (process.env.DEBUG) return PocketIc.createFromUrl("http://localhost:7000");
-  return PocketIc.create();
+function createPocketIcInstance(options?: CreateInstanceOptions): Promise<PocketIc> {
+  if (process.env.DEBUG) return PocketIc.createFromUrl("http://localhost:7000", options);
+  return PocketIc.create(options);
 }
 
 async function deployCanister<_SERVICE>(
@@ -95,8 +95,8 @@ export function initTestSuite() {
     );
   };
 
-  const setup = async () => {
-    instance = await createPocketIcInstance();
+  const setup = async (options?: CreateInstanceOptions) => {
+    instance = await createPocketIcInstance(options);
   };
 
   const teardown = async () => {
