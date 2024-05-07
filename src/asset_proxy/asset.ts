@@ -13,11 +13,11 @@ export async function store(asset: AssetStoreArg): Promise<Result<bool, text>> {
   await ic.call(tempAssetCanister.store, {
     args: [
       {
-        key: asset.file_name,
+        key: asset.key,
         content_type: asset.content_type,
         content_encoding: asset.content_encoding,
-        content: asset.chunk,
-        sha256: None,
+        content: asset.content,
+        sha256: asset.sha256,
       },
     ],
   });
