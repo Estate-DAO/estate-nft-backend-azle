@@ -13,10 +13,11 @@ async function main() {
     agent: await getAgent(),
   });
  
-  const file = await readFile('./test.jpg');
-  console.log(await assetProxyManager.store('./test.jpg', {
-    contentEncoding: 'identity'
-  }));
+  console.log(
+    await assetProxyManager.store('./test.jpg', {
+      contentEncoding: 'identity'
+    })
+  );
   console.log(await assetManager.get('/test.jpg', ['identity']))
 }
 

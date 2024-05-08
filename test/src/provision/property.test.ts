@@ -16,30 +16,26 @@ describe("Property Requests", () => {
   let actor: provisionActor;
   const suite = initTestSuite();
   const admin = generateRandomIdentity();
-  
+
   const draftPropertyCount = 3;
   const publishedPropertyCount = 2;
   const totalPropertyCount = draftPropertyCount + publishedPropertyCount;
-  
+
   let draftProperties: Vec<nat> = [];
   let publishedProperties: Vec<nat> = [];
 
   async function seed() {
     const properties = await Promise.all(
-      new Array(totalPropertyCount)
-      .fill(undefined)
-      .map(async () => {
+      new Array(totalPropertyCount).fill(undefined).map(async () => {
         const res = await actor.add_property_request(testPropertyMetadata);
         expectResultIsOk(res);
 
         return res.Ok;
-      })
+      }),
     );
-    
+
     await Promise.all(
-      properties
-        .slice(0, publishedPropertyCount)
-        .map(id => actor.approve_request(id))
+      properties.slice(0, publishedPropertyCount).map((id) => actor.approve_request(id)),
     );
 
     publishedProperties = properties.slice(0, publishedPropertyCount);
@@ -54,15 +50,18 @@ describe("Property Requests", () => {
 
     const managementActor = await suite.attachToManagementCanister();
 
-    await configureCanisters({
-      provision,
-      assetProxy,
-      tempAsset,
-      management: {
-        canisterId: Principal.from("aaaaa-aa"),
-        actor: managementActor
-      }
-    }, admin.getPrincipal())
+    await configureCanisters(
+      {
+        provision,
+        assetProxy,
+        tempAsset,
+        management: {
+          canisterId: Principal.from("aaaaa-aa"),
+          actor: managementActor,
+        },
+      },
+      admin.getPrincipal(),
+    );
 
     actor = provision.actor;
     actor.setIdentity(admin);

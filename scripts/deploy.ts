@@ -8,15 +8,15 @@ import { createActor as createProvisionActor } from "../test/dfx_generated/provi
 import { Principal } from "@dfinity/principal";
 import { configureCanisters } from "../test/src/utils/deploy";
 import { managementIdl, managementService } from "../test/src/utils/canister";
-import { buildCanister, getAgent, getCanisterId } from "./common";
+import { buildCanister, deployCanister, getAgent, getCanisterId } from "./common";
 
 async function main() {
   const agent = await getAgent();
-  const provisionCanisterId = Principal.fromText(await getCanisterId('provision'));
-  const assetProxyCanisterId = Principal.fromText(await getCanisterId('asset_proxy'));
-  const tempAssetCanisterId = Principal.fromText(await getCanisterId('asset'));
+  const provisionCanisterId = Principal.fromText(await deployCanister('provision'));
+  const assetProxyCanisterId = Principal.fromText(await deployCanister('asset_proxy'));
+  const tempAssetCanisterId = Principal.fromText(await deployCanister('asset'));
   const managementCanisterId = Principal.fromText('aaaaa-aa');
-  // await buildCanister("estate_dao_nft");
+  await buildCanister("estate_dao_nft");
 
   const assetProxyActor = createAssetProxyActor(assetProxyCanisterId, { agent });
   const tempAssetActor = createAssetActor(tempAssetCanisterId, { agent });
