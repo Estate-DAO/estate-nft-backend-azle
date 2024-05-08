@@ -17,29 +17,41 @@ describe("Property Requests", () => {
   const suite = initTestSuite();
   const admin = generateRandomIdentity();
 
-  const draftPropertyCount = 3;
+  const draftPropertyCount = 1;
   const publishedPropertyCount = 2;
   const totalPropertyCount = draftPropertyCount + publishedPropertyCount;
 
-  let draftProperties: Vec<nat> = [];
-  let publishedProperties: Vec<nat> = [];
+  let publishedProperties: any[] = [];
 
   async function seed() {
     const properties = await Promise.all(
-      new Array(totalPropertyCount).fill(undefined).map(async () => {
-        const res = await actor.add_property_request(testPropertyMetadata);
-        expectResultIsOk(res);
+      new Array(totalPropertyCount).fill(undefined)
+        .map(async () => {
+          const res = await actor.add_property_request(testPropertyMetadata);
+          expectResultIsOk(res);
 
-        return res.Ok;
-      }),
+          return res.Ok;
+        }),
     );
 
     await Promise.all(
-      properties.slice(0, publishedPropertyCount).map((id) => actor.approve_request(id)),
+      properties
+        .slice(0, publishedPropertyCount)
+        .map((id) => actor.approve_request(id)),
     );
 
-    publishedProperties = properties.slice(0, publishedPropertyCount);
-    draftProperties = properties.slice(publishedPropertyCount);
+    publishedProperties = await Promise.all(
+      properties
+        .slice(0, publishedPropertyCount)
+        .map(async id => {
+          const property = await actor.get_request_info(id);
+          return {
+            id,
+            token_canister: property[0]?.token_canister[0]!,
+            asset_canister: property[0]?.asset_canister[0]!,
+          }
+        })
+    );
   }
 
   beforeAll(async () => {
@@ -71,20 +83,8 @@ describe("Property Requests", () => {
 
   afterAll(suite.teardown);
 
-  describe("list_properties", () => {
-    it("status: Draft", async () => {
-      const listedProperties = await actor.list_properties([{ Draft: null }]);
-      expect(listedProperties.sort()).toEqual(draftProperties.sort());
-    });
-
-    it("status: Published", async () => {
-      const listedProperties = await actor.list_properties([{ Published: null }]);
-      expect(listedProperties.sort()).toEqual(publishedProperties.sort());
-    });
-
-    it("status: Default", async () => {
-      const listedProperties = await actor.list_properties([]);
-      expect(listedProperties.sort()).toEqual(publishedProperties.sort());
-    });
+  it("list_properties", async () => {
+    const listedProperties = await actor.list_properties();
+    expect(listedProperties.sort()).toEqual(publishedProperties.sort());
   });
 });
