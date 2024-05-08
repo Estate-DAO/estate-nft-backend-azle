@@ -45,3 +45,4 @@ export const ListPropertiesResult = Record({
   asset_canister: Principal,
 });
 export type ListPropertiesResult = typeof ListPropertiesResult.tsType;
+
