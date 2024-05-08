@@ -16,7 +16,7 @@ async function main() {
   const assetProxyCanisterId = Principal.fromText(await getCanisterId('asset_proxy'));
   const tempAssetCanisterId = Principal.fromText(await getCanisterId('asset'));
   const managementCanisterId = Principal.fromText('aaaaa-aa');
-  await buildCanister("estate_dao_nft");
+  // await buildCanister("estate_dao_nft");
 
   const assetProxyActor = createAssetProxyActor(assetProxyCanisterId, { agent });
   const tempAssetActor = createAssetActor(tempAssetCanisterId, { agent });

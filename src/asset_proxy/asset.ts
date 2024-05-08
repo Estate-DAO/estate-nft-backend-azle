@@ -1,7 +1,7 @@
 import { None, Result, Vec, bool, ic, text } from "azle";
 import { TempAssetCanisterStore } from "./store";
 import { ApproveFilesArg, AssetStoreArg } from "./types";
-import { validateAssetUploader, validateProvisionCanister } from "./validate";
+import { validateAssetUploader, validateController, validateProvisionCanister } from "./validate";
 import { getAssetCanister } from "../common/utils";
 import { isErr } from "../common/utils";
 
@@ -22,6 +22,25 @@ export async function store(asset: AssetStoreArg): Promise<Result<bool, text>> {
     ],
   });
 
+  return Result.Ok(true);
+}
+
+export async function prune(files: Vec<text>): Promise<Result<bool, text>> {
+  const validationResult = validateController(ic.caller());
+  if (isErr(validationResult)) return validationResult;
+
+  const tempAssetCanister = getAssetCanister(TempAssetCanisterStore.getPrincipal());
+  const promises = files.map(async (file) => {
+    await ic.call(tempAssetCanister.delete_asset, {
+      args: [
+        {
+          key: file,
+        },
+      ],
+    });
+  });
+
+  await Promise.all(promises);
   return Result.Ok(true);
 }
 
