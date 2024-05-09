@@ -5,7 +5,7 @@ import {
   getModuleHash,
   loadWasmChunksToCanister,
 } from "./wasm";
-import { assetProxyService, assetService, managementService, provisionService } from "./canister";
+import { assetProxyService, assetService, managementService, provisionService } from "./canister.js";
 
 type CanisterFixture<T> = {
   canisterId: Principal;

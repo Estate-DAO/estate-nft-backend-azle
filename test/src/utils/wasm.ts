@@ -3,7 +3,7 @@ import { exec } from "child_process";
 import { readFile } from "fs/promises";
 import path from "path";
 import { createHash } from "crypto";
-import { managementService } from "./canister";
+import { managementService } from "./canister.js";
 
 export const PROVISION_CANISTER_WASM = path.resolve(
   ".dfx",

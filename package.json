@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@dfinity/candid": "^1.0.1",
+    "@dfinity/ledger-icp": "^2.2.3",
     "@dfinity/principal": "^1.0.1",
     "azle": "^0.20.2"
   },
