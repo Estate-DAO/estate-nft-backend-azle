@@ -22,6 +22,7 @@ import {
   provisionInit,
   provisionService,
 } from "./canister";
+import { AccountIdentifier } from "@dfinity/ledger-icp";
 
 function createPocketIcInstance(options?: CreateInstanceOptions): Promise<PocketIc> {
   if (process.env.DEBUG) return PocketIc.createFromUrl("http://localhost:7000", options);
@@ -111,7 +112,7 @@ export function initTestSuite() {
           send_whitelist: [],
           token_symbol: [],
           transfer_fee: [],
-          minting_account: "",
+          minting_account: AccountIdentifier.fromPrincipal({ principal: minterPrincipal }).toHex(),
           maximum_number_of_accounts: [],
           accounts_overflow_trim_quantity: [],
           transaction_window: [],

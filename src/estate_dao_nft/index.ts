@@ -26,7 +26,6 @@ import {
   Account,
   MintArg,
   TransferResult,
-  BurnArg,
   TransferArg,
   ICRC61Standards,
   TxnResult,
@@ -37,7 +36,6 @@ import {
 import { initImpl } from "./base";
 import { icrc61_supported_standards } from "./icrc61";
 import {
-  burn,
   icrc7_balance_of,
   icrc7_owner_of,
   icrc7_token_metadata,
@@ -73,9 +71,8 @@ export default Canister({
   icrc7_balance_of: query([Vec(Account)], Vec(nat), icrc7_balance_of),
   icrc7_tokens: query([Opt(nat), Opt(nat)], Vec(nat), icrc7_tokens),
   icrc7_tokens_of: query([Account, Opt(nat), Opt(nat)], Vec(nat), icrc7_tokens_of),
-  mint: update([Opt(Subaccount)], Result(nat32, text), mint),
+  mint: update([MintArg], Result(nat, text), mint),
   refund: update([Opt(Subaccount)], Result(bool, text), refund),
-  burn: update([Vec(BurnArg)], Vec(Opt(TransferResult)), burn),
   icrc7_transfer: update([Vec(TransferArg)], Vec(Opt(TransferResult)), icrc7_transfer),
 
   icrc61_supported_standards: query([], ICRC61Standards, icrc61_supported_standards),

@@ -2,8 +2,7 @@ import * as estateDaoNft from "../../dfx_generated/estate_dao_nft/estate_dao_nft
 import * as provision from "../../dfx_generated/provision/provision.did.js";
 import * as asset from "../../dfx_generated/asset/asset.did.js";
 import * as assetProxy from "../../dfx_generated/asset_proxy/asset_proxy.did.js";
-import type * as icpLedgerTypes from "@dfinity/ledger-icp/dist/candid/ledger";
-import * as icpLedger from "./ledger.idl";
+import * as icpLedger from "../../dfx_generated/icp_ledger/icp_ledger.did.js";
 import managementCanisterIdl from "@dfinity/agent/lib/cjs/canisters/management_idl.js";
 import { ActorMethod, ManagementCanisterRecord } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
@@ -51,11 +50,10 @@ export type provisionService = provision._SERVICE;
 export type assetService = asset._SERVICE;
 export type assetProxyService = assetProxy._SERVICE;
 export type managementService = ManagementCanisterRecordPatched;
-export type icpLedgerService = icpLedgerTypes._SERVICE;
+export type icpLedgerService = icpLedger._SERVICE;
 
 export const estateDaoNftInit = estateDaoNft.init;
 export const provisionInit = provision.init;
 export const assetInit = asset.init;
 export const assetProxyInit = assetProxy.init;
-// @ts-ignore
 export const icpLedgerInit = icpLedger.init; 

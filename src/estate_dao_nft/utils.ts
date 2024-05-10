@@ -52,12 +52,3 @@ export function toOptionalSchema<T extends { [name: string]: CandidType }>(
     return acc;
   }, {} as any);
 }
-
-export function deriveSubaccount(principal: Principal): Subaccount {
-  const principalInBytes = principal.toUint8Array();
-  const subaccount = new Uint8Array(32);
-  const startIndex = subaccount.length - principalInBytes.length;
-
-  principalInBytes.forEach((val, ind) => subaccount[startIndex+ind] = val);
-  return subaccount;
-}

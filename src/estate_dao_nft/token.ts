@@ -1,5 +1,5 @@
 import { Opt, Principal, Vec, ic, nat } from "azle";
-import { Account, BurnArg, MetadataResult, MintArg, TransferArg, TransferResult } from "./types";
+import { Account, MetadataResult, MintArg, TransferArg, TransferResult } from "./types";
 import { TokenStore, TxnIndexStore } from "./store";
 import { bigIntToNumber, isSubaccountsEq, toAccountId, toOpt } from "./utils";
 import { iterableToArray } from "../common/utils";
@@ -54,31 +54,6 @@ export function icrc7_tokens_of(account: Account, prev: Opt<nat>, take: Opt<nat>
   return tokens
     .slice(prevIndex + 1, prevIndex + 1 + bigIntToNumber(take.Some ?? 5n))
     .map((id) => BigInt(id));
-}
-
-// TODO: Implement memo and created_at_time checks
-export function mint(args: Vec<MintArg>): Vec<Opt<TransferResult>> {
-  // TODO: DISABLED for local dev
-  // if ( ic.caller().isAnonymous() ) return [toOpt({ Err: { Unauthorized: null } })];
-
-  return args.map((arg) => {
-    const tokenId = TokenStore.mint(ic.caller().toString(), arg.subaccount.Some);
-    return toOpt({ Ok: BigInt(tokenId) });
-  });
-}
-
-export function burn(args: Vec<BurnArg>): Vec<Opt<TransferResult>> {
-  return args.map((arg) => {
-    const tokenId = bigIntToNumber(arg.token_id);
-    const token = TokenStore.tokens.get(tokenId);
-
-    if (!token) return toOpt({ Err: { NonExistingTokenId: null } });
-    if (token.owner.principal !== ic.caller().toString())
-      return toOpt({ Err: { Unauthorized: null } });
-
-    TokenStore.burn(tokenId);
-    return toOpt({ Ok: TxnIndexStore.index });
-  });
 }
 
 export function icrc7_transfer(args: Vec<TransferArg>): Vec<Opt<TransferResult>> {

@@ -19,12 +19,6 @@ export const MintArg = Record({
 
 export type MintArg = typeof MintArg.tsType;
 
-export const BurnArg = Record({
-  token_id: nat,
-});
-
-export type BurnArg = typeof BurnArg.tsType;
-
 export const TransferArg = Record({
   from_subaccount: Opt(Subaccount),
   to: Account,

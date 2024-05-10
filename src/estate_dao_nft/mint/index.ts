@@ -1,9 +1,9 @@
-import { None, Opt, Result, Some, blob, bool, ic, nat, nat32, text } from "azle";
-import { deriveSubaccount } from "../utils";
+import { None, Opt, Result, Some, blob, bool, ic, nat, nat32, nat64, text } from "azle";
+import { deriveSubaccount } from "../../common/token";
 import { validateInvestor } from "../validate";
 import { getTokenLedger, TRANSFER_FEE } from "../../common/ledger";
 import { MetadataStore, TokenStore } from "../store";
-import { Subaccount } from "../types";
+import { MintArg, Subaccount } from "../types";
 
 export async function refund(to_subaccount: Opt<Subaccount>): Promise<Result<bool, text>> {
   const principal = ic.caller();
@@ -13,27 +13,35 @@ export async function refund(to_subaccount: Opt<Subaccount>): Promise<Result<boo
   if ( validationResult.Err ) return validationResult;
 
   const subaccount = deriveSubaccount(principal);
-  const escrowBalance = await icpLedger.icrc1_balance_of({
-    owner: ic.id(),
-    subaccount: Some(subaccount)
-  });
+  const escrowBalance = await ic.call(
+    icpLedger.icrc1_balance_of, 
+    {
+      args: [{
+        owner: ic.id(),
+        subaccount: Some(subaccount)
+      }]
+    }
+  );
   
-  await icpLedger.icrc1_transfer({
-    from_subaccount: Some(subaccount),
-    to: {
-      owner: principal,
-      subaccount: to_subaccount
-    },
-    amount: escrowBalance - TRANSFER_FEE,
-    fee: Some(TRANSFER_FEE),
-    memo: None,
-    created_at_time: None,
+  await ic.call(icpLedger.icrc1_transfer, {
+    args: [{
+      from_subaccount: Some(subaccount),
+      to: {
+        owner: principal,
+        subaccount: to_subaccount
+      },
+      amount: escrowBalance - TRANSFER_FEE,
+      fee: Some(TRANSFER_FEE),
+      memo: None,
+      created_at_time: None,
+    }]
   });
 
   return Result.Ok(true);
 }
 
-export async function mint(to_subaccount: Opt<Subaccount>): Promise<Result<nat32, text>> {
+// TODO: Implement memo and created_at_time checks
+export async function mint({ subaccount: to_subaccount }: MintArg): Promise<Result<nat, text>> {
   const principal = ic.caller();
   const icpLedger = getTokenLedger(MetadataStore.metadata.token);
 
@@ -41,10 +49,15 @@ export async function mint(to_subaccount: Opt<Subaccount>): Promise<Result<nat32
   if ( validationResult.Err ) return validationResult;
   
   const subaccount = deriveSubaccount(principal);
-  const escrowBalance = await icpLedger.icrc1_balance_of({
-    owner: ic.id(),
-    subaccount: Some(subaccount)
-  });
+  const escrowBalance = await ic.call(
+    icpLedger.icrc1_balance_of, 
+    {
+      args: [{
+        owner: ic.id(),
+        subaccount: Some(subaccount)
+      }]
+    }
+  );
 
   if ( escrowBalance < MetadataStore.metadata.price + TRANSFER_FEE )
     return Result.Err("Invalid balance in escrow.");
@@ -55,21 +68,23 @@ export async function mint(to_subaccount: Opt<Subaccount>): Promise<Result<nat32
   const tokenId = TokenStore.mint(principal.toString(), to_subaccount.Some);
 
   try {
-    await icpLedger.icrc1_transfer({
-      from_subaccount: Some(subaccount),
-      to: {
-        owner: MetadataStore.metadata.treasury,
-        subaccount: None
-      },
-      amount: MetadataStore.metadata.price - TRANSFER_FEE,
-      fee: Some(TRANSFER_FEE),
-      memo: None,
-      created_at_time: None,
+    await ic.call(icpLedger.icrc1_transfer, {
+      args: [{
+        from_subaccount: Some(subaccount),
+        to: {
+          owner: MetadataStore.metadata.treasury,
+          subaccount: None
+        },
+        amount: MetadataStore.metadata.price - TRANSFER_FEE,
+        fee: Some(TRANSFER_FEE),
+        memo: None,
+        created_at_time: None,
+      }]
     });
   } catch ( err )  {
     TokenStore.burn(tokenId);
     return Result.Err("An error occured while transferring ICP to treasury.");
   }
 
-  return Result.Ok(tokenId);
+  return Result.Ok(BigInt(tokenId));
 }
