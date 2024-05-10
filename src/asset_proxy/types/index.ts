@@ -1,10 +1,11 @@
 import { Opt, Principal, Record, Vec, blob, nat, text } from "azle";
 
 export const AssetStoreArg = Record({
-  file_name: text,
+  key: text,
   content_type: text,
   content_encoding: text,
-  chunk: blob,
+  content: blob,
+  sha256: Opt(blob),
 });
 export type AssetStoreArg = typeof AssetStoreArg.tsType;
 
