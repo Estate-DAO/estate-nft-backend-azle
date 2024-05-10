@@ -1,6 +1,6 @@
 import path from "path";
 import { IDL } from "@dfinity/candid";
-import { Actor, CanisterFixture, PocketIc, SetupCanisterOptions } from "@hadronous/pic";
+import { Actor, CanisterFixture, CreateInstanceOptions, PocketIc, SetupCanisterOptions } from "@hadronous/pic";
 import { Principal } from "@dfinity/principal";
 import { SamplePropertyInit } from "./sample";
 import {
@@ -13,16 +13,20 @@ import {
   estateDaoNftIdl,
   estateDaoNftInit,
   estateDaoNftService,
+  icpLedgerIdl,
+  icpLedgerInit,
+  icpLedgerService,
   managementIdl,
   managementService,
   provisionIdl,
   provisionInit,
   provisionService,
 } from "./canister";
+import { AccountIdentifier } from "@dfinity/ledger-icp";
 
-function createPocketIcInstance(): Promise<PocketIc> {
-  if (process.env.DEBUG) return PocketIc.createFromUrl("http://localhost:7000");
-  return PocketIc.create();
+function createPocketIcInstance(options?: CreateInstanceOptions): Promise<PocketIc> {
+  if (process.env.DEBUG) return PocketIc.createFromUrl("http://localhost:7000", options);
+  return PocketIc.create(options);
 }
 
 async function deployCanister<_SERVICE>(
@@ -95,8 +99,40 @@ export function initTestSuite() {
     );
   };
 
-  const setup = async () => {
-    instance = await createPocketIcInstance();
+  const deployIcpLedgerCanister = async (
+    minterPrincipal: Principal,
+    args?: Partial<SetupCanisterOptions>,
+  ) => {
+    return deployCanister<icpLedgerService>(
+      instance,
+      icpLedgerIdl,
+      path.resolve('test', 'ledger-canister', 'ledger.wasm.gz'),
+      IDL.encode(icpLedgerInit({ IDL }), [{
+        Init: {
+          send_whitelist: [],
+          token_symbol: [],
+          transfer_fee: [],
+          minting_account: AccountIdentifier.fromPrincipal({ principal: minterPrincipal }).toHex(),
+          maximum_number_of_accounts: [],
+          accounts_overflow_trim_quantity: [],
+          transaction_window: [],
+          max_message_size_bytes: [],
+          icrc1_minting_account: [{
+            owner: minterPrincipal,
+            subaccount: []
+          }],
+          archive_options: [],
+          initial_values: [],
+          token_name: [],
+          feature_flags: [],
+        }
+      }]),
+      args
+    )
+  }
+
+  const setup = async (options?: CreateInstanceOptions) => {
+    instance = await createPocketIcInstance(options);
   };
 
   const teardown = async () => {
@@ -115,6 +151,10 @@ export function initTestSuite() {
     return instance.createActor(managementIdl, Principal.fromText("aaaaa-aa"));
   };
 
+  const attachToIcpLedgerCanister = (principal: Principal): icpLedgerActor => {
+    return instance.createActor(icpLedgerIdl, principal);
+  };
+
   const getInstance = (): PocketIc => {
     return instance;
   };
@@ -127,9 +167,11 @@ export function initTestSuite() {
     deployEstateDaoNftCanister,
     deployAssetCanister,
     deployAssetProxyCanister,
+    deployIcpLedgerCanister,
     attachToTokenCanister,
     attachToAssetCanister,
     attachToManagementCanister,
+    attachToIcpLedgerCanister,
   };
 }
 
@@ -143,3 +185,5 @@ export type assetProxyFixture = CanisterFixture<assetProxyService>;
 export type assetProxyActor = Actor<assetProxyService>;
 export type managementFixture = CanisterFixture<managementService>;
 export type managementActor = Actor<managementService>;
+export type icpLedgerActor = Actor<icpLedgerService>;
+export type icpLedgerFixture = CanisterFixture<icpLedgerService>;

@@ -23,6 +23,12 @@ export const CollectionMetadataRaw = {
   name: text,
   description: text,
   logo: text,
+  supply_cap: nat,
+  price: nat,
+  treasury: Principal,
+  asset_canister: Principal,
+  token: Principal,
+  documents: Vec(Tuple(text, text)),
 };
 
 export const PropertyDetailsRaw = {
@@ -93,9 +99,7 @@ export const MetadataRaw = {
   ...PropertyDetailsRaw,
   ...CollectionMetadataRaw,
 
-  asset_canister: Principal,
   property_owner: Principal,
-  documents: Vec(Tuple(text, text)),
 };
 
 export const MetadataUpdateRaw = toOptionalSchema({
@@ -103,9 +107,6 @@ export const MetadataUpdateRaw = toOptionalSchema({
   ...MarketDetailsRaw,
   ...PropertyDetailsRaw,
   ...CollectionMetadataRaw,
-
-  asset_canister: Principal,
-  documents: MetadataRaw.documents,
 });
 
 export const PropertyMetadataResultRaw = {

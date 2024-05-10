@@ -1,4 +1,4 @@
-import { Opt, update as azleUpdate, AzleOpt, CandidType } from "azle";
+import { Opt, update as azleUpdate, AzleOpt, CandidType, Principal } from "azle";
 import { Subaccount } from "./types";
 import { TxnIndexStore } from "./store";
 

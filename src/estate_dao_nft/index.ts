@@ -1,4 +1,4 @@
-import { bool, Canister, init, nat, Opt, Principal, query, text, Vec } from "azle";
+import { bool, Canister, init, nat, nat32, Opt, Principal, query, Result, text, Vec } from "azle";
 import { update } from "./utils";
 import {
   icrc7_symbol,
@@ -26,25 +26,25 @@ import {
   Account,
   MintArg,
   TransferResult,
-  BurnArg,
   TransferArg,
   ICRC61Standards,
   TxnResult,
   MetadataUpdateArg,
   PropertyMetadataResult,
+  Subaccount,
+  RefundArg,
 } from "./types";
 import { initImpl } from "./base";
 import { icrc61_supported_standards } from "./icrc61";
 import {
-  burn,
   icrc7_balance_of,
   icrc7_owner_of,
   icrc7_token_metadata,
   icrc7_tokens,
   icrc7_tokens_of,
   icrc7_transfer,
-  mint,
 } from "./token";
+import { mint, refund } from "./mint";
 
 export default Canister({
   init: init([InitArg], initImpl),
@@ -72,8 +72,8 @@ export default Canister({
   icrc7_balance_of: query([Vec(Account)], Vec(nat), icrc7_balance_of),
   icrc7_tokens: query([Opt(nat), Opt(nat)], Vec(nat), icrc7_tokens),
   icrc7_tokens_of: query([Account, Opt(nat), Opt(nat)], Vec(nat), icrc7_tokens_of),
-  mint: update([Vec(MintArg)], Vec(Opt(TransferResult)), mint),
-  burn: update([Vec(BurnArg)], Vec(Opt(TransferResult)), burn),
+  mint: update([MintArg], Result(nat, text), mint),
+  refund: update([RefundArg], Result(bool, text), refund),
   icrc7_transfer: update([Vec(TransferArg)], Vec(Opt(TransferResult)), icrc7_transfer),
 
   icrc61_supported_standards: query([], ICRC61Standards, icrc61_supported_standards),
