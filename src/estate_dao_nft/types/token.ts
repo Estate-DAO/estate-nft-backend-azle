@@ -16,8 +16,12 @@ export type OwnerToTokensIndexReadonlyType = ReadonlyMap<text, ReadonlyMap<nat32
 export const MintArg = Record({
   subaccount: Opt(Subaccount),
 });
-
 export type MintArg = typeof MintArg.tsType;
+
+export const RefundArg = Record({
+  subaccount: Opt(Subaccount),
+});
+export type RefundArg = typeof RefundArg.tsType;
 
 export const TransferArg = Record({
   from_subaccount: Opt(Subaccount),

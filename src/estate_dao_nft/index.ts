@@ -32,6 +32,7 @@ import {
   MetadataUpdateArg,
   PropertyMetadataResult,
   Subaccount,
+  RefundArg,
 } from "./types";
 import { initImpl } from "./base";
 import { icrc61_supported_standards } from "./icrc61";
@@ -72,7 +73,7 @@ export default Canister({
   icrc7_tokens: query([Opt(nat), Opt(nat)], Vec(nat), icrc7_tokens),
   icrc7_tokens_of: query([Account, Opt(nat), Opt(nat)], Vec(nat), icrc7_tokens_of),
   mint: update([MintArg], Result(nat, text), mint),
-  refund: update([Opt(Subaccount)], Result(bool, text), refund),
+  refund: update([RefundArg], Result(bool, text), refund),
   icrc7_transfer: update([Vec(TransferArg)], Vec(Opt(TransferResult)), icrc7_transfer),
 
   icrc61_supported_standards: query([], ICRC61Standards, icrc61_supported_standards),

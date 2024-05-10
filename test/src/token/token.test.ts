@@ -3,6 +3,7 @@ import { estateDaoActor, icpLedgerActor, initTestSuite } from "../utils/pocket-i
 import { Principal } from "@dfinity/principal";
 import { deriveSubaccount } from "../../../src/common/token";
 import { expectResultIsOk } from "../utils/common";
+import { Result } from "azle";
 
 const TOKEN_PRICE = 100000n;
 const TRANSFER_FEE = 10_000n;
@@ -80,7 +81,9 @@ describe("Token", () => {
       })
       expect(escrowBalanceBeforeRefund).toBe(TOKEN_PRICE + TRANSFER_FEE);
 
-      const res = await tokenActor.refund([]);
+      const res = await tokenActor.refund({
+        subaccount: []
+      });
       expectResultIsOk(res);
 
       const escrowBalanceAfterRefund = await icpLedgerActor.icrc1_balance_of({
@@ -188,6 +191,24 @@ describe("Token", () => {
       expect(transferRes).toHaveLength(1);
       expect(transferRes[0]).toHaveLength(1);
       expect((transferRes[0][0] as any).Err.InvalidRecipient).toBe(null);
+    });
+
+    it("success", async () => {
+      tokenActor.setIdentity(accountA);
+      const transferRes = await tokenActor.icrc7_transfer([
+        {
+          to: {
+            owner: accountB.getPrincipal(),
+            subaccount: [],
+          },
+          from_subaccount: [],
+          token_id: mintedTokenId,
+          memo: [],
+          created_at_time: [],
+        },
+      ]);
+
+      expectResultIsOk(transferRes[0][0]!);
     });
   });
 });

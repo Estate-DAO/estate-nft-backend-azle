@@ -16,7 +16,7 @@ async function getAgent(): Promise<HttpAgent> {
     readFileSync(identityPemFilePath, {encoding: 'utf8'})
   )
   
-  const agent = new HttpAgent({ host, identity: identity as Identity });
+  const agent = new HttpAgent({ host, identity: identity as unknown as Identity });
   if ( process.env.DFX_NETWORK !== 'ic' ) {
     await agent.fetchRootKey().catch((err) => {
       console.warn(

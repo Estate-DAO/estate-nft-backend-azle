@@ -3,9 +3,9 @@ import { deriveSubaccount } from "../../common/token";
 import { validateInvestor } from "../validate";
 import { getTokenLedger, TRANSFER_FEE } from "../../common/ledger";
 import { MetadataStore, TokenStore } from "../store";
-import { MintArg, Subaccount } from "../types";
+import { MintArg, RefundArg, Subaccount } from "../types";
 
-export async function refund(to_subaccount: Opt<Subaccount>): Promise<Result<bool, text>> {
+export async function refund({subaccount: to_subaccount}: RefundArg): Promise<Result<bool, text>> {
   const principal = ic.caller();
   const icpLedger = getTokenLedger(MetadataStore.metadata.token);
 
