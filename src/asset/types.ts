@@ -21,7 +21,6 @@ export const GetArgs = Record({
 export type GetArgs = typeof GetArgs.tsType;
 
 export const GetRes = Record({
-  key: text,
   content_type: text,
   content_encoding: text,
   content: blob,
