@@ -75,7 +75,7 @@ export async function mint({ subaccount: to_subaccount }: MintArg): Promise<Resu
           owner: MetadataStore.metadata.treasury,
           subaccount: None
         },
-        amount: MetadataStore.metadata.price - TRANSFER_FEE,
+        amount: MetadataStore.metadata.price,
         fee: Some(TRANSFER_FEE),
         memo: None,
         created_at_time: None,
