@@ -58,7 +58,7 @@ export const FinancialDetailsRaw = {
   llc_monthly_franchise_tax: float32,
   vacancy_rate: float32,
   property_taxes: float32,
-  property_managment_fee: float32,
+  property_management_fee: float32,
   projected_rent: float32,
   monthly_utilities: float32,
   average_5_year_roi: float32,
@@ -76,7 +76,7 @@ export const MarketDetailsRaw = {
   average_rent: nat32,
   median_home_sale_price: nat32,
   coordinates: text,
-  annual_popullation_growth: nat32,
+  annual_population_growth: nat32,
 };
 
 export const ConfigRaw = {

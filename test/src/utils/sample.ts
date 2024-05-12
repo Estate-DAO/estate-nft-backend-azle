@@ -38,7 +38,7 @@ export const SamplePropertyInit = {
   state: "",
   property_taxes: 0,
   price_per_sq_foot: 0,
-  property_managment_fee: 0,
+  property_management_fee: 0,
   market_description: "",
   cap_rate: 0,
   baths: 0,
@@ -52,7 +52,7 @@ export const SamplePropertyInit = {
   median_home_sale_price: 0,
   symbol: "",
   coordinates: "",
-  annual_popullation_growth: 0,
+  annual_population_growth: 0,
 };
 
 export const SamplePropertyUpdate = {
@@ -91,7 +91,7 @@ export const SamplePropertyUpdate = {
   state: [],
   property_taxes: [],
   price_per_sq_foot: [],
-  property_managment_fee: [],
+  property_management_fee: [],
   market_description: [],
   cap_rate: [],
   baths: [],
@@ -104,7 +104,7 @@ export const SamplePropertyUpdate = {
   median_home_sale_price: [],
   symbol: [],
   coordinates: [],
-  annual_popullation_growth: [],
+  annual_population_growth: [],
 } as Parameters<estateDaoNft._SERVICE["update_metadata"]>[0];
 
 export const SamplePropertyRequest = {
@@ -142,7 +142,7 @@ export const SamplePropertyRequest = {
   state: "",
   property_taxes: 0,
   price_per_sq_foot: 0,
-  property_managment_fee: 0,
+  property_management_fee: 0,
   market_description: "",
   cap_rate: 0,
   baths: 0,
@@ -155,5 +155,5 @@ export const SamplePropertyRequest = {
   median_home_sale_price: 0,
   symbol: "",
   coordinates: "",
-  annual_popullation_growth: 0,
+  annual_population_growth: 0,
 } as Parameters<provision._SERVICE["add_property_request"]>[0];
