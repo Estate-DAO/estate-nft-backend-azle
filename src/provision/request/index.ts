@@ -1,6 +1,6 @@
 import { None, Opt, Principal, Result, Some, Vec, bool, ic, nat, text } from "azle";
 import { PropertyMetadata, RequestInfo } from "../types";
-import { RequestStore } from "../store";
+import { AssetProxyCanisterStore, RequestStore } from "../store";
 import { validateAdmin, validatePropertyRequester } from "../validate";
 import { isErr, isOk, iterableToArray } from "../../common/utils";
 import {
@@ -8,6 +8,7 @@ import {
   deploy_token,
   grant_asset_admin_perms,
   grant_asset_edit_perms,
+  revoke_asset_edit_perms,
 } from "../canister";
 import { approve_files_from_proxy } from "../canister/asset_proxy";
 
@@ -58,11 +59,17 @@ export async function approve_request(id: nat): Promise<Result<bool, text>> {
   const deployAssetResult = await deploy_asset();
   if (isErr(deployAssetResult)) return deployAssetResult;
 
+  const grantProxyPermsResult = await grant_asset_edit_perms(deployAssetResult.Ok, AssetProxyCanisterStore.id);
+  if (isErr(grantProxyPermsResult)) return grantProxyPermsResult;
+
   const approveAssetsResult = await approve_files_from_proxy(
     deployAssetResult.Ok,
     requestMetadata.documents.map((doc) => doc[1]),
   );
   if (isErr(approveAssetsResult)) return approveAssetsResult;
+
+  const revokeProxyPermsResult = await revoke_asset_edit_perms(deployAssetResult.Ok, AssetProxyCanisterStore.id);
+  if (isErr(revokeProxyPermsResult)) return revokeProxyPermsResult;
 
   const deployTokenResult = await deploy_token({
     ...requestMetadata,
@@ -77,6 +84,7 @@ export async function approve_request(id: nat): Promise<Result<bool, text>> {
   );
   if (isErr(grantAssetAdminAccessResult)) return grantAssetAdminAccessResult;
 
+  // TODO: move to minter canister
   const grantAssetEditAccessResult = await grant_asset_edit_perms(
     deployAssetResult.Ok,
     requestConfig.property_owner,
