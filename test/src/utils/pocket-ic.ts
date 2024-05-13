@@ -73,7 +73,7 @@ export function initTestSuite() {
       instance,
       assetProxyIdl,
       path.resolve(".azle", "asset_proxy", "asset_proxy.wasm.gz"),
-      IDL.encode(assetProxyInit({ IDL }), []),
+      IDL.encode(assetProxyInit({ IDL }), [[]]),
       args,
     );
   };

@@ -1,4 +1,4 @@
-import { Opt, Principal, Record, Vec, blob, nat, text } from "azle";
+import { Null, Opt, Principal, Record, Variant, Vec, blob, nat, text } from "azle";
 
 export const AssetStoreArg = Record({
   key: text,
@@ -14,3 +14,9 @@ export const ApproveFilesArg = Record({
   asset_canister: Principal,
 });
 export type ApproveFilesArg = typeof ApproveFilesArg.tsType;
+
+export const CanisterArgs = Variant({
+  Init: Null,
+  Upgrade: Null
+});
+export type CanisterArgs = typeof CanisterArgs.tsType;
