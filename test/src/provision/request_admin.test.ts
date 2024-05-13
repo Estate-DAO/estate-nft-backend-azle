@@ -184,14 +184,34 @@ describe("Property Requests", () => {
       expect(isSome(request[0]!.token_canister)).toBe(true);
       if (!isSome(request[0]!.token_canister)) return;
 
-      const canisterId = request[0]!.token_canister[0];
-      const tokenActor = suite.attachToTokenCanister(canisterId);
+      const tokenCanisterId = request[0]!.token_canister[0];
+      const tokenActor = suite.attachToTokenCanister(tokenCanisterId);
 
       const name = await tokenActor.icrc7_name();
       const symbol = await tokenActor.icrc7_symbol();
 
       expect(name).toBe(testPropertyMetadata.name);
       expect(symbol).toBe(testPropertyMetadata.symbol);
+
+      const assetCanisterId = request[0]!.asset_canister[0]!;
+      const assetActor = suite.attachToAssetCanister(assetCanisterId);
+
+      const tokenPermsValidationRes = await assetActor.validate_grant_permission({
+        to_principal: tokenCanisterId,
+        permission: {
+          ManagePermissions: null
+        }
+      });
+
+      const ownerPermsValidationRes = await assetActor.validate_grant_permission({
+        to_principal: bob.getPrincipal(),
+        permission: {
+          Commit: null
+        }
+      });
+
+      expect('Ok' in tokenPermsValidationRes).toBe(true);
+      expect('Ok' in ownerPermsValidationRes).toBe(true);
     });
   });
 });
