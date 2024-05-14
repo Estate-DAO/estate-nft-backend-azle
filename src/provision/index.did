@@ -14,4 +14,6 @@ service: (opt variant {Upgrade; Init}) -> {
     set_asset_canister_wasm: (record {moduleHash:vec nat8; chunkHashes:vec vec nat8}) -> (variant {Ok:bool; Err:text});
     set_asset_proxy_canister: (principal) -> (variant {Ok:bool; Err:text});
     set_token_canister_wasm: (record {moduleHash:vec nat8; chunkHashes:vec vec nat8}) -> (variant {Ok:bool; Err:text});
+    upgrade_token_canister: (principal) -> (variant {Ok:bool; Err:text});
+    upgrade_token_canisters: () -> (variant {Ok:bool; Err:text});
 }
