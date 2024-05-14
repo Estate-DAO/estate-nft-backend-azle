@@ -1,4 +1,4 @@
-import { Principal } from "azle";
+import { Principal, jsonReplacer, jsonReviver } from "azle";
 import { ConfigStoreType, InitArg, MetadataRaw, MetadataStoreType, MetadataUpdateArg } from "../types";
 import { Store } from "../../common/types";
 
@@ -54,59 +54,15 @@ export class MetadataStore implements Store {
 
   serialize(): string | undefined {
     const toSerialize = {
-      metadata: {} as any,
-      config: {} as any,
+      metadata: this._metadata,
+      config: this._config,
     };
 
-    Object
-      .entries(this.metadata)
-      .forEach(([key, value]) => {
-        let transformedValue;
-        
-        switch (typeof value) {
-          case 'bigint':
-            transformedValue = value.toString();
-            break;
-          
-          case 'object':
-            if ( value instanceof Principal )
-              transformedValue = value.toString();
-            transformedValue = value;
-
-          default:
-            transformedValue = value;
-        }
-
-        toSerialize.metadata[key] = transformedValue;
-      })
-    
-    Object
-      .entries(this.metadata)
-      .forEach(([key, value]) => {
-        let transformedValue;
-        
-        switch (typeof value) {
-          case 'bigint':
-            transformedValue = value.toString();
-            break;
-          
-          case 'object':
-            if ( value instanceof Principal )
-              transformedValue = value.toString();
-            transformedValue = value;
-
-          default:
-            transformedValue = value;
-        }
-
-        toSerialize.config[key] = transformedValue;
-      })
-
-    return JSON.stringify(toSerialize);
+    return JSON.stringify(toSerialize, jsonReplacer);
   }
 
   deserialize(serialized: string): void {
-    const { metadata, config } = JSON.parse(serialized);
+    const { metadata, config } = JSON.parse(serialized, jsonReviver);
     
     this._metadata = metadata;
     this._config = config;

@@ -5,6 +5,8 @@ import {
   init,
   nat,
   Opt,
+  postUpgrade,
+  preUpgrade,
   Principal,
   query,
   Result,
@@ -12,7 +14,7 @@ import {
   update,
   Vec,
 } from "azle";
-import { PropertyMetadata, ListPropertiesResult, RequestInfo, WasmChunked } from "./types";
+import { PropertyMetadata, ListPropertiesResult, RequestInfo, WasmChunked, CanisterArgs } from "./types";
 import {
   add_property_request,
   approve_request,
@@ -21,7 +23,7 @@ import {
   reject_request,
 } from "./request";
 import { add_admin, is_admin, remove_admin } from "./admin";
-import { initImpl } from "./base";
+import { init_impl, post_upgrade_impl, pre_upgrade_impl } from "./lifecycle";
 import {
   get_asset_canister_wasm,
   get_token_canister_wasm,
@@ -32,7 +34,7 @@ import { get_asset_proxy_canister, set_asset_proxy_canister } from "./canister/a
 import { list_properties } from "./property";
 
 export default Canister({
-  init: init([], initImpl),
+  init: init([Opt(CanisterArgs)], init_impl),
 
   set_token_canister_wasm: update([WasmChunked], Result(bool, text), set_token_canister_wasm),
   get_token_canister_wasm: query([], WasmChunked, get_token_canister_wasm),
@@ -55,4 +57,7 @@ export default Canister({
   reject_request: update([nat], Result(bool, text), reject_request),
 
   list_properties: query([], Vec(ListPropertiesResult), list_properties),
+
+  preUpgrade: preUpgrade(pre_upgrade_impl),
+  postUpgrade: postUpgrade([Opt(CanisterArgs)], post_upgrade_impl),
 });

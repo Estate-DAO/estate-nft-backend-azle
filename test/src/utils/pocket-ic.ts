@@ -53,7 +53,7 @@ export function initTestSuite() {
       instance,
       provisionIdl,
       path.resolve(".azle", "provision", "provision.wasm.gz"),
-      IDL.encode(provisionInit({ IDL }), []),
+      IDL.encode(provisionInit({ IDL }), [[]]),
       args,
     );
   };

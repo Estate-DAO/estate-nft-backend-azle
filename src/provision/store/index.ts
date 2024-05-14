@@ -8,3 +8,11 @@ export const AssetCanisterWasmStore = new WasmChunkedStoreClass();
 export const RequestStore = new RequestStoreClass();
 export const AdminStore = new AdminStoreClass();
 export const AssetProxyCanisterStore = new CanisterStoreClass();
+
+export const StorePersistIndex = {
+  'token_wasm': TokenCanisterWasmStore,
+  'asset_wasm': AssetCanisterWasmStore,
+  'requests': RequestStore,
+  'admins': AdminStore,
+  'asset_proxy': AssetProxyCanisterStore
+}
