@@ -59,7 +59,10 @@ export async function approve_request(id: nat): Promise<Result<bool, text>> {
   const deployAssetResult = await deploy_asset();
   if (isErr(deployAssetResult)) return deployAssetResult;
 
-  const grantProxyPermsResult = await grant_asset_edit_perms(deployAssetResult.Ok, AssetProxyCanisterStore.id);
+  const grantProxyPermsResult = await grant_asset_edit_perms(
+    deployAssetResult.Ok,
+    AssetProxyCanisterStore.id,
+  );
   if (isErr(grantProxyPermsResult)) return grantProxyPermsResult;
 
   const approveAssetsResult = await approve_files_from_proxy(
@@ -68,7 +71,10 @@ export async function approve_request(id: nat): Promise<Result<bool, text>> {
   );
   if (isErr(approveAssetsResult)) return approveAssetsResult;
 
-  const revokeProxyPermsResult = await revoke_asset_edit_perms(deployAssetResult.Ok, AssetProxyCanisterStore.id);
+  const revokeProxyPermsResult = await revoke_asset_edit_perms(
+    deployAssetResult.Ok,
+    AssetProxyCanisterStore.id,
+  );
   if (isErr(revokeProxyPermsResult)) return revokeProxyPermsResult;
 
   const deployTokenResult = await deploy_token({

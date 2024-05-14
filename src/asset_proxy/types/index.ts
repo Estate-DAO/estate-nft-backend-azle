@@ -17,6 +17,6 @@ export type ApproveFilesArg = typeof ApproveFilesArg.tsType;
 
 export const CanisterArgs = Variant({
   Init: Null,
-  Upgrade: Null
+  Upgrade: Null,
 });
 export type CanisterArgs = typeof CanisterArgs.tsType;

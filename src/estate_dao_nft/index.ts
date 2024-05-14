@@ -1,4 +1,18 @@
-import { bool, Canister, init, nat, nat32, Opt, postUpgrade, preUpgrade, Principal, query, Result, text, Vec } from "azle";
+import {
+  bool,
+  Canister,
+  init,
+  nat,
+  nat32,
+  Opt,
+  postUpgrade,
+  preUpgrade,
+  Principal,
+  query,
+  Result,
+  text,
+  Vec,
+} from "azle";
 import { update } from "./utils";
 import {
   icrc7_symbol,
@@ -84,5 +98,5 @@ export default Canister({
   get_property_metadata: query([], PropertyMetadataResult, get_property_metadata),
 
   preUpgrade: preUpgrade(pre_upgrade_impl),
-  postUpgrade: postUpgrade([CanisterArgs], post_upgrade_impl)
+  postUpgrade: postUpgrade([CanisterArgs], post_upgrade_impl),
 });

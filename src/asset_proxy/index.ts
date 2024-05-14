@@ -1,4 +1,16 @@
-import { Canister, Opt, Principal, Result, Vec, bool, postUpgrade, preUpgrade, query, text, update } from "azle";
+import {
+  Canister,
+  Opt,
+  Principal,
+  Result,
+  Vec,
+  bool,
+  postUpgrade,
+  preUpgrade,
+  query,
+  text,
+  update,
+} from "azle";
 import { ApproveFilesArg, AssetStoreArg, CanisterArgs } from "./types";
 import {
   get_provision_canister,

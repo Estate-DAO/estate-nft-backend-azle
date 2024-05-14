@@ -81,7 +81,6 @@ export async function grant_asset_edit_perms(
   return Result.Ok(true);
 }
 
-
 export async function revoke_asset_edit_perms(
   canister: Principal,
   user: Principal,

@@ -12,16 +12,19 @@ describe("estate_dao_nft Upgrade Check", () => {
   beforeAll(async () => {
     await suite.setup();
 
-    token = await suite.deployEstateDaoNftCanister({
-      name: "Test Token",
-      symbol: "TEST"
-    }, {
-      sender: controllerAccount.getPrincipal(),
-      controllers: [controllerAccount.getPrincipal()],
-    });
+    token = await suite.deployEstateDaoNftCanister(
+      {
+        name: "Test Token",
+        symbol: "TEST",
+      },
+      {
+        sender: controllerAccount.getPrincipal(),
+        controllers: [controllerAccount.getPrincipal()],
+      },
+    );
 
     token.actor.setIdentity(controllerAccount);
-  })
+  });
 
   afterAll(suite.teardown);
 
@@ -39,9 +42,9 @@ describe("estate_dao_nft Upgrade Check", () => {
       await instance.tick(10);
 
       await instance.upgradeCanister({
-        sender: controllerAccount.getPrincipal(), 
+        sender: controllerAccount.getPrincipal(),
         canisterId: token.canisterId,
-        wasm: resolve('.azle', 'estate_dao_nft', 'estate_dao_nft.wasm.gz'),
+        wasm: resolve(".azle", "estate_dao_nft", "estate_dao_nft.wasm.gz"),
         arg: IDL.encode(estateDaoNftInit({ IDL }), [{ Upgrade: null }]),
       });
 

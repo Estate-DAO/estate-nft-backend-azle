@@ -70,17 +70,20 @@ export class RequestStore implements Store {
     const toSerialize = {
       metadata: [] as [nat, PropertyMetadata][],
       config: [] as [nat, RequestConfig][],
-    }
+    };
 
     return JSON.stringify(toSerialize, jsonReplacer);
   }
 
   deserialize(serialized: string): void {
-    const { metadata, config }: {
-      metadata: [nat, PropertyMetadata][],
-      config: [nat, RequestConfig][]
+    const {
+      metadata,
+      config,
+    }: {
+      metadata: [nat, PropertyMetadata][];
+      config: [nat, RequestConfig][];
     } = JSON.parse(serialized, jsonReviver);
-    
+
     metadata.forEach(([key, val]) => {
       this._requestMetadata.set(key, val);
     });

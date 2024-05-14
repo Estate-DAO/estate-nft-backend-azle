@@ -199,19 +199,19 @@ describe("Property Requests", () => {
       const tokenPermsValidationRes = await assetActor.validate_grant_permission({
         to_principal: tokenCanisterId,
         permission: {
-          ManagePermissions: null
-        }
+          ManagePermissions: null,
+        },
       });
 
       const ownerPermsValidationRes = await assetActor.validate_grant_permission({
         to_principal: bob.getPrincipal(),
         permission: {
-          Commit: null
-        }
+          Commit: null,
+        },
       });
 
-      expect('Ok' in tokenPermsValidationRes).toBe(true);
-      expect('Ok' in ownerPermsValidationRes).toBe(true);
+      expect("Ok" in tokenPermsValidationRes).toBe(true);
+      expect("Ok" in ownerPermsValidationRes).toBe(true);
     });
   });
 });

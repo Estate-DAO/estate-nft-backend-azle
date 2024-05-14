@@ -1,6 +1,12 @@
 import path from "path";
 import { IDL } from "@dfinity/candid";
-import { Actor, CanisterFixture, CreateInstanceOptions, PocketIc, SetupCanisterOptions } from "@hadronous/pic";
+import {
+  Actor,
+  CanisterFixture,
+  CreateInstanceOptions,
+  PocketIc,
+  SetupCanisterOptions,
+} from "@hadronous/pic";
 import { Principal } from "@dfinity/principal";
 import { SamplePropertyInit } from "./sample";
 import {
@@ -106,30 +112,36 @@ export function initTestSuite() {
     return deployCanister<icpLedgerService>(
       instance,
       icpLedgerIdl,
-      path.resolve('test', 'ledger-canister', 'ledger.wasm.gz'),
-      IDL.encode(icpLedgerInit({ IDL }), [{
-        Init: {
-          send_whitelist: [],
-          token_symbol: [],
-          transfer_fee: [],
-          minting_account: AccountIdentifier.fromPrincipal({ principal: minterPrincipal }).toHex(),
-          maximum_number_of_accounts: [],
-          accounts_overflow_trim_quantity: [],
-          transaction_window: [],
-          max_message_size_bytes: [],
-          icrc1_minting_account: [{
-            owner: minterPrincipal,
-            subaccount: []
-          }],
-          archive_options: [],
-          initial_values: [],
-          token_name: [],
-          feature_flags: [],
-        }
-      }]),
-      args
-    )
-  }
+      path.resolve("test", "ledger-canister", "ledger.wasm.gz"),
+      IDL.encode(icpLedgerInit({ IDL }), [
+        {
+          Init: {
+            send_whitelist: [],
+            token_symbol: [],
+            transfer_fee: [],
+            minting_account: AccountIdentifier.fromPrincipal({
+              principal: minterPrincipal,
+            }).toHex(),
+            maximum_number_of_accounts: [],
+            accounts_overflow_trim_quantity: [],
+            transaction_window: [],
+            max_message_size_bytes: [],
+            icrc1_minting_account: [
+              {
+                owner: minterPrincipal,
+                subaccount: [],
+              },
+            ],
+            archive_options: [],
+            initial_values: [],
+            token_name: [],
+            feature_flags: [],
+          },
+        },
+      ]),
+      args,
+    );
+  };
 
   const setup = async (options?: CreateInstanceOptions) => {
     instance = await createPocketIcInstance(options);

@@ -25,7 +25,7 @@ describe("Token", () => {
     await icpLedgerActor.icrc1_transfer({
       to: {
         owner: principal,
-        subaccount: subaccount ? [subaccount] : []
+        subaccount: subaccount ? [subaccount] : [],
       },
       from_subaccount: [],
       memo: [],
@@ -38,12 +38,12 @@ describe("Token", () => {
   async function icpAccountBalance(principal: Principal, subaccount?: SubAccount): Promise<nat> {
     return await icpLedgerActor.icrc1_balance_of({
       owner: principal,
-      subaccount: subaccount ? [subaccount] : []
-    })
+      subaccount: subaccount ? [subaccount] : [],
+    });
   }
 
   beforeAll(async () => {
-    await suite.setup();    
+    await suite.setup();
     const icpLedgerFixture = await suite.deployIcpLedgerCanister(minterAccount.getPrincipal());
     icpLedgerActor = icpLedgerFixture.actor;
     icpLedgerActor.setIdentity(minterAccount);
@@ -67,7 +67,7 @@ describe("Token", () => {
       const res = await tokenActor.refund({ subaccount: [] });
       expectResultIsErr(res);
       expect(res.Err).toBe("Anonymous users not allowed");
-    })
+    });
 
     it("success - returns escrow amount back to account", async () => {
       const account = generateRandomIdentity();
@@ -88,8 +88,8 @@ describe("Token", () => {
 
       const accountBalanceAfterRefund = await icpAccountBalance(account.getPrincipal());
       expect(accountBalanceAfterRefund).toBe(REFUND_AMOUNT);
-    })
-  })
+    });
+  });
 
   describe("mint", () => {
     it("fails for anonymous accounts", async () => {
@@ -103,7 +103,7 @@ describe("Token", () => {
     it("fails for invalid escrow balance", async () => {
       const account = generateRandomIdentity();
       tokenActor.setIdentity(account);
-      
+
       // should be at least TOKEN_PRICE + TRANSFER_FEE
       await mintICPToAccount(TOKEN_PRICE, tokenId, deriveSubaccount(account.getPrincipal()));
 
@@ -115,7 +115,7 @@ describe("Token", () => {
     it("success", async () => {
       const subaccount = deriveSubaccount(accountA.getPrincipal());
       tokenActor.setIdentity(accountA);
-      
+
       await mintICPToAccount(TOKEN_PRICE + TRANSFER_FEE, tokenId, subaccount);
 
       const res = await tokenActor.mint({ subaccount: [] });
@@ -123,11 +123,11 @@ describe("Token", () => {
 
       mintedTokenId = res.Ok;
 
-      const [ balance ] = await tokenActor.icrc7_balance_of([
+      const [balance] = await tokenActor.icrc7_balance_of([
         {
           owner: accountA.getPrincipal(),
-          subaccount: []
-        }
+          subaccount: [],
+        },
       ]);
       expect(balance).toBe(1n);
 
@@ -141,13 +141,17 @@ describe("Token", () => {
     it("fails on exceeding max supply", async () => {
       const account = generateRandomIdentity();
       tokenActor.setIdentity(account);
-      
-      await mintICPToAccount(TOKEN_PRICE + TRANSFER_FEE, tokenId, deriveSubaccount(account.getPrincipal()));
+
+      await mintICPToAccount(
+        TOKEN_PRICE + TRANSFER_FEE,
+        tokenId,
+        deriveSubaccount(account.getPrincipal()),
+      );
 
       const res = await tokenActor.mint({ subaccount: [] });
       expectResultIsErr(res);
       expect(res.Err).toBe("Supply cap reached.");
-    })
+    });
   });
 
   describe("icrc7_transfer", () => {

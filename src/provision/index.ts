@@ -14,7 +14,13 @@ import {
   update,
   Vec,
 } from "azle";
-import { PropertyMetadata, ListPropertiesResult, RequestInfo, WasmChunked, CanisterArgs } from "./types";
+import {
+  PropertyMetadata,
+  ListPropertiesResult,
+  RequestInfo,
+  WasmChunked,
+  CanisterArgs,
+} from "./types";
 import {
   add_property_request,
   approve_request,
@@ -29,6 +35,8 @@ import {
   get_token_canister_wasm,
   set_asset_canister_wasm,
   set_token_canister_wasm,
+  upgrade_token_canister,
+  upgrade_token_canisters,
 } from "./canister";
 import { get_asset_proxy_canister, set_asset_proxy_canister } from "./canister/asset_proxy";
 import { list_properties } from "./property";
@@ -60,4 +68,7 @@ export default Canister({
 
   preUpgrade: preUpgrade(pre_upgrade_impl),
   postUpgrade: postUpgrade([Opt(CanisterArgs)], post_upgrade_impl),
+  
+  upgrade_token_canister: update([Principal], Result(bool, text), upgrade_token_canister),
+  upgrade_token_canisters: update([], Result(bool, text), upgrade_token_canisters),
 });

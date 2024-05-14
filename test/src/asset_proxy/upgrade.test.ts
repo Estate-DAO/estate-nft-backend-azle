@@ -1,5 +1,10 @@
 import { generateRandomIdentity } from "@hadronous/pic";
-import { assetProxyActor, assetProxyFixture, initTestSuite, managementActor } from "../utils/pocket-ic"
+import {
+  assetProxyActor,
+  assetProxyFixture,
+  initTestSuite,
+  managementActor,
+} from "../utils/pocket-ic";
 import { readFile } from "fs/promises";
 import { resolve } from "path";
 import { IDL } from "@dfinity/candid";
@@ -24,7 +29,7 @@ describe("asset_proxy Upgrade Check", () => {
 
     managementActor.setIdentity(controllerAccount);
     assetProxy.actor.setIdentity(controllerAccount);
-  })
+  });
 
   afterAll(suite.teardown);
 
@@ -45,9 +50,9 @@ describe("asset_proxy Upgrade Check", () => {
       await instance.tick(10);
 
       await instance.upgradeCanister({
-        sender: controllerAccount.getPrincipal(), 
+        sender: controllerAccount.getPrincipal(),
         canisterId: assetProxy.canisterId,
-        wasm: resolve('.azle', 'asset_proxy', 'asset_proxy.wasm.gz'),
+        wasm: resolve(".azle", "asset_proxy", "asset_proxy.wasm.gz"),
         arg: IDL.encode(assetProxyInit({ IDL }), [[{ Upgrade: null }]]),
       });
 

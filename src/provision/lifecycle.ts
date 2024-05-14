@@ -9,23 +9,19 @@ export function init_impl() {
 }
 
 export function pre_upgrade_impl() {
-  Object
-    .entries(StorePersistIndex)
-    .forEach(([key, store]) => {
-      const serialized = store.serialize();
-      if ( !serialized ) return;
+  Object.entries(StorePersistIndex).forEach(([key, store]) => {
+    const serialized = store.serialize();
+    if (!serialized) return;
 
-      stableStorage.insert(key, serialized);
-    })
+    stableStorage.insert(key, serialized);
+  });
 }
 
 export function post_upgrade_impl() {
-  Object
-    .entries(StorePersistIndex)
-    .forEach(([key, store]) => {
-      const serialized = stableStorage.get(key).Some;
-      if ( !serialized ) return;
+  Object.entries(StorePersistIndex).forEach(([key, store]) => {
+    const serialized = stableStorage.get(key).Some;
+    if (!serialized) return;
 
-      store.deserialize(serialized);
-    })
+    store.deserialize(serialized);
+  });
 }

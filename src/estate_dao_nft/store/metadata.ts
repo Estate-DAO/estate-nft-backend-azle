@@ -1,5 +1,11 @@
 import { Principal, jsonReplacer, jsonReviver } from "azle";
-import { ConfigStoreType, InitArg, MetadataRaw, MetadataStoreType, MetadataUpdateArg } from "../types";
+import {
+  ConfigStoreType,
+  InitArg,
+  MetadataRaw,
+  MetadataStoreType,
+  MetadataUpdateArg,
+} from "../types";
 import { Store } from "../../common/types";
 
 export class MetadataStore implements Store {
@@ -63,7 +69,7 @@ export class MetadataStore implements Store {
 
   deserialize(serialized: string): void {
     const { metadata, config } = JSON.parse(serialized, jsonReviver);
-    
+
     this._metadata = metadata;
     this._config = config;
   }

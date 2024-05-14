@@ -19,7 +19,7 @@ describe("estate_dao_nft Upgrade Check", () => {
     });
 
     provision.actor.setIdentity(controllerAccount);
-  })
+  });
 
   afterAll(suite.teardown);
 
@@ -27,7 +27,9 @@ describe("estate_dao_nft Upgrade Check", () => {
     it("initial config", async () => {
       await provision.actor.set_asset_proxy_canister(assetProxyCanisterId.getPrincipal());
       const storedAssetProxyCanisterId = await provision.actor.get_asset_proxy_canister();
-      expect(storedAssetProxyCanisterId.toText()).toBe(assetProxyCanisterId.getPrincipal().toText());
+      expect(storedAssetProxyCanisterId.toText()).toBe(
+        assetProxyCanisterId.getPrincipal().toText(),
+      );
     });
 
     it("upgrade", async () => {
@@ -35,14 +37,16 @@ describe("estate_dao_nft Upgrade Check", () => {
       await instance.tick(10);
 
       await instance.upgradeCanister({
-        sender: controllerAccount.getPrincipal(), 
+        sender: controllerAccount.getPrincipal(),
         canisterId: provision.canisterId,
-        wasm: resolve('.azle', 'provision', 'provision.wasm.gz'),
+        wasm: resolve(".azle", "provision", "provision.wasm.gz"),
         arg: IDL.encode(provisionInit({ IDL }), [[{ Upgrade: null }]]),
       });
 
       const storedAssetProxyCanisterId = await provision.actor.get_asset_proxy_canister();
-      expect(storedAssetProxyCanisterId.toText()).toBe(assetProxyCanisterId.getPrincipal().toText());
+      expect(storedAssetProxyCanisterId.toText()).toBe(
+        assetProxyCanisterId.getPrincipal().toText(),
+      );
     });
   });
 });

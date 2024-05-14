@@ -6,4 +6,4 @@ export type None = typeof None;
 export interface Store {
   serialize(): text | undefined;
   deserialize(serialized: text): void;
-};
+}

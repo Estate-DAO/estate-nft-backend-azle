@@ -24,15 +24,15 @@ export class AdminStore implements Store {
     const adminsLinear: string[] = [];
     this._admins.forEach((value, key) => {
       adminsLinear.push(key);
-    })
+    });
 
     return JSON.stringify(adminsLinear);
   }
 
   deserialize(serialized: string): void {
     const adminsLinear: string[] = JSON.parse(serialized);
-    adminsLinear.forEach(admin => {
+    adminsLinear.forEach((admin) => {
       this._admins.set(admin, true);
-    })
+    });
   }
 }

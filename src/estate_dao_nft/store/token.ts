@@ -82,12 +82,12 @@ export class TokenStore implements Store {
   serialize(): string | undefined {
     const toSerialize = {
       counter: this._counter,
-      tokens: [] as any[]
-    }
+      tokens: [] as any[],
+    };
 
     this._tokens.forEach((value, key) => {
       toSerialize.tokens.push([key, value]);
-    })
+    });
 
     return JSON.stringify(toSerialize);
   }
@@ -95,9 +95,9 @@ export class TokenStore implements Store {
   deserialize(serialized: string): void {
     const { counter, tokens } = JSON.parse(serialized);
     this._counter = counter;
-    
+
     tokens.forEach(([key, value]: [nat32, any]) => {
-      if ( value.owner.subaccount ) 
+      if (value.owner.subaccount)
         value.owner.subaccount = new Uint8Array(Object.values(value.owner.subaccount));
 
       this._tokens.set(key, value);

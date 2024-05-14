@@ -7,7 +7,7 @@ export const TxnIndexStore = new TxnIndexStoreClass();
 export const TokenStore = new TokenStoreClass();
 
 export const StorePersistIndex = {
-  'metadata': MetadataStore,
-  'txn_index': TxnIndexStore,
-  'token': TokenStore
-}
+  metadata: MetadataStore,
+  txn_index: TxnIndexStore,
+  token: TokenStore,
+};
