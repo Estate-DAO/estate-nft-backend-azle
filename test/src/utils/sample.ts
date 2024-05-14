@@ -48,7 +48,7 @@ export const SamplePropertyInit = {
   last_renovated: 0,
   projected_rent: 0,
   average_rent: 0,
-  min_investment: 0,
+  min_investment: 0n,
   median_home_sale_price: 0,
   symbol: "",
   coordinates: "",

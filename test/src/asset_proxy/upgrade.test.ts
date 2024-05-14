@@ -5,14 +5,13 @@ import {
   initTestSuite,
   managementActor,
 } from "../utils/pocket-ic";
-import { readFile } from "fs/promises";
 import { resolve } from "path";
 import { IDL } from "@dfinity/candid";
 import { assetProxyInit } from "../utils/canister";
 
 describe("asset_proxy Upgrade Check", () => {
   const suite = initTestSuite();
-  let assetProxy: assetProxyFixture, managementActor: managementActor;
+  let assetProxy: assetProxyFixture;
   const provisionCanisterId = generateRandomIdentity();
   const tempAssetCanisterId = generateRandomIdentity();
   const controllerAccount = generateRandomIdentity();
@@ -25,9 +24,6 @@ describe("asset_proxy Upgrade Check", () => {
       controllers: [controllerAccount.getPrincipal()],
     });
 
-    managementActor = await suite.attachToManagementCanister();
-
-    managementActor.setIdentity(controllerAccount);
     assetProxy.actor.setIdentity(controllerAccount);
   });
 

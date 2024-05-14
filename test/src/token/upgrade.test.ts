@@ -3,25 +3,57 @@ import { resolve } from "path";
 import { IDL } from "@dfinity/candid";
 import { estateDaoFixture, initTestSuite } from "../utils/pocket-ic";
 import { estateDaoNftInit } from "../utils/canister";
+import { SamplePropertyInit } from "../utils/sample";
+import { deriveSubaccount } from "../../../src/common/token";
+
+const testInitMetadata = {
+  ...SamplePropertyInit,
+  name: "Test Token",
+  symbol: "TEST",
+  price: 100_000n,
+}
 
 describe("estate_dao_nft Upgrade Check", () => {
   const suite = initTestSuite();
   let token: estateDaoFixture;
   const controllerAccount = generateRandomIdentity();
+  const userAccount = generateRandomIdentity();
 
   beforeAll(async () => {
     await suite.setup();
 
+    const minterAccount = generateRandomIdentity();
+    const icpLedger = await suite.deployIcpLedgerCanister(minterAccount.getPrincipal());
+    icpLedger.actor.setIdentity(minterAccount);
+    
+    testInitMetadata.token = icpLedger.canisterId;
+
     token = await suite.deployEstateDaoNftCanister(
-      {
-        name: "Test Token",
-        symbol: "TEST",
-      },
+      testInitMetadata,
       {
         sender: controllerAccount.getPrincipal(),
         controllers: [controllerAccount.getPrincipal()],
       },
     );
+
+    token.actor.setIdentity(userAccount);
+    const subaccount = deriveSubaccount(userAccount.getPrincipal());
+    
+    await icpLedger.actor.icrc1_transfer({
+      from_subaccount: [],
+      to: {
+        owner: token.canisterId,
+        subaccount: [subaccount]
+      },
+      fee: [],
+      memo: [],
+      created_at_time: [],
+      amount: testInitMetadata.price * 2n,
+    })
+
+    await token.actor.mint({
+      subaccount: []
+    });
 
     token.actor.setIdentity(controllerAccount);
   });
@@ -30,11 +62,17 @@ describe("estate_dao_nft Upgrade Check", () => {
 
   describe("upgrade success", () => {
     it("initial config", async () => {
-      const name = await token.actor.icrc7_name();
-      expect(name).toBe("Test Token");
+      const metadata = await token.actor.get_property_metadata();
+      expect(metadata).toMatchObject(testInitMetadata);
 
-      const symbol = await token.actor.icrc7_symbol();
-      expect(symbol).toBe("TEST");
+      const tokens = await token.actor.icrc7_tokens([], []);
+      expect(tokens).toHaveLength(1);
+
+      const userTokens = await token.actor.icrc7_tokens_of({
+        owner: userAccount.getPrincipal(),
+        subaccount: []
+      }, [], []);
+      expect(userTokens).toHaveLength(1);
     });
 
     it("upgrade", async () => {
@@ -48,11 +86,17 @@ describe("estate_dao_nft Upgrade Check", () => {
         arg: IDL.encode(estateDaoNftInit({ IDL }), [{ Upgrade: null }]),
       });
 
-      const name = await token.actor.icrc7_name();
-      expect(name).toBe("Test Token");
+      const metadata = await token.actor.get_property_metadata();
+      expect(metadata).toMatchObject(testInitMetadata);
 
-      const symbol = await token.actor.icrc7_symbol();
-      expect(symbol).toBe("TEST");
+      const tokens = await token.actor.icrc7_tokens([], []);
+      expect(tokens).toHaveLength(1);
+
+      const userTokens = await token.actor.icrc7_tokens_of({
+        owner: userAccount.getPrincipal(),
+        subaccount: []
+      }, [], []);
+      expect(userTokens).toHaveLength(1);
     });
   });
 });

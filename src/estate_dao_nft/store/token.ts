@@ -8,7 +8,7 @@ import {
 } from "../types";
 import { toAccountId } from "../utils";
 import { Store } from "../../common/types";
-import { nat32 } from "azle";
+import { jsonReplacer, jsonReviver, nat32 } from "azle";
 import { TokenType } from "../types";
 
 export class TokenStore implements Store {
@@ -89,18 +89,25 @@ export class TokenStore implements Store {
       toSerialize.tokens.push([key, value]);
     });
 
-    return JSON.stringify(toSerialize);
+    return JSON.stringify(toSerialize, jsonReplacer);
   }
 
   deserialize(serialized: string): void {
-    const { counter, tokens } = JSON.parse(serialized);
+    const { counter, tokens } = JSON.parse(serialized, jsonReviver);
     this._counter = counter;
 
-    tokens.forEach(([key, value]: [nat32, any]) => {
-      if (value.owner.subaccount)
-        value.owner.subaccount = new Uint8Array(Object.values(value.owner.subaccount));
-
+    tokens.forEach(([key, value]: [nat32, TokenType]) => {
       this._tokens.set(key, value);
+
+      const accountId = toAccountId(value.owner.principal, value.owner.subaccount);
+      let userTokenIndex = this._ownerToTokenIndex.get(accountId);
+
+      if (!userTokenIndex) {
+        userTokenIndex = new Map();
+        this._ownerToTokenIndex.set(accountId, userTokenIndex);
+      }
+
+      userTokenIndex.set(key, true);
     });
   }
 }
