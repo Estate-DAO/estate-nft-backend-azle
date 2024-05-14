@@ -3,7 +3,7 @@ import { managementCanister } from "azle/canisters/management";
 import { TokenCanisterWasmStore } from "../store";
 import { validateController } from "../validate";
 import { encode } from "azle/src/lib/candid/serde";
-import { InitArg } from "../../estate_dao_nft/types";
+import { CanisterArgs, InitArg } from "../../estate_dao_nft/types";
 import { managementCanisterExtended } from "../../common/management";
 import { WasmChunked } from "../types";
 
@@ -36,7 +36,7 @@ export async function deploy_token(args: InitArg): Promise<Result<Principal, tex
         store_canister: Some(ic.id()),
         chunk_hashes_list: TokenCanisterWasmStore.wasm.chunkHashes,
         wasm_module_hash: TokenCanisterWasmStore.wasm.moduleHash,
-        arg: encode(InitArg, args),
+        arg: encode(CanisterArgs, { Init: args }),
         sender_canister_version: None,
       },
     ],

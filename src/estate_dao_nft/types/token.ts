@@ -1,7 +1,7 @@
 import { Record, Opt, blob, Variant, text, nat, bool, nat64, Null, nat32 } from "azle";
 import { Account, Subaccount } from "./common";
 
-type TokenType = {
+export type TokenType = {
   owner: {
     principal: text;
     subaccount?: Subaccount;

@@ -7,8 +7,11 @@ import {
   TokenStoreType,
 } from "../types";
 import { toAccountId } from "../utils";
+import { Store } from "../../common/types";
+import { nat32 } from "azle";
+import { TokenType } from "../types";
 
-export class TokenStore {
+export class TokenStore implements Store {
   private _counter = 1;
   private _tokens: TokenStoreType = new Map();
   private _ownerToTokenIndex: OwnerToTokenIndexType = new Map();
@@ -74,5 +77,30 @@ export class TokenStore {
 
     this._ownerToTokenIndex.get(holderAccountId)!.delete(tokenId);
     receiverTokenIndex.set(tokenId, true);
+  }
+
+  serialize(): string | undefined {
+    const toSerialize = {
+      counter: this._counter,
+      tokens: [] as any[]
+    }
+
+    this._tokens.forEach((value, key) => {
+      toSerialize.tokens.push([key, value]);
+    })
+
+    return JSON.stringify(toSerialize);
+  }
+
+  deserialize(serialized: string): void {
+    const { counter, tokens } = JSON.parse(serialized);
+    this._counter = counter;
+    
+    tokens.forEach(([key, value]: [nat32, any]) => {
+      if ( value.owner.subaccount ) 
+        value.owner.subaccount = new Uint8Array(Object.values(value.owner.subaccount));
+
+      this._tokens.set(key, value);
+    });
   }
 }

@@ -1,7 +1,8 @@
 import { Principal } from "azle";
-import { ConfigStoreType, InitArg, MetadataStoreType, MetadataUpdateArg } from "../types";
+import { ConfigStoreType, InitArg, MetadataRaw, MetadataStoreType, MetadataUpdateArg } from "../types";
+import { Store } from "../../common/types";
 
-export class MetadataStore {
+export class MetadataStore implements Store {
   private _metadata: MetadataStoreType;
   private _config: ConfigStoreType;
 
@@ -49,5 +50,65 @@ export class MetadataStore {
 
   decrementSupply() {
     this._config.total_supply--;
+  }
+
+  serialize(): string | undefined {
+    const toSerialize = {
+      metadata: {} as any,
+      config: {} as any,
+    };
+
+    Object
+      .entries(this.metadata)
+      .forEach(([key, value]) => {
+        let transformedValue;
+        
+        switch (typeof value) {
+          case 'bigint':
+            transformedValue = value.toString();
+            break;
+          
+          case 'object':
+            if ( value instanceof Principal )
+              transformedValue = value.toString();
+            transformedValue = value;
+
+          default:
+            transformedValue = value;
+        }
+
+        toSerialize.metadata[key] = transformedValue;
+      })
+    
+    Object
+      .entries(this.metadata)
+      .forEach(([key, value]) => {
+        let transformedValue;
+        
+        switch (typeof value) {
+          case 'bigint':
+            transformedValue = value.toString();
+            break;
+          
+          case 'object':
+            if ( value instanceof Principal )
+              transformedValue = value.toString();
+            transformedValue = value;
+
+          default:
+            transformedValue = value;
+        }
+
+        toSerialize.config[key] = transformedValue;
+      })
+
+    return JSON.stringify(toSerialize);
+  }
+
+  deserialize(serialized: string): void {
+    const { metadata, config } = JSON.parse(serialized);
+    
+    this._metadata = metadata;
+    this._config = config;
   }
 }

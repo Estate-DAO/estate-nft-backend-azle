@@ -94,7 +94,7 @@ export function initTestSuite() {
       instance,
       estateDaoNftIdl,
       path.resolve(".azle", "estate_dao_nft", "estate_dao_nft.wasm.gz"),
-      IDL.encode(estateDaoNftInit({ IDL }), [initMetadata]),
+      IDL.encode(estateDaoNftInit({ IDL }), [{ Init: initMetadata }]),
       args,
     );
   };
