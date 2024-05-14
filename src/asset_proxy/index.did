@@ -1,4 +1,4 @@
-service: () -> {
+service: (opt variant {Upgrade; Init}) -> {
     approve_files: (record {files:vec text; asset_canister:principal}) -> (variant {Ok:bool; Err:text});
     get_provision_canister: () -> (principal) query;
     get_temp_asset_canister: () -> (principal) query;

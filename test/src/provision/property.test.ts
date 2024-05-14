@@ -25,32 +25,27 @@ describe("Property Requests", () => {
 
   async function seed() {
     const properties = await Promise.all(
-      new Array(totalPropertyCount).fill(undefined)
-        .map(async () => {
-          const res = await actor.add_property_request(testPropertyMetadata);
-          expectResultIsOk(res);
+      new Array(totalPropertyCount).fill(undefined).map(async () => {
+        const res = await actor.add_property_request(testPropertyMetadata);
+        expectResultIsOk(res);
 
-          return res.Ok;
-        }),
+        return res.Ok;
+      }),
     );
 
     await Promise.all(
-      properties
-        .slice(0, publishedPropertyCount)
-        .map((id) => actor.approve_request(id)),
+      properties.slice(0, publishedPropertyCount).map((id) => actor.approve_request(id)),
     );
 
     publishedProperties = await Promise.all(
-      properties
-        .slice(0, publishedPropertyCount)
-        .map(async id => {
-          const property = await actor.get_request_info(id);
-          return {
-            id,
-            token_canister: property[0]?.token_canister[0]!,
-            asset_canister: property[0]?.asset_canister[0]!,
-          }
-        })
+      properties.slice(0, publishedPropertyCount).map(async (id) => {
+        const property = await actor.get_request_info(id);
+        return {
+          id,
+          token_canister: property[0]?.token_canister[0]!,
+          asset_canister: property[0]?.asset_canister[0]!,
+        };
+      }),
     );
   }
 

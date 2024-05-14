@@ -1,7 +1,8 @@
-import { None, Principal, Some, nat } from "azle";
+import { None, Principal, Some, jsonReplacer, jsonReviver, nat } from "azle";
 import { PropertyMetadata, RequestConfig } from "../types";
+import { Store } from "../../common/types";
 
-export class RequestStore {
+export class RequestStore implements Store {
   private _counter: nat;
   private _requestMetadata: Map<nat, PropertyMetadata>;
   private _requestConfig: Map<nat, RequestConfig>;
@@ -63,5 +64,40 @@ export class RequestStore {
 
     this._requestMetadata.delete(id);
     this._requestConfig.set(id, config);
+  }
+
+  serialize(): string | undefined {
+    const toSerialize = {
+      metadata: [] as [nat, PropertyMetadata][],
+      config: [] as [nat, RequestConfig][],
+    };
+    
+    this._requestMetadata.forEach((val, key) => {
+      toSerialize.metadata.push([key, val]);
+    });
+
+    this._requestConfig.forEach((val, key) => {
+      toSerialize.config.push([key, val]);
+    });
+
+    return JSON.stringify(toSerialize, jsonReplacer);
+  }
+
+  deserialize(serialized: string): void {
+    const {
+      metadata,
+      config,
+    }: {
+      metadata: [nat, PropertyMetadata][];
+      config: [nat, RequestConfig][];
+    } = JSON.parse(serialized, jsonReviver);
+
+    metadata.forEach(([key, val]) => {
+      this._requestMetadata.set(key, val);
+    });
+
+    config.forEach(([key, val]) => {
+      this._requestConfig.set(key, val);
+    });
   }
 }

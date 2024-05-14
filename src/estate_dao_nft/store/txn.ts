@@ -1,6 +1,7 @@
 import { nat } from "azle";
+import { Store } from "../../common/types";
 
-export class TxnIndexStore {
+export class TxnIndexStore implements Store {
   private _index: nat = 0n;
 
   get index() {
@@ -9,5 +10,13 @@ export class TxnIndexStore {
 
   increment() {
     this._index++;
+  }
+
+  serialize(): string | undefined {
+    return this._index.toString();
+  }
+
+  deserialize(serialized: string): void {
+    this._index = BigInt(serialized);
   }
 }

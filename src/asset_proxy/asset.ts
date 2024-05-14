@@ -82,18 +82,20 @@ export async function approve_files(arg: ApproveFilesArg): Promise<Result<bool, 
     });
 
     await ic.call(assetCanister.store, {
-      args: [{
-        ...res,
-        key: file
-      }],
+      args: [
+        {
+          ...res,
+          key: file,
+        },
+      ],
     });
 
     await ic.call(tempAssetCanister.delete_asset, {
       args: [
         {
-          key: file
-        }
-      ]
+          key: file,
+        },
+      ],
     });
   });
 

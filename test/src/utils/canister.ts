@@ -56,4 +56,4 @@ export const estateDaoNftInit = estateDaoNft.init;
 export const provisionInit = provision.init;
 export const assetInit = asset.init;
 export const assetProxyInit = assetProxy.init;
-export const icpLedgerInit = icpLedger.init; 
+export const icpLedgerInit = icpLedger.init;

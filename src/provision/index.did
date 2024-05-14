@@ -1,4 +1,4 @@
-service: () -> {
+service: (opt variant {Upgrade; Init}) -> {
     add_admin: (principal) -> (variant {Ok:bool; Err:text});
     add_property_request: (record {year_built:nat32; monthly_utilities:float32; total_monthly_cost:float32; average_5_year_roi:float32; token:principal; documents:vec record {text; text}; yields:float32; supply_cap:nat; llc_monthly_franchise_tax:float32; country:text; occupied:bool; annual_population_growth:nat32; monthly_cash_flow:float32; crime_score:nat32; monthly_rent:float32; beds:nat32; city:text; total_5_year_irr:float32; logo:text; property_insurance:float32; name:text; affordability:float32; expense_to_income_ratio:float32; square_footage:float32; description:text; flood_zone:bool; initial_maintenance_reserve:float32; vacancy_rate:float32; projected_appreciation:float32; underlying_asset_price:float32; state:text; property_taxes:float32; price_per_sq_foot:float32; property_management_fee:float32; market_description:text; cap_rate:float32; baths:nat32; platform_closing_fee:float32; school_score:nat32; price:nat; last_renovated:float32; projected_rent:float32; average_rent:nat32; min_investment:nat64; median_home_sale_price:nat32; symbol:text; coordinates:text; treasury:principal}) -> (variant {Ok:nat; Err:text});
     approve_request: (nat) -> (variant {Ok:bool; Err:text});
@@ -14,4 +14,6 @@ service: () -> {
     set_asset_canister_wasm: (record {moduleHash:vec nat8; chunkHashes:vec vec nat8}) -> (variant {Ok:bool; Err:text});
     set_asset_proxy_canister: (principal) -> (variant {Ok:bool; Err:text});
     set_token_canister_wasm: (record {moduleHash:vec nat8; chunkHashes:vec vec nat8}) -> (variant {Ok:bool; Err:text});
+    upgrade_token_canister: (principal) -> (variant {Ok:bool; Err:text});
+    upgrade_token_canisters: () -> (variant {Ok:bool; Err:text});
 }

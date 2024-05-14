@@ -1,6 +1,7 @@
 import { Principal } from "azle";
+import { Store } from "../../common/types";
 
-export class CanisterStore {
+export class CanisterStore implements Store {
   private _id: Principal;
 
   constructor() {
@@ -13,5 +14,13 @@ export class CanisterStore {
 
   updateId(id: Principal) {
     this._id = id;
+  }
+
+  serialize(): string | undefined {
+    return this._id.toText();
+  }
+
+  deserialize(serialized: string): void {
+    this._id = Principal.fromText(serialized);
   }
 }

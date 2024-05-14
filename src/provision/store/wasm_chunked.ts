@@ -1,6 +1,8 @@
+import { jsonReplacer, jsonReviver } from "azle";
+import { Store } from "../../common/types";
 import { WasmChunked } from "../types";
 
-export class WasmChunkedStore {
+export class WasmChunkedStore implements Store {
   private _wasm: WasmChunked;
 
   constructor() {
@@ -23,5 +25,13 @@ export class WasmChunkedStore {
       chunkHashes: [],
       moduleHash: new Uint8Array(),
     };
+  }
+
+  serialize(): string | undefined {
+    return JSON.stringify(this._wasm, jsonReplacer);
+  }
+
+  deserialize(serialized: string): void {
+    this._wasm = JSON.parse(serialized, jsonReviver);
   }
 }

@@ -1,7 +1,14 @@
-import { Principal } from "azle";
-import { ConfigStoreType, InitArg, MetadataStoreType, MetadataUpdateArg } from "../types";
+import { Principal, jsonReplacer, jsonReviver } from "azle";
+import {
+  ConfigStoreType,
+  InitArg,
+  MetadataRaw,
+  MetadataStoreType,
+  MetadataUpdateArg,
+} from "../types";
+import { Store } from "../../common/types";
 
-export class MetadataStore {
+export class MetadataStore implements Store {
   private _metadata: MetadataStoreType;
   private _config: ConfigStoreType;
 
@@ -49,5 +56,21 @@ export class MetadataStore {
 
   decrementSupply() {
     this._config.total_supply--;
+  }
+
+  serialize(): string | undefined {
+    const toSerialize = {
+      metadata: this._metadata,
+      config: this._config,
+    };
+
+    return JSON.stringify(toSerialize, jsonReplacer);
+  }
+
+  deserialize(serialized: string): void {
+    const { metadata, config } = JSON.parse(serialized, jsonReviver);
+
+    this._metadata = metadata;
+    this._config = config;
   }
 }

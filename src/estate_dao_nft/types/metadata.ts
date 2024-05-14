@@ -11,6 +11,7 @@ import {
   nat32,
   float32,
   nat64,
+  Null,
 } from "azle";
 import { Value } from "./common";
 import { toOptionalSchema } from "../utils";
@@ -123,6 +124,12 @@ export type ConfigStoreType = typeof ConfigStoreType.tsType;
 
 export const InitArg = Record(MetadataRaw);
 export type InitArg = typeof InitArg.tsType;
+
+export const CanisterArgs = Variant({
+  Init: InitArg,
+  Upgrade: Null,
+});
+export type CanisterArgs = typeof CanisterArgs.tsType;
 
 export const MetadataUpdateArg = Record(MetadataUpdateRaw);
 export type MetadataUpdateArg = typeof MetadataUpdateArg.tsType;

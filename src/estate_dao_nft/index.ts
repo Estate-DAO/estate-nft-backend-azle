@@ -1,4 +1,18 @@
-import { bool, Canister, init, nat, nat32, Opt, Principal, query, Result, text, Vec } from "azle";
+import {
+  bool,
+  Canister,
+  init,
+  nat,
+  nat32,
+  Opt,
+  postUpgrade,
+  preUpgrade,
+  Principal,
+  query,
+  Result,
+  text,
+  Vec,
+} from "azle";
 import { update } from "./utils";
 import {
   icrc7_symbol,
@@ -33,8 +47,9 @@ import {
   PropertyMetadataResult,
   Subaccount,
   RefundArg,
+  CanisterArgs,
 } from "./types";
-import { initImpl } from "./base";
+import { init_impl, post_upgrade_impl, pre_upgrade_impl } from "./lifecycle";
 import { icrc61_supported_standards } from "./icrc61";
 import {
   icrc7_balance_of,
@@ -47,7 +62,7 @@ import {
 import { mint, refund } from "./mint";
 
 export default Canister({
-  init: init([InitArg], initImpl),
+  init: init([CanisterArgs], init_impl),
 
   icrc7_symbol: query([], text, icrc7_symbol),
   icrc7_name: query([], text, icrc7_name),
@@ -81,4 +96,7 @@ export default Canister({
   change_ownership: update([Principal], TxnResult, change_ownership),
   update_metadata: update([MetadataUpdateArg], TxnResult, update_metadata),
   get_property_metadata: query([], PropertyMetadataResult, get_property_metadata),
+
+  preUpgrade: preUpgrade(pre_upgrade_impl),
+  postUpgrade: postUpgrade([CanisterArgs], post_upgrade_impl),
 });

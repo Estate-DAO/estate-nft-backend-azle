@@ -46,3 +46,8 @@ export const ListPropertiesResult = Record({
 });
 export type ListPropertiesResult = typeof ListPropertiesResult.tsType;
 
+export const CanisterArgs = Variant({
+  Init: Null,
+  Upgrade: Null,
+});
+export type CanisterArgs = typeof CanisterArgs.tsType;
