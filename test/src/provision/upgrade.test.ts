@@ -1,14 +1,17 @@
 import { generateRandomIdentity } from "@hadronous/pic";
 import { resolve } from "path";
 import { IDL } from "@dfinity/candid";
-import { provisionFixture, initTestSuite } from "../utils/pocket-ic";
+import { provisionFixture, initTestSuite, managementActor } from "../utils/pocket-ic";
 import { provisionInit } from "../utils/canister";
+import { SamplePropertyRequest } from "../utils/sample";
 
-describe("estate_dao_nft Upgrade Check", () => {
+describe("provision Upgrade Check", () => {
   const suite = initTestSuite();
-  let provision: provisionFixture;
+  let provision: provisionFixture, managementActor: managementActor;
   const assetProxyCanisterId = generateRandomIdentity();
   const controllerAccount = generateRandomIdentity();
+  const userAccount = generateRandomIdentity();
+  const fileHash = new Uint8Array([0,1,2]);
 
   beforeAll(async () => {
     await suite.setup();
@@ -17,19 +20,58 @@ describe("estate_dao_nft Upgrade Check", () => {
       sender: controllerAccount.getPrincipal(),
       controllers: [controllerAccount.getPrincipal()],
     });
-
     provision.actor.setIdentity(controllerAccount);
+
+    managementActor = await suite.attachToManagementCanister();
+    managementActor.setIdentity(controllerAccount);
+
+    await provision.actor.add_admin(userAccount.getPrincipal());
+    await provision.actor.set_asset_proxy_canister(assetProxyCanisterId.getPrincipal());
+
+    await managementActor.upload_chunk({
+      chunk: "Hello World".split('').map(v => v.charCodeAt(0)),
+      canister_id: provision.canisterId
+    })
+
+    await provision.actor.set_asset_canister_wasm({
+      moduleHash: fileHash,
+      chunkHashes: [fileHash]
+    });
+
+    await provision.actor.set_token_canister_wasm({
+      moduleHash: fileHash,
+      chunkHashes: [fileHash]
+    });
+
+    await provision.actor.add_property_request({
+      ...SamplePropertyRequest,
+      name: 'Test Token'
+    });
   });
 
   afterAll(suite.teardown);
 
   describe("upgrade success", () => {
     it("initial config", async () => {
-      await provision.actor.set_asset_proxy_canister(assetProxyCanisterId.getPrincipal());
-      const storedAssetProxyCanisterId = await provision.actor.get_asset_proxy_canister();
-      expect(storedAssetProxyCanisterId.toText()).toBe(
-        assetProxyCanisterId.getPrincipal().toText(),
-      );
+      const storedCanisterId = await provision.actor.get_asset_proxy_canister();
+      expect(storedCanisterId.toText()).toBe(assetProxyCanisterId.getPrincipal().toText());
+
+      const assetWasm = await provision.actor.get_asset_canister_wasm();
+      expect(assetWasm.moduleHash).toMatchObject(fileHash);
+      expect(assetWasm.chunkHashes).toMatchObject([fileHash]);
+
+      const tokenWasm = await provision.actor.get_token_canister_wasm();
+      expect(tokenWasm.moduleHash).toMatchObject(fileHash);
+      expect(tokenWasm.chunkHashes).toMatchObject([fileHash]);
+
+      const isAdmin = await provision.actor.is_admin([userAccount.getPrincipal()]);
+      expect(isAdmin).toBe(true);
+
+      const uploadedChunks = await managementActor.stored_chunks({ canister_id: provision.canisterId });
+      expect(uploadedChunks).toHaveLength(1);
+
+      const pendingRequests = await provision.actor.get_pending_requests();
+      expect(pendingRequests).toHaveLength(1);
     });
 
     it("upgrade", async () => {
@@ -43,10 +85,25 @@ describe("estate_dao_nft Upgrade Check", () => {
         arg: IDL.encode(provisionInit({ IDL }), [[{ Upgrade: null }]]),
       });
 
-      const storedAssetProxyCanisterId = await provision.actor.get_asset_proxy_canister();
-      expect(storedAssetProxyCanisterId.toText()).toBe(
-        assetProxyCanisterId.getPrincipal().toText(),
-      );
+      const storedCanisterId = await provision.actor.get_asset_proxy_canister();
+      expect(storedCanisterId.toText()).toBe(assetProxyCanisterId.getPrincipal().toText());
+
+      const assetWasm = await provision.actor.get_asset_canister_wasm();
+      expect(assetWasm.moduleHash).toMatchObject(fileHash);
+      expect(assetWasm.chunkHashes).toMatchObject([fileHash]);
+
+      const tokenWasm = await provision.actor.get_token_canister_wasm();
+      expect(tokenWasm.moduleHash).toMatchObject(fileHash);
+      expect(tokenWasm.chunkHashes).toMatchObject([fileHash]);
+
+      const isAdmin = await provision.actor.is_admin([userAccount.getPrincipal()]);
+      expect(isAdmin).toBe(true);
+
+      const uploadedChunks = await managementActor.stored_chunks({ canister_id: provision.canisterId });
+      expect(uploadedChunks).toHaveLength(1);
+
+      const pendingRequests = await provision.actor.get_pending_requests();
+      expect(pendingRequests).toHaveLength(1);
     });
   });
 });
