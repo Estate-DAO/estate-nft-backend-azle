@@ -50,6 +50,7 @@ describe("estate_dao_nft Upgrade Check", () => {
 
     await token.actor.mint({
       subaccount: [],
+      quantity: 1n
     });
 
     token.actor.setIdentity(controllerAccount);
