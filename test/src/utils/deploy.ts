@@ -51,6 +51,8 @@ export async function configureCanisters(
       freezing_threshold: [],
       compute_allocation: [],
       memory_allocation: [],
+      reserved_cycles_limit: [],
+      log_visibility: [],
       controllers: [[...provisionControllers, fixtures.provision.canisterId]],
     },
     sender_canister_version: [],

@@ -1,7 +1,7 @@
 {
   "scripts": {
     "build": "dfx build",
-    "deploy:local": "DFX_NETWORK=local IDENTITY_PEM_FILE=./secrets/default.pem ts-node ./scripts/deploy.ts",
+    "deploy:local": "DFX_NETWORK=local IDENTITY_PEM_FILE=./secrets/default/identity.pem ts-node ./scripts/deploy.ts",
     "generate": "dfx generate",
     "lint": "prettier src/ test/ --write",
     "lint:check": "prettier src/ test/ --check",
