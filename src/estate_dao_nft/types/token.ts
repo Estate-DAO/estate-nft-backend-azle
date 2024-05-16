@@ -15,6 +15,7 @@ export type OwnerToTokensIndexReadonlyType = ReadonlyMap<text, ReadonlyMap<nat32
 
 export const MintArg = Record({
   subaccount: Opt(Subaccount),
+  quantity: nat,
 });
 export type MintArg = typeof MintArg.tsType;
 

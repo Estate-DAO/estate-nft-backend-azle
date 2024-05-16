@@ -24,7 +24,7 @@ describe("Property Requests", () => {
   async function addSeedRequest() {
     actor.setIdentity(user);
     const res = await actor.add_property_request(testPropertyMetadata);
-    actor.setIdentity(controller)
+    actor.setIdentity(controller);
 
     expectResultIsOk(res);
     return res.Ok;

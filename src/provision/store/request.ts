@@ -71,7 +71,7 @@ export class RequestStore implements Store {
       metadata: [] as [nat, PropertyMetadata][],
       config: [] as [nat, RequestConfig][],
     };
-    
+
     this._requestMetadata.forEach((val, key) => {
       toSerialize.metadata.push([key, val]);
     });
