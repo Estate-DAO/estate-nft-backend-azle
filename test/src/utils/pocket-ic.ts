@@ -5,6 +5,7 @@ import {
   CanisterFixture,
   CreateInstanceOptions,
   PocketIc,
+  PocketIcServer,
   SetupCanisterOptions,
 } from "@hadronous/pic";
 import { Principal } from "@dfinity/principal";
@@ -30,9 +31,25 @@ import {
 } from "./canister";
 import { AccountIdentifier } from "@dfinity/ledger-icp";
 
-function createPocketIcInstance(options?: CreateInstanceOptions): Promise<PocketIc> {
-  if (process.env.DEBUG) return PocketIc.createFromUrl("http://localhost:7000", options);
-  return PocketIc.create(options);
+type PocketIcInstance = {
+  instance: PocketIc;
+  server: PocketIcServer;
+};
+
+async function createPocketIcInstance(options?: CreateInstanceOptions): Promise<PocketIcInstance> {
+  const server = await PocketIcServer.start(
+    process.env.DEBUG ?
+    {
+      showCanisterLogs: true,
+      showRuntimeLogs: true,
+    } :
+    {}
+  );
+
+  return {
+    instance: await PocketIc.create(server.getUrl(), options),
+    server
+  };
 }
 
 async function deployCanister<_SERVICE>(
@@ -52,11 +69,11 @@ async function deployCanister<_SERVICE>(
 }
 
 export function initTestSuite() {
-  let instance: PocketIc;
+  let pic: PocketIcInstance;
 
   const deployProvisionCanister = async (args?: Partial<SetupCanisterOptions>) => {
     return deployCanister<provisionService>(
-      instance,
+      pic.instance,
       provisionIdl,
       path.resolve(".azle", "provision", "provision.wasm.gz"),
       IDL.encode(provisionInit({ IDL }), [[]]),
@@ -66,7 +83,7 @@ export function initTestSuite() {
 
   const deployAssetCanister = async (args?: Partial<SetupCanisterOptions>) => {
     return deployCanister<assetService>(
-      instance,
+      pic.instance,
       assetIdl,
       path.resolve("test", "asset-canister", "assetstorage.wasm.gz"),
       IDL.encode(assetInit({ IDL }), [[{ Init: {} }]]),
@@ -76,7 +93,7 @@ export function initTestSuite() {
 
   const deployAssetProxyCanister = async (args?: Partial<SetupCanisterOptions>) => {
     return deployCanister<assetProxyService>(
-      instance,
+      pic.instance,
       assetProxyIdl,
       path.resolve(".azle", "asset_proxy", "asset_proxy.wasm.gz"),
       IDL.encode(assetProxyInit({ IDL }), [[]]),
@@ -97,7 +114,7 @@ export function initTestSuite() {
     };
 
     return deployCanister<estateDaoNftService>(
-      instance,
+      pic.instance,
       estateDaoNftIdl,
       path.resolve(".azle", "estate_dao_nft", "estate_dao_nft.wasm.gz"),
       IDL.encode(estateDaoNftInit({ IDL }), [{ Init: initMetadata }]),
@@ -110,7 +127,7 @@ export function initTestSuite() {
     args?: Partial<SetupCanisterOptions>,
   ) => {
     return deployCanister<icpLedgerService>(
-      instance,
+      pic.instance,
       icpLedgerIdl,
       path.resolve("test", "ledger-canister", "ledger.wasm.gz"),
       IDL.encode(icpLedgerInit({ IDL }), [
@@ -144,31 +161,32 @@ export function initTestSuite() {
   };
 
   const setup = async (options?: CreateInstanceOptions) => {
-    instance = await createPocketIcInstance(options);
+    pic = await createPocketIcInstance(options);
   };
 
   const teardown = async () => {
-    await instance?.tearDown();
+    await pic.instance.tearDown();
+    await pic.server.stop();
   };
 
   const attachToTokenCanister = (principal: Principal): estateDaoActor => {
-    return instance.createActor(estateDaoNftIdl, principal);
+    return pic.instance.createActor(estateDaoNftIdl, principal);
   };
 
   const attachToAssetCanister = (principal: Principal): assetActor => {
-    return instance.createActor(assetIdl, principal);
+    return pic.instance.createActor(assetIdl, principal);
   };
 
   const attachToManagementCanister = (): managementActor => {
-    return instance.createActor(managementIdl, Principal.fromText("aaaaa-aa"));
+    return pic.instance.createActor(managementIdl, Principal.fromText("aaaaa-aa"));
   };
 
   const attachToIcpLedgerCanister = (principal: Principal): icpLedgerActor => {
-    return instance.createActor(icpLedgerIdl, principal);
+    return pic.instance.createActor(icpLedgerIdl, principal);
   };
 
   const getInstance = (): PocketIc => {
-    return instance;
+    return pic.instance;
   };
 
   return {
