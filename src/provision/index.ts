@@ -68,7 +68,7 @@ export default Canister({
 
   preUpgrade: preUpgrade(pre_upgrade_impl),
   postUpgrade: postUpgrade([Opt(CanisterArgs)], post_upgrade_impl),
-  
+
   upgrade_token_canister: update([Principal], Result(bool, text), upgrade_token_canister),
   upgrade_token_canisters: update([], Result(bool, text), upgrade_token_canisters),
 });

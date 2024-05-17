@@ -11,7 +11,7 @@ describe("provision Upgrade Check", () => {
   const assetProxyCanisterId = generateRandomIdentity();
   const controllerAccount = generateRandomIdentity();
   const userAccount = generateRandomIdentity();
-  const fileHash = new Uint8Array([0,1,2]);
+  const fileHash = new Uint8Array([0, 1, 2]);
 
   beforeAll(async () => {
     await suite.setup();
@@ -29,23 +29,23 @@ describe("provision Upgrade Check", () => {
     await provision.actor.set_asset_proxy_canister(assetProxyCanisterId.getPrincipal());
 
     await managementActor.upload_chunk({
-      chunk: "Hello World".split('').map(v => v.charCodeAt(0)),
-      canister_id: provision.canisterId
-    })
+      chunk: "Hello World".split("").map((v) => v.charCodeAt(0)),
+      canister_id: provision.canisterId,
+    });
 
     await provision.actor.set_asset_canister_wasm({
       moduleHash: fileHash,
-      chunkHashes: [fileHash]
+      chunkHashes: [fileHash],
     });
 
     await provision.actor.set_token_canister_wasm({
       moduleHash: fileHash,
-      chunkHashes: [fileHash]
+      chunkHashes: [fileHash],
     });
 
     await provision.actor.add_property_request({
       ...SamplePropertyRequest,
-      name: 'Test Token'
+      name: "Test Token",
     });
   });
 
@@ -67,7 +67,9 @@ describe("provision Upgrade Check", () => {
       const isAdmin = await provision.actor.is_admin([userAccount.getPrincipal()]);
       expect(isAdmin).toBe(true);
 
-      const uploadedChunks = await managementActor.stored_chunks({ canister_id: provision.canisterId });
+      const uploadedChunks = await managementActor.stored_chunks({
+        canister_id: provision.canisterId,
+      });
       expect(uploadedChunks).toHaveLength(1);
 
       const pendingRequests = await provision.actor.get_pending_requests();
@@ -99,7 +101,9 @@ describe("provision Upgrade Check", () => {
       const isAdmin = await provision.actor.is_admin([userAccount.getPrincipal()]);
       expect(isAdmin).toBe(true);
 
-      const uploadedChunks = await managementActor.stored_chunks({ canister_id: provision.canisterId });
+      const uploadedChunks = await managementActor.stored_chunks({
+        canister_id: provision.canisterId,
+      });
       expect(uploadedChunks).toHaveLength(1);
 
       const pendingRequests = await provision.actor.get_pending_requests();

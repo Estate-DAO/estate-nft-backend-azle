@@ -181,7 +181,7 @@ describe("E2E Test", () => {
     });
 
     const subaccount = Array(32).fill(2);
-    const mintRes = await tokenActor.mint({ subaccount: [subaccount] });
+    const mintRes = await tokenActor.mint({ subaccount: [subaccount], quantity: 1n });
     expectResultIsOk(mintRes);
 
     const refundRes = await tokenActor.refund({ subaccount: [subaccount] });

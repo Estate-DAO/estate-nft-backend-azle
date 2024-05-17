@@ -1,9 +1,30 @@
-import { None, Opt, Result, Some, blob, bool, ic, nat, nat32, nat64, text } from "azle";
+import { None, Opt, Result, Some, Vec, blob, bool, ic, nat, nat32, nat64, text } from "azle";
 import { deriveSubaccount } from "../../common/token";
 import { validateInvestor } from "../validate";
 import { getTokenLedger, TRANSFER_FEE } from "../../common/ledger";
 import { MetadataStore, TokenStore } from "../store";
-import { MintArg, RefundArg, Subaccount } from "../types";
+import { Account, MintArg, RefundArg, Subaccount } from "../types";
+
+export function get_escrow_account(): Account {
+  const principal = ic.caller();
+  const subaccount = deriveSubaccount(principal);
+
+  return {
+    owner: principal,
+    subaccount: Some(subaccount),
+  };
+}
+
+export async function get_escrow_balance(): Promise<nat> {
+  return await ic.call(getTokenLedger(MetadataStore.metadata.token).icrc1_balance_of, {
+    args: [
+      {
+        owner: ic.id(),
+        subaccount: Some(deriveSubaccount(ic.caller())),
+      },
+    ],
+  });
+}
 
 export async function refund({
   subaccount: to_subaccount,
@@ -44,9 +65,14 @@ export async function refund({
 }
 
 // TODO: Implement memo and created_at_time checks
-export async function mint({ subaccount: to_subaccount }: MintArg): Promise<Result<nat, text>> {
+export async function mint({
+  subaccount: to_subaccount,
+  quantity,
+}: MintArg): Promise<Result<Vec<nat>, text>> {
   const principal = ic.caller();
   const icpLedger = getTokenLedger(MetadataStore.metadata.token);
+
+  if ( quantity <= 0 ) return Result.Err("Quantity should be at least 1.");
 
   const validationResult = validateInvestor(principal);
   if (validationResult.Err) return validationResult;
@@ -61,13 +87,16 @@ export async function mint({ subaccount: to_subaccount }: MintArg): Promise<Resu
     ],
   });
 
-  if (escrowBalance < MetadataStore.metadata.price + TRANSFER_FEE)
+  if (escrowBalance < MetadataStore.metadata.price * quantity + TRANSFER_FEE)
     return Result.Err("Invalid balance in escrow.");
 
-  if (MetadataStore.config.total_supply >= MetadataStore.metadata.supply_cap)
+  if (MetadataStore.config.total_supply + quantity >= MetadataStore.metadata.supply_cap)
     return Result.Err("Supply cap reached.");
 
-  const tokenId = TokenStore.mint(principal.toString(), to_subaccount.Some);
+  const quantityInNum = parseInt(quantity.toString());
+  const tokenIds = Array(quantityInNum)
+    .fill(0)
+    .map(() => TokenStore.mint(principal.toString(), to_subaccount.Some));
 
   try {
     await ic.call(icpLedger.icrc1_transfer, {
@@ -78,7 +107,7 @@ export async function mint({ subaccount: to_subaccount }: MintArg): Promise<Resu
             owner: MetadataStore.metadata.treasury,
             subaccount: None,
           },
-          amount: MetadataStore.metadata.price,
+          amount: MetadataStore.metadata.price * quantity,
           fee: Some(TRANSFER_FEE),
           memo: None,
           created_at_time: None,
@@ -86,9 +115,9 @@ export async function mint({ subaccount: to_subaccount }: MintArg): Promise<Resu
       ],
     });
   } catch (err) {
-    TokenStore.burn(tokenId);
+    tokenIds.forEach((tokenId) => TokenStore.burn(tokenId));
     return Result.Err("An error occured while transferring ICP to treasury.");
   }
 
-  return Result.Ok(BigInt(tokenId));
+  return Result.Ok(tokenIds.map((v) => BigInt(v)));
 }

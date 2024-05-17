@@ -11,7 +11,7 @@ const testInitMetadata = {
   name: "Test Token",
   symbol: "TEST",
   price: 100_000n,
-}
+};
 
 describe("estate_dao_nft Upgrade Check", () => {
   const suite = initTestSuite();
@@ -25,34 +25,32 @@ describe("estate_dao_nft Upgrade Check", () => {
     const minterAccount = generateRandomIdentity();
     const icpLedger = await suite.deployIcpLedgerCanister(minterAccount.getPrincipal());
     icpLedger.actor.setIdentity(minterAccount);
-    
+
     testInitMetadata.token = icpLedger.canisterId;
 
-    token = await suite.deployEstateDaoNftCanister(
-      testInitMetadata,
-      {
-        sender: controllerAccount.getPrincipal(),
-        controllers: [controllerAccount.getPrincipal()],
-      },
-    );
+    token = await suite.deployEstateDaoNftCanister(testInitMetadata, {
+      sender: controllerAccount.getPrincipal(),
+      controllers: [controllerAccount.getPrincipal()],
+    });
 
     token.actor.setIdentity(userAccount);
     const subaccount = deriveSubaccount(userAccount.getPrincipal());
-    
+
     await icpLedger.actor.icrc1_transfer({
       from_subaccount: [],
       to: {
         owner: token.canisterId,
-        subaccount: [subaccount]
+        subaccount: [subaccount],
       },
       fee: [],
       memo: [],
       created_at_time: [],
       amount: testInitMetadata.price * 2n,
-    })
+    });
 
     await token.actor.mint({
-      subaccount: []
+      subaccount: [],
+      quantity: 1n
     });
 
     token.actor.setIdentity(controllerAccount);
@@ -68,10 +66,14 @@ describe("estate_dao_nft Upgrade Check", () => {
       const tokens = await token.actor.icrc7_tokens([], []);
       expect(tokens).toHaveLength(1);
 
-      const userTokens = await token.actor.icrc7_tokens_of({
-        owner: userAccount.getPrincipal(),
-        subaccount: []
-      }, [], []);
+      const userTokens = await token.actor.icrc7_tokens_of(
+        {
+          owner: userAccount.getPrincipal(),
+          subaccount: [],
+        },
+        [],
+        [],
+      );
       expect(userTokens).toHaveLength(1);
     });
 
@@ -92,10 +94,14 @@ describe("estate_dao_nft Upgrade Check", () => {
       const tokens = await token.actor.icrc7_tokens([], []);
       expect(tokens).toHaveLength(1);
 
-      const userTokens = await token.actor.icrc7_tokens_of({
-        owner: userAccount.getPrincipal(),
-        subaccount: []
-      }, [], []);
+      const userTokens = await token.actor.icrc7_tokens_of(
+        {
+          owner: userAccount.getPrincipal(),
+          subaccount: [],
+        },
+        [],
+        [],
+      );
       expect(userTokens).toHaveLength(1);
     });
   });

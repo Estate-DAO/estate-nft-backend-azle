@@ -59,8 +59,8 @@ export function get_token_canister_wasm(): WasmChunked {
 
 export async function upgrade_token_canister(canisterId: Principal): Promise<Result<bool, text>> {
   const validationResult = validateController(ic.caller());
-  if ( validationResult.Err ) return validationResult;
-  
+  if (validationResult.Err) return validationResult;
+
   try {
     await ic.call(managementCanisterExtended.install_chunked_code, {
       args: [
@@ -89,7 +89,7 @@ export async function upgrade_token_canister(canisterId: Principal): Promise<Res
 
 export async function upgrade_token_canisters(): Promise<Result<bool, text>> {
   const validationResult = validateController(ic.caller());
-  if ( validationResult.Err ) return validationResult;
+  if (validationResult.Err) return validationResult;
 
   const tokenCanisters = Array.from(RequestStore.config.values())
     .map((v) => v.token_canister.Some)
