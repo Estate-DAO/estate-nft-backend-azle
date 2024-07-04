@@ -31,7 +31,7 @@ import {
 import { AccountIdentifier } from "@dfinity/ledger-icp";
 
 function createPocketIcInstance(options?: CreateInstanceOptions): Promise<PocketIc> {
-  if (process.env.DEBUG) return PocketIc.createFromUrl("http://localhost:7000", options);
+  if (process.env.DEBUG) return PocketIc.createFromUrl("http://localhost:7001", options);
   return PocketIc.create(options);
 }
 
