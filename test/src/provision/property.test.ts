@@ -1,4 +1,4 @@
-import { provisionActor, initTestSuite } from "../utils/pocket-ic";
+import { provisionActor, initTestSuite, managementActor } from "../utils/pocket-ic";
 import { generateRandomIdentity } from "@hadronous/pic";
 import { expectResultIsErr, expectResultIsOk, isSome } from "../utils/common";
 import { SamplePropertyRequest } from "../utils/sample";
@@ -13,15 +13,20 @@ const testPropertyMetadata = {
 };
 
 describe("Property Requests", () => {
-  let actor: provisionActor;
+  let actor: provisionActor, managementActor: managementActor;
   const suite = initTestSuite();
   const admin = generateRandomIdentity();
+  const controller = generateRandomIdentity();
 
   const draftPropertyCount = 1;
   const publishedPropertyCount = 2;
   const totalPropertyCount = draftPropertyCount + publishedPropertyCount;
 
-  let publishedProperties: any[] = [];
+  let publishedProperties: {
+    id: nat;
+    token_canister: Principal;
+    asset_canister: Principal;
+  }[] = [];
 
   async function seed() {
     const properties = await Promise.all(
@@ -51,11 +56,15 @@ describe("Property Requests", () => {
 
   beforeAll(async () => {
     await suite.setup();
-    const provision = await suite.deployProvisionCanister();
-    const assetProxy = await suite.deployAssetProxyCanister();
-    const tempAsset = await suite.deployAssetCanister();
+    const provision = await suite.deployProvisionCanister({ sender: controller.getPrincipal() });
+    const assetProxy = await suite.deployAssetProxyCanister({ sender: controller.getPrincipal() });
+    const tempAsset = await suite.deployAssetCanister({ sender: controller.getPrincipal() });
+    managementActor = await suite.attachToManagementCanister();
 
-    const managementActor = await suite.attachToManagementCanister();
+    provision.actor.setIdentity(controller);
+    assetProxy.actor.setIdentity(controller);
+    tempAsset.actor.setIdentity(controller);
+    managementActor.setIdentity(controller);
 
     await configureCanisters(
       {
@@ -82,4 +91,29 @@ describe("Property Requests", () => {
     const listedProperties = await actor.list_properties();
     expect(listedProperties.sort()).toEqual(publishedProperties.sort());
   });
+
+  describe("delete_property", () => {
+    it("fails on non-controller", async () => {
+      const account = generateRandomIdentity();
+      const property = publishedProperties[0];
+      actor.setIdentity(account);
+
+      const result = await actor.delete_property(property.id);
+      expectResultIsErr(result);
+    });
+
+    it("success", async () => {
+      const property = publishedProperties[0];
+      actor.setIdentity(controller);
+
+      const result = await actor.delete_property(property.id);
+      expectResultIsOk(result);
+
+      const instance = suite.getInstance();
+      const assetCanisterSubnet = await instance.getCanisterSubnetId(property.asset_canister);
+      const tokenCanisterSubnet = await instance.getCanisterSubnetId(property.token_canister);
+      expect(assetCanisterSubnet).toBe(null);
+      expect(tokenCanisterSubnet).toBe(null);
+    });
+  })
 });

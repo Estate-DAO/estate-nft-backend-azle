@@ -39,7 +39,7 @@ import {
   upgrade_token_canisters,
 } from "./canister";
 import { get_asset_proxy_canister, set_asset_proxy_canister } from "./canister/asset_proxy";
-import { list_properties } from "./property";
+import { list_properties, delete_property } from "./property";
 
 export default Canister({
   init: init([Opt(CanisterArgs)], init_impl),
@@ -65,6 +65,7 @@ export default Canister({
   reject_request: update([nat], Result(bool, text), reject_request),
 
   list_properties: query([], Vec(ListPropertiesResult), list_properties),
+  delete_property: update([nat], Result(bool, text), delete_property),
 
   preUpgrade: preUpgrade(pre_upgrade_impl),
   postUpgrade: postUpgrade([Opt(CanisterArgs)], post_upgrade_impl),

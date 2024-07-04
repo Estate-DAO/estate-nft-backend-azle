@@ -38,6 +38,11 @@ export class RequestStore implements Store {
     return id;
   }
 
+  deleteRequest(id: nat) {
+    this._requestMetadata.delete(id);
+    this._requestConfig.delete(id);
+  }
+
   approveRequest(id: nat) {
     const config = this._requestConfig.get(id)!;
     config.approval_status = { Approved: null };
