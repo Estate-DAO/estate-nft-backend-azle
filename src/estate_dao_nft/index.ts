@@ -48,6 +48,7 @@ import {
   Subaccount,
   RefundArg,
   CanisterArgs,
+  GetEscrowAccountResult,
 } from "./types";
 import { init_impl, post_upgrade_impl, pre_upgrade_impl } from "./lifecycle";
 import { icrc61_supported_standards } from "./icrc61";
@@ -59,7 +60,7 @@ import {
   icrc7_tokens_of,
   icrc7_transfer,
 } from "./token";
-import { get_escrow_account, get_escrow_balance, mint, refund } from "./mint";
+import { get_escrow_account, mint, refund } from "./mint";
 
 export default Canister({
   init: init([CanisterArgs], init_impl),
@@ -89,8 +90,7 @@ export default Canister({
   icrc7_tokens_of: query([Account, Opt(nat), Opt(nat)], Vec(nat), icrc7_tokens_of),
   icrc7_transfer: update([Vec(TransferArg)], Vec(Opt(TransferResult)), icrc7_transfer),
 
-  get_escrow_account: query([], Account, get_escrow_account),
-  get_escrow_balance: query([], nat, get_escrow_balance),
+  get_escrow_account: query([], GetEscrowAccountResult, get_escrow_account),
   mint: update([MintArg], Result(Vec(nat), text), mint),
   refund: update([RefundArg], Result(bool, text), refund),
 

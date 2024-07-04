@@ -51,3 +51,9 @@ export const TransferResult = Variant({
 export type TransferArg = typeof TransferArg.tsType;
 export type TransferError = typeof TransferError.tsType;
 export type TransferResult = typeof TransferResult.tsType;
+
+export const GetEscrowAccountResult = Record({
+  account: Account,
+  accountId: text,
+})
+export type GetEscrowAccountResult = typeof GetEscrowAccountResult.tsType;

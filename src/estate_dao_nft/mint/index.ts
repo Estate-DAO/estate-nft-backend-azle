@@ -3,27 +3,25 @@ import { deriveSubaccount } from "../../common/token";
 import { validateInvestor } from "../validate";
 import { getTokenLedger, TRANSFER_FEE } from "../../common/ledger";
 import { MetadataStore, TokenStore } from "../store";
-import { Account, MintArg, RefundArg, Subaccount } from "../types";
+import { Account, GetEscrowAccountResult, MintArg, RefundArg, Subaccount } from "../types";
+import { AccountIdentifier, SubAccount } from "@dfinity/ledger-icp";
 
-export function get_escrow_account(): Account {
-  const principal = ic.caller();
-  const subaccount = deriveSubaccount(principal);
+export function get_escrow_account(): GetEscrowAccountResult {
+  const principal = ic.id();
+  const subaccount = deriveSubaccount(ic.caller());
+  
+  const accountIdentifier = AccountIdentifier.fromPrincipal({
+    principal,
+    subAccount: SubAccount.fromBytes(subaccount) as SubAccount
+  });
 
   return {
-    owner: principal,
-    subaccount: Some(subaccount),
+    account: {
+      owner: principal,
+      subaccount: Some(subaccount),
+    },
+    accountId: accountIdentifier.toHex()
   };
-}
-
-export async function get_escrow_balance(): Promise<nat> {
-  return await ic.call(getTokenLedger(MetadataStore.metadata.token).icrc1_balance_of, {
-    args: [
-      {
-        owner: ic.id(),
-        subaccount: Some(deriveSubaccount(ic.caller())),
-      },
-    ],
-  });
 }
 
 export async function refund({
