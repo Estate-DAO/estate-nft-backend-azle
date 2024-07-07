@@ -65,9 +65,15 @@ export async function approve_request(id: nat): Promise<Result<bool, text>> {
   );
   if (isErr(grantProxyPermsResult)) return grantProxyPermsResult;
 
+  const approvedFiles = [
+    ...requestMetadata.documents.map((doc) => doc[1]),
+    ...requestMetadata.images,
+    ...(requestMetadata.logo !== '' ? [requestMetadata.logo] : []),
+  ];
+
   const approveAssetsResult = await approve_files_from_proxy(
     deployAssetResult.Ok,
-    requestMetadata.documents.map((doc) => doc[1]),
+    approvedFiles,
   );
   if (isErr(approveAssetsResult)) return approveAssetsResult;
 
@@ -81,6 +87,10 @@ export async function approve_request(id: nat): Promise<Result<bool, text>> {
     ...requestMetadata,
     property_owner: requestConfig.property_owner,
     asset_canister: deployAssetResult.Ok,
+    ...(
+      requestMetadata.logo !== "" &&
+      { logo: `https://${deployAssetResult.Ok.toString()}.icp0.io${requestMetadata.logo}` }
+    )
   });
   if (isErr(deployTokenResult)) return deployTokenResult;
 
