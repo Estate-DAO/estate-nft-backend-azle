@@ -29,6 +29,7 @@ export const CollectionMetadataRaw = {
   treasury: Principal,
   asset_canister: Principal,
   token: Principal,
+  index: Principal,
   images: Vec(text),
   documents: Vec(Tuple(text, text)),
 };
