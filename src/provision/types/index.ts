@@ -51,3 +51,10 @@ export const CanisterArgs = Variant({
   Upgrade: Null,
 });
 export type CanisterArgs = typeof CanisterArgs.tsType;
+
+export const ApproveSuccessResponse = Record({
+  id: nat,
+  asset_canister: Principal,
+  token_canister: Principal,
+});
+export type ApproveSuccessResponse = typeof ApproveSuccessResponse.tsType;

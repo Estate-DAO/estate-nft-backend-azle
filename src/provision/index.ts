@@ -20,6 +20,7 @@ import {
   RequestInfo,
   WasmChunked,
   CanisterArgs,
+  ApproveSuccessResponse,
 } from "./types";
 import {
   add_property_request,
@@ -61,7 +62,7 @@ export default Canister({
   get_pending_requests: query([], Vec(nat), get_pending_requests),
   get_request_info: query([nat], Opt(RequestInfo), get_request_info),
 
-  approve_request: update([nat], Result(bool, text), approve_request),
+  approve_request: update([nat], Result(ApproveSuccessResponse, text), approve_request),
   reject_request: update([nat], Result(bool, text), reject_request),
 
   list_properties: query([], Vec(ListPropertiesResult), list_properties),

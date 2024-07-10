@@ -1,5 +1,5 @@
 import { None, Opt, Principal, Result, Some, Vec, bool, ic, nat, text } from "azle";
-import { PropertyMetadata, RequestInfo } from "../types";
+import { ApproveSuccessResponse, PropertyMetadata, RequestInfo } from "../types";
 import { AssetProxyCanisterStore, RequestStore } from "../store";
 import { validateAdmin, validatePropertyRequester } from "../validate";
 import { isErr, isOk, iterableToArray } from "../../common/utils";
@@ -46,7 +46,7 @@ export function get_request_info(id: nat): Opt<RequestInfo> {
   return Some(requestInfo);
 }
 
-export async function approve_request(id: nat): Promise<Result<bool, text>> {
+export async function approve_request(id: nat): Promise<Result<ApproveSuccessResponse, text>> {
   const validationResult = validateAdmin(ic.caller());
   if (validationResult.Err) return validationResult;
 
@@ -110,7 +110,11 @@ export async function approve_request(id: nat): Promise<Result<bool, text>> {
   RequestStore.approveRequest(id);
   RequestStore.setTokenCanister(id, deployTokenResult.Ok);
   RequestStore.setAssetCanister(id, deployAssetResult.Ok);
-  return Result.Ok(true);
+  return Result.Ok({
+    id,
+    token_canister: deployTokenResult.Ok,
+    asset_canister: deployAssetResult.Ok
+  });
 }
 
 export function reject_request(id: nat): Result<bool, text> {
