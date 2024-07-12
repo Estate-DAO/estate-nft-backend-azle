@@ -63,7 +63,7 @@ describe("E2E Test", () => {
 
   afterAll(suite.teardown);
 
-  it("request new property", async () => {
+  it("request new collection", async () => {
     provisionActor.setIdentity(userAccount);
     assetProxyActor.setIdentity(userAccount);
 
@@ -83,9 +83,25 @@ describe("E2E Test", () => {
       sha256: [],
     });
 
+    await assetProxyActor.store({
+      key: "/image.txt",
+      content: "Hello Universe".split("").map((v) => v.charCodeAt(0)),
+      content_encoding: "identity",
+      content_type: "text/plain",
+      sha256: [],
+    });
+
+    await assetProxyActor.store({
+      key: "/logo.txt",
+      content: "Hello Universe".split("").map((v) => v.charCodeAt(0)),
+      content_encoding: "identity",
+      content_type: "text/plain",
+      sha256: [],
+    });
+
     const res = await provisionActor.add_property_request({
       ...SamplePropertyRequest,
-      name: "Test Property",
+      name: "Test Collection",
       symbol: "TEST",
       token: icpLedgerId,
       treasury: userAccount.getPrincipal(),
@@ -95,6 +111,8 @@ describe("E2E Test", () => {
         ["kyc", "/document_1.txt"],
         ["ownership", "/document_2.txt"],
       ],
+      images: ["/image.txt"],
+      logo: "/logo.txt",
     });
     expectResultIsOk(res);
     requestId = res.Ok;
@@ -121,21 +139,23 @@ describe("E2E Test", () => {
     tokenActor = await suite.attachToTokenCanister(tokenCanisterId);
     assetActor = await suite.attachToAssetCanister(assetCanisterId);
 
-    const propertyMetadata = await tokenActor.get_property_metadata();
-    expect(propertyMetadata.name).toBe("Test Property");
-    expect(propertyMetadata.symbol).toBe("TEST");
-    expect(propertyMetadata.supply_cap).toBe(2n);
-    expect(propertyMetadata.total_supply).toBe(0n);
-    expect(propertyMetadata.documents).toHaveLength(2);
+    const metadata = await tokenActor.get_property_metadata();
+    expect(metadata.name).toBe("Test Collection");
+    expect(metadata.symbol).toBe("TEST");
+    expect(metadata.supply_cap).toBe(2n);
+    expect(metadata.total_supply).toBe(0n);
+    expect(metadata.documents).toHaveLength(2);
+    expect(metadata.images).toHaveLength(1);
+    expect(metadata.logo).toBe(`https://${assetCanisterId}.icp0.io/logo.txt`);
 
     const files = await assetActor.list({});
-    expect(files).toHaveLength(2);
+    expect(files).toHaveLength(4);
     expect(files.map((file) => file.key).sort()).toEqual(
-      ["/document_1.txt", "/document_2.txt"].sort(),
+      ["/document_1.txt", "/document_2.txt", "/image.txt", "/logo.txt"].sort(),
     );
   });
 
-  it("edit property documents", async () => {
+  it("edit collection documents", async () => {
     tokenActor.setIdentity(userAccount);
     assetActor.setIdentity(userAccount);
 
@@ -159,19 +179,20 @@ describe("E2E Test", () => {
     const investorAccount = generateRandomIdentity();
     provisionActor.setIdentity(investorAccount);
 
-    const properties = await provisionActor.list_properties();
-    expect(properties).toHaveLength(1);
+    const collections = await provisionActor.list_properties();
+    expect(collections).toHaveLength(1);
 
-    const property = properties[0];
-    const tokenActor = await suite.attachToTokenCanister(property.token_canister);
+    const collection = collections[0];
+    const tokenActor = await suite.attachToTokenCanister(collection.token_canister);
     tokenActor.setIdentity(investorAccount);
+
     const price = (await tokenActor.get_property_metadata()).price;
     const escrowSubaccount = deriveSubaccount(investorAccount.getPrincipal());
 
     await icpLedgerActor.icrc1_transfer({
       from_subaccount: [],
       to: {
-        owner: property.token_canister,
+        owner: collection.token_canister,
         subaccount: [escrowSubaccount],
       },
       fee: [],
@@ -180,27 +201,30 @@ describe("E2E Test", () => {
       amount: 2n * price,
     });
 
-    const subaccount = Array(32).fill(2);
-    const mintRes = await tokenActor.mint({ subaccount: [subaccount], quantity: 1n });
-    expectResultIsOk(mintRes);
+    const bookRes = await tokenActor.book_tokens({ quantity: 1n });
+    expectResultIsOk(bookRes);
 
-    const refundRes = await tokenActor.refund({ subaccount: [subaccount] });
-    expectResultIsOk(refundRes);
+    const bookedTokens = await tokenActor.get_booked_tokens([]);
+    expect(bookedTokens).toBe(1n);
+
+    tokenActor.setIdentity(userAccount);
+    const acceptSaleRes = await tokenActor.accept_sale();
+    expectResultIsOk(acceptSaleRes);
 
     const [tokenBalance] = await tokenActor.icrc7_balance_of([
       {
         owner: investorAccount.getPrincipal(),
-        subaccount: [subaccount],
+        subaccount: [],
       },
     ]);
 
     const icpBalance = await icpLedgerActor.icrc1_balance_of({
       owner: investorAccount.getPrincipal(),
-      subaccount: [subaccount],
+      subaccount: [],
     });
 
     const escrowBalance = await icpLedgerActor.icrc1_balance_of({
-      owner: property.token_canister,
+      owner: collection.token_canister,
       subaccount: [escrowSubaccount],
     });
 
@@ -210,8 +234,8 @@ describe("E2E Test", () => {
     });
 
     expect(treasuryBalance).toBe(price);
-    expect(escrowBalance).toBe(0n);
-    expect(icpBalance).toBe(2n * price - price - 2n * TRANSFER_FEE);
+    expect(escrowBalance).toBe(2n * price - price - TRANSFER_FEE);
+    expect(icpBalance).toBe(0n);
     expect(tokenBalance).toBe(1n);
   });
 });

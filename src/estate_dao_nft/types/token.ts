@@ -1,4 +1,4 @@
-import { Record, Opt, blob, Variant, text, nat, bool, nat64, Null, nat32 } from "azle";
+import { Record, Opt, blob, Variant, text, nat, bool, nat64, Null, nat32, Principal } from "azle";
 import { Account, Subaccount } from "./common";
 
 export type TokenType = {
@@ -52,8 +52,14 @@ export type TransferArg = typeof TransferArg.tsType;
 export type TransferError = typeof TransferError.tsType;
 export type TransferResult = typeof TransferResult.tsType;
 
+export const EscrowAccount = Record({
+  owner: Principal,
+  subaccount: Subaccount,
+});
+export type EscrowAccount = typeof EscrowAccount.tsType;
+
 export const GetEscrowAccountResult = Record({
-  account: Account,
+  account: EscrowAccount,
   accountId: text,
 })
 export type GetEscrowAccountResult = typeof GetEscrowAccountResult.tsType;

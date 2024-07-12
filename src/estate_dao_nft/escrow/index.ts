@@ -18,7 +18,7 @@ export function get_escrow_account(): GetEscrowAccountResult {
   return {
     account: {
       owner: principal,
-      subaccount: Some(subaccount), 
+      subaccount: subaccount, 
     },
     accountId: accountIdentifier.toHex()
   };

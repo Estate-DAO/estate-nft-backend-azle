@@ -20,6 +20,9 @@ import {
   estateDaoNftInit,
   estateDaoNftService,
   icpLedgerIdl,
+  icpLedgerIndexIdl,
+  icpLedgerIndexInit,
+  icpLedgerIndexService,
   icpLedgerInit,
   icpLedgerService,
   managementIdl,
@@ -143,6 +146,23 @@ export function initTestSuite() {
     );
   };
 
+  const deployIcpLedgerIndexCanister = async (
+    ledgerPrincipal: Principal,
+    args?: Partial<SetupCanisterOptions>,
+  ) => {
+    return deployCanister<icpLedgerIndexService>(
+      instance,
+      icpLedgerIndexIdl,
+      path.resolve("test", "index-canister", "index.wasm.gz"),
+      IDL.encode(icpLedgerIndexInit({ IDL }), [
+        {
+          ledger_id: ledgerPrincipal,
+        },
+      ]),
+      args,
+    );
+  };
+
   const setup = async (options?: CreateInstanceOptions) => {
     instance = await createPocketIcInstance(options);
   };
@@ -180,6 +200,7 @@ export function initTestSuite() {
     deployAssetCanister,
     deployAssetProxyCanister,
     deployIcpLedgerCanister,
+    deployIcpLedgerIndexCanister,
     attachToTokenCanister,
     attachToAssetCanister,
     attachToManagementCanister,
@@ -199,3 +220,5 @@ export type managementFixture = CanisterFixture<managementService>;
 export type managementActor = Actor<managementService>;
 export type icpLedgerActor = Actor<icpLedgerService>;
 export type icpLedgerFixture = CanisterFixture<icpLedgerService>;
+export type icpLedgerIndexActor = Actor<icpLedgerIndexService>;
+export type icpLedgerIndexFixture = CanisterFixture<icpLedgerIndexService>;

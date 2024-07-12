@@ -1,14 +1,11 @@
 {
   "asset": {
-    "ic": "t4l5p-laaaa-aaaam-aclba-cai"
+    "ic": "bgokq-kaaaa-aaaam-acxgq-cai"
   },
   "asset_proxy": {
-    "ic": "tviwt-5iaaa-aaaam-aclaq-cai"
-  },
-  "estate_dao_nft": {
-    "ic": "pix63-oaaaa-aaaam-acfoa-cai"
+    "ic": "pedcl-2aaaa-aaaam-acwgq-caik256"
   },
   "provision": {
-    "ic": "4pmll-diaaa-aaaam-ackeq-cai"
+    "ic": "pdce7-xyaaa-aaaam-acwga-cai"
   }
 }
