@@ -56,17 +56,21 @@ export async function configureCanisters(
     sender_canister_version: [],
   });
 
+  console.log("Hello");
+
   // load wasms in provision canister
   const assetWasmChunks = await loadWasmChunksToCanister(
     fixtures.management.actor,
     ASSET_CANISTER_WASM,
     fixtures.provision.canisterId,
   );
+  console.log("Hello 2");
   const tokenWasmChunks = await loadWasmChunksToCanister(
     fixtures.management.actor,
     TOKEN_CANISTER_WASM,
     fixtures.provision.canisterId,
   );
+  console.log("Hello 3");
 
   await fixtures.provision.actor.set_asset_canister_wasm({
     moduleHash: await getModuleHash(ASSET_CANISTER_WASM),

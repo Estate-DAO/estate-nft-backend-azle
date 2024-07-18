@@ -5,6 +5,7 @@ import { deriveSubaccount } from "../../../src/common/token";
 import { expectResultIsErr, expectResultIsOk } from "../utils/common";
 import { Result, nat } from "azle";
 import { SubAccount } from "../../dfx_generated/icp_ledger/icp_ledger.did";
+import { AccountIdentifier } from "@dfinity/ledger-icp";
 
 const TOKEN_PRICE = 100000n;
 const TRANSFER_FEE = 10_000n;
@@ -59,6 +60,17 @@ describe("Token", () => {
   });
 
   afterAll(suite.teardown);
+
+  it("get_escrow_account", async () => {
+    const account = generateRandomIdentity();
+    tokenActor.setIdentity(account);
+
+    const escrowAccount = await tokenActor.get_escrow_account();
+    const derivedSubaccount = deriveSubaccount(account.getPrincipal());
+
+    expect(escrowAccount.account.owner.toString()).toBe(tokenId.toString());
+    expect(escrowAccount.account.subaccount.toString()).toBe(derivedSubaccount.toString());
+  });
 
   describe("refund", () => {
     it("fails for anonymous accounts", async () => {

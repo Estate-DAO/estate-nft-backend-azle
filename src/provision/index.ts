@@ -20,6 +20,7 @@ import {
   RequestInfo,
   WasmChunked,
   CanisterArgs,
+  ApproveSuccessResponse,
 } from "./types";
 import {
   add_property_request,
@@ -39,7 +40,7 @@ import {
   upgrade_token_canisters,
 } from "./canister";
 import { get_asset_proxy_canister, set_asset_proxy_canister } from "./canister/asset_proxy";
-import { list_properties } from "./property";
+import { list_properties, delete_property } from "./property";
 
 export default Canister({
   init: init([Opt(CanisterArgs)], init_impl),
@@ -61,10 +62,11 @@ export default Canister({
   get_pending_requests: query([], Vec(nat), get_pending_requests),
   get_request_info: query([nat], Opt(RequestInfo), get_request_info),
 
-  approve_request: update([nat], Result(bool, text), approve_request),
+  approve_request: update([nat], Result(ApproveSuccessResponse, text), approve_request),
   reject_request: update([nat], Result(bool, text), reject_request),
 
   list_properties: query([], Vec(ListPropertiesResult), list_properties),
+  delete_property: update([nat], Result(bool, text), delete_property),
 
   preUpgrade: preUpgrade(pre_upgrade_impl),
   postUpgrade: postUpgrade([Opt(CanisterArgs)], post_upgrade_impl),

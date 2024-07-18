@@ -513,9 +513,9 @@
   integrity sha512-T1QyPSDCyMXaO3pzBkF96E8xMkiRYbUEZADd29SyPGabqxMViNoii+NcK7eWJAEoU6RZyEm5lVSIjTmcdoB9HA==
 
 "@hadronous/pic@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@hadronous/pic/-/pic-0.6.0.tgz#b8c9e10ebe37069901c8676d3778d9f24bb22f03"
-  integrity sha512-nr79j4KG7itoyiCjil8JZKYsujw0UCyXCqhuhL0wFV5dlGvzQ1q2LoM/TAVHRoNnVIh/s0eM5XX9yV7Y3aBVJQ==
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@hadronous/pic/-/pic-0.6.1.tgz#7d929e01b4e623192c0642b1124142bc73d7c684"
+  integrity sha512-SeN+WV5SfzFuVjU1dZ2A1CN7l8w3uO1Ld6Xut0Y8pt6ThP6+RdXHmT+cefOgyX7WxHrLSbDPZcZI9lwVv3lDQQ==
   dependencies:
     bip39 "^3.1.0"
 

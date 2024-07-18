@@ -48,6 +48,9 @@ import {
   Subaccount,
   RefundArg,
   CanisterArgs,
+  GetEscrowAccountResult,
+  SaleStatus,
+  BookTokensArg,
 } from "./types";
 import { init_impl, post_upgrade_impl, pre_upgrade_impl } from "./lifecycle";
 import { icrc61_supported_standards } from "./icrc61";
@@ -59,7 +62,8 @@ import {
   icrc7_tokens_of,
   icrc7_transfer,
 } from "./token";
-import { get_escrow_account, get_escrow_balance, mint, refund } from "./mint";
+import { accept_sale, reject_sale, reject_sale_individual } from "./mint";
+import { book_tokens, get_booked_tokens, get_escrow_account, get_sale_status, get_total_booked_tokens } from "./escrow";
 
 export default Canister({
   init: init([CanisterArgs], init_impl),
@@ -89,10 +93,16 @@ export default Canister({
   icrc7_tokens_of: query([Account, Opt(nat), Opt(nat)], Vec(nat), icrc7_tokens_of),
   icrc7_transfer: update([Vec(TransferArg)], Vec(Opt(TransferResult)), icrc7_transfer),
 
-  get_escrow_account: query([], Account, get_escrow_account),
-  get_escrow_balance: query([], nat, get_escrow_balance),
-  mint: update([MintArg], Result(Vec(nat), text), mint),
-  refund: update([RefundArg], Result(bool, text), refund),
+  get_escrow_account: query([], GetEscrowAccountResult, get_escrow_account),
+  get_booked_tokens: query([Opt(Principal)], nat, get_booked_tokens),
+  get_total_booked_tokens: query([], nat, get_total_booked_tokens),
+  get_sale_status: query([], SaleStatus, get_sale_status),
+
+  book_tokens: update([BookTokensArg], Result(bool, text), book_tokens),
+
+  accept_sale: update([], Result(bool, text), accept_sale),
+  reject_sale: update([], Result(bool, text), reject_sale),
+  reject_sale_individual: update([Principal], Result(bool, text), reject_sale_individual),
 
   icrc61_supported_standards: query([], ICRC61Standards, icrc61_supported_standards),
 
